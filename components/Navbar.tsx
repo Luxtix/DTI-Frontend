@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "../public/logo.svg";
+import logo from "../public/logo.svg";
 import navItems from "@/utils/navItems";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,7 +32,7 @@ function Navbar() {
     <nav className="bg-black text-white px-4 py-2 flex items-center justify-between sm:px-28">
       <div className="flex items-center">
         <Link href="/">
-          <Image src={Logo} alt="Logo" className="w-10 h-10 sm:w-14 sm:h-14" />
+          <Image src={logo} alt="Logo" className="w-10 h-10 sm:w-14 sm:h-14" />
         </Link>
       </div>
       <div className="flex justify-center flex-1 pb-0">

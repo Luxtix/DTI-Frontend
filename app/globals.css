@@ -6,7 +6,8 @@
   * {
     font-family: "Open Sans", system-ui, sans-serif;
   }
-  a {
+  h2,
+  h3 {
     font-family: "Montserrat", system-ui, sans-serif;
   }
 }

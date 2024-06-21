@@ -1,4 +1,4 @@
-import Logo from "../public/logo.svg";
+import logo from "../public/logo.svg";
 import footerItems from "@/utils/footerItems";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +13,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between gap-x-8">
           <div className="mb-6 sm:mb-0">
-            <Image src={Logo} alt="Luxtix Logo" className="mb-4 h-20 w-20" />
+            <Image src={logo} alt="Luxtix Logo" className="mb-4 h-20 w-20" />
             <div className="text-zinc-400 mb-4 leading-relaxed">
               <div className="max-w-md text-sm">{footerParagraph}</div>
             </div>
