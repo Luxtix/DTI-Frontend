@@ -1,4 +1,11 @@
-import { Categories, Footer, Hero, Navbar, PopularEvents } from "@/components";
+import {
+  Categories,
+  Footer,
+  Hero,
+  Navbar,
+  OnlineEvents,
+  PopularEvents,
+} from "@/components";
 
 function page() {
   return (
@@ -7,6 +14,7 @@ function page() {
       <Hero />
       <Categories />
       <PopularEvents />
+      <OnlineEvents />
       <Footer />
     </div>
   );

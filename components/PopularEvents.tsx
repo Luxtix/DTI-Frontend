@@ -23,7 +23,7 @@ function PopularEvents() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-8 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:py-8">
       <h2 className="text-3xl font-bold text-luxtix-5 mb-8 mt-8 sm:mt-0">
         Popular Events
       </h2>
