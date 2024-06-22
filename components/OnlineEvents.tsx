@@ -17,7 +17,7 @@ function PopularEvents() {
       <div className="flex justify-center mt-8">
         <Link
           href="/events"
-          className="px-8 sm:px-40 py-4 text-lg border border-luxtix-7 text-luxtix-1 rounded-full"
+          className="btn-anim px-8 sm:px-40 py-4 text-lg border border-luxtix-7 text-luxtix-1 rounded-full"
         >
           See More
         </Link>

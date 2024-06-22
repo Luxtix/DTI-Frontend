@@ -3,6 +3,7 @@ import {
   Footer,
   Hero,
   Navbar,
+  Newsletter,
   OnlineEvents,
   PopularEvents,
 } from "@/components";
@@ -15,6 +16,7 @@ function page() {
       <Categories />
       <PopularEvents />
       <OnlineEvents />
+      <Newsletter />
       <Footer />
     </div>
   );
