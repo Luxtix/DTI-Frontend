@@ -16,6 +16,7 @@ const config: Config = {
           4: "#E6D5B8",
           5: "#986B2D",
           6: "#E5BF67",
+          7: "#CCC8C3",
         },
       },
     },

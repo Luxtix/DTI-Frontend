@@ -25,7 +25,7 @@ function CategoryItem({ name, img, link }: CategoryItemProps) {
 
 function Categories() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:py-8">
+    <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
       <h2 className="text-3xl font-bold text-luxtix-5 mb-8">
         Explore Categories
       </h2>
