@@ -12,9 +12,8 @@ function PopularEvents() {
   const filters: Filter[] = [
     { label: "All" },
     { label: "Today" },
-    { label: "Tomorrow" },
-    { label: "This Weekend" },
-    { label: "Free" },
+    { label: "This Week" },
+    { label: "This Month" },
   ];
 
   const [activeFilter, setActiveFilter] = useState<string>("All");
