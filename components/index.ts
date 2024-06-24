@@ -8,3 +8,5 @@ export { default as Newsletter } from "./Newsletter";
 
 export { default as HeroEvent } from "./HeroEvent";
 export { default as EventsTab } from "./EventsTab";
+
+export { default as SignUp } from "./SignUp";
