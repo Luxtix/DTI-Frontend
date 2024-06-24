@@ -6,14 +6,17 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useState } from "react";
 
 interface Filters {
-  price: string[];
-  date: string[];
-  category: string[];
+  price: string;
+  category: string;
 }
 
-const filters: Filters = {
+const initialFilters: Filters = {
+  price: "",
+  category: "",
+};
+
+const filterOptions = {
   price: ["Free", "Paid"],
-  date: ["Today", "Tomorrow", "This Week", "This Weekend", "Next Week"],
   category: [
     "Entertainment",
     "Educational & Business",
@@ -26,9 +29,21 @@ const filters: Filters = {
 
 function EventsTab() {
   const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
+  };
+
+  const handleFilterChange = (filterType: keyof Filters, value: string) => {
+    setActiveFilters({
+      ...activeFilters,
+      [filterType]: value,
+    });
+  };
+
+  const resetFilters = () => {
+    setActiveFilters(initialFilters);
   };
 
   return (
@@ -55,21 +70,36 @@ function EventsTab() {
         } sm:block w-full sm:w-1/4 p-4 border-r`}
       >
         <h2 className="text-xl font-semibold mb-4">Filters</h2>
-        {Object.keys(filters).map((filterType) => (
+        {Object.keys(filterOptions).map((filterType) => (
           <div className="mb-6" key={filterType}>
             <h3 className="text-lg font-medium mb-2">
               {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
             </h3>
-            <div>
-              {filters[filterType as keyof Filters].map((filter) => (
-                <label className="flex items-center mb-2" key={filter}>
-                  <input type="checkbox" className="mr-2" />
+            <div className="flex flex-wrap gap-2">
+              {filterOptions[filterType as keyof Filters].map((filter) => (
+                <div
+                  key={filter}
+                  onClick={() =>
+                    handleFilterChange(filterType as keyof Filters, filter)
+                  }
+                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${
+                    activeFilters[filterType as keyof Filters] === filter
+                      ? "bg-luxtix-4 text-luxtix-1"
+                      : "border-luxtix-7 text-luxtix-7"
+                  }`}
+                >
                   {filter}
-                </label>
+                </div>
               ))}
             </div>
           </div>
         ))}
+        <button
+          onClick={resetFilters}
+          className="btn-anim underline text-luxtix-1 px-4 py-2 rounded-md mt-4"
+        >
+          Reset Filters
+        </button>
       </div>
 
       <div className="w-full sm:w-3/4 p-4">

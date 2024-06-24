@@ -10,7 +10,7 @@ import { BsFacebook } from "react-icons/bs";
 function SignIn() {
   return (
     <div className="flex flex-col sm:flex-row h-screen bg-black">
-      <div className="w-full sm:w-1/3 bg-black text-white p-8 flex flex-col justify-center sm:justify-start items-center sm:items-start">
+      <div className="w-full sm:w-1/3 bg-black text-white p-8 flex flex-col justify-center sm:justify-center items-center sm:items-center">
         <div className="mb-8 text-center sm:text-left">
           <Image
             src={logo}
@@ -36,12 +36,12 @@ function SignIn() {
           </h2>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6 text-sm">
             <a className="btn-anim">
-              <SocialSign provider={<FcGoogle />} text="Sign up with Google" />
+              <SocialSign provider={<FcGoogle />} text="Sign in with Google" />
             </a>
             <a className="btn-anim">
               <SocialSign
                 provider={<BsFacebook />}
-                text="Sign up with Facebook"
+                text="Sign in with Facebook"
               />
             </a>
           </div>

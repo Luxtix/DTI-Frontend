@@ -63,13 +63,6 @@ function Navbar() {
               </button>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-50">
-                  <Link
-                    href="/create-events"
-                    className="block px-4 py-2 hover:bg-gray-200"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Create Event
-                  </Link>
                   {navItems.navItemsIcon.map((item, index) => (
                     <Link
                       key={index}
@@ -86,12 +79,6 @@ function Navbar() {
               )}
             </div>
             <div className="hidden sm:flex space-x-2 sm:space-x-4 items-center">
-              <Link
-                href="/create-events"
-                className="text-white text-sm sm:text-base hover:text-luxtix-6"
-              >
-                Create Event
-              </Link>
               {navItems.navItemsIcon.map((item, index) => (
                 <Link
                   key={index}

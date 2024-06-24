@@ -11,9 +11,8 @@ interface Filter {
 function PopularEvents() {
   const filters: Filter[] = [
     { label: "All" },
-    { label: "Today" },
-    { label: "This Week" },
-    { label: "This Month" },
+    { label: "Free" },
+    { label: "Paid" },
   ];
 
   const [activeFilter, setActiveFilter] = useState<string>("All");
@@ -33,7 +32,7 @@ function PopularEvents() {
             onClick={() => handleFilterClick(filter.label)}
             className={`px-4 py-2 text-xs sm:text-base rounded-full border ${
               activeFilter === filter.label
-                ? "bg-luxtix-6 text-luxtix-1"
+                ? "bg-luxtix-4 text-luxtix-1"
                 : "border-luxtix-7 text-luxtix-7"
             }`}
           >

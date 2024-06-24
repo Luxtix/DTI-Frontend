@@ -20,7 +20,7 @@ function SignUp() {
 
   return (
     <div className="flex flex-col sm:flex-row h-screen bg-black">
-      <div className="w-full sm:w-1/3 bg-black text-white p-8 flex flex-col justify-center sm:justify-start items-center sm:items-start">
+      <div className="w-full sm:w-1/3 bg-black text-white p-8 flex flex-col justify-center sm:justify-center items-center sm:items-center">
         <div className="mb-8 text-center sm:text-left">
           <Image
             src={logo}
@@ -92,14 +92,12 @@ function SignUp() {
 
           <form>
             <FormField
-              label={
-                registrationType === "user" ? "Username" : "Company Username"
-              }
+              label={registrationType === "user" ? "Full Name" : "Company Name"}
               type="text"
               placeholder={
                 registrationType === "user"
-                  ? "Enter your username"
-                  : "Enter your company username"
+                  ? "Enter your name"
+                  : "Enter your company name"
               }
             />
             <FormField
