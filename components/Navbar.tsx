@@ -7,11 +7,16 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { FaUserCircle, FaCaretDown } from "react-icons/fa";
+import { CiLogout } from "react-icons/ci";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
+
+  //   const toggleLoginState = () => {
+  //     setIsLoggedIn((prevState) => !prevState);
+  //   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,9 +25,10 @@ function Navbar() {
     }
   }, []);
 
-  //   const toggleLoginState = () => {
-  //     setIsLoggedIn((prevState) => !prevState);
-  //   };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
 
   const toggleDropdown = () => {
     setDropdownOpen((prevState) => !prevState);
@@ -75,6 +81,13 @@ function Navbar() {
                       {item.text}
                     </Link>
                   ))}
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 hover:bg-gray-200 w-full text-left flex flex-row items-center gap-2"
+                  >
+                    <CiLogout />
+                    Logout
+                  </button>
                 </div>
               )}
             </div>
@@ -89,6 +102,12 @@ function Navbar() {
                   <span className="text-xs">{item.text}</span>
                 </Link>
               ))}
+              <button
+                onClick={handleLogout}
+                className="text-white text-sm sm:text-base hover:text-luxtix-6"
+              >
+                Logout
+              </button>
             </div>
           </>
         ) : (
