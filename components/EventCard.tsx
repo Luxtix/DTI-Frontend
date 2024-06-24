@@ -1,21 +1,12 @@
 "use client";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { useState } from "react";
+import { EventType } from "@/types/event";
 
 interface EventCardProps {
-  event: {
-    id: number;
-    title: string;
-    image: StaticImageData;
-    date: string;
-    time: string;
-    description: string;
-    price: string;
-    interested: number;
-    category: string;
-  };
+  event: EventType;
 }
 
 function EventCard({ event }: EventCardProps) {
