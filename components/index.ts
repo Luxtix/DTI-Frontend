@@ -10,3 +10,4 @@ export { default as HeroEvent } from "./HeroEvent";
 export { default as EventsTab } from "./EventsTab";
 
 export { default as SignUp } from "./SignUp";
+export { default as SignIn } from "./SignIn";
