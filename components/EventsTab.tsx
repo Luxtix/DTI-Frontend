@@ -20,7 +20,7 @@ const filterOptions = {
   category: [
     "Entertainment",
     "Educational & Business",
-    "Cultural & Arts",
+    "Arts & Culture",
     "Sports & Fitness",
     "Technology & Innovation",
     "Travel & Adventure",
@@ -38,13 +38,25 @@ function EventsTab() {
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
     setActiveFilters({
       ...activeFilters,
-      [filterType]: value,
+      [filterType]: activeFilters[filterType] === value ? "" : value,
     });
   };
 
   const resetFilters = () => {
     setActiveFilters(initialFilters);
   };
+
+  const filteredEvents = eventCardItems.filter((event) => {
+    const matchesPrice =
+      activeFilters.price === "" ||
+      (activeFilters.price === "Free" && event.price === "Free Admission") ||
+      (activeFilters.price === "Paid" && event.price !== "Free Admission");
+    const matchesCategory =
+      activeFilters.category === "" ||
+      event.category === activeFilters.category;
+
+    return matchesPrice && matchesCategory;
+  });
 
   return (
     <div className="flex flex-col md:flex-row max-w-7xl mx-auto px-4 py-4 sm:py-8">
@@ -115,7 +127,7 @@ function EventsTab() {
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {eventCardItems.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>

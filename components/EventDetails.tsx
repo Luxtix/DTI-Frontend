@@ -1,9 +1,19 @@
-import { AiOutlineArrowLeft } from "react-icons/ai";
-import eventDetailsItems from "@/utils/eventDetailsItems";
+"use client";
+import { useParams } from "next/navigation";
+import eventCardItems from "@/utils/eventCardItems";
 import { EventDetailsCard } from ".";
 import Link from "next/link";
+import { AiOutlineArrowLeft } from "react-icons/ai";
 
 function EventDetails() {
+  const { id } = useParams();
+
+  const event = eventCardItems.find((event) => event.id === Number(id));
+
+  if (!event) {
+    return <p>Event not found</p>;
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
       <div className="hidden sm:block sm:py-6">
@@ -11,9 +21,7 @@ function EventDetails() {
           <AiOutlineArrowLeft size={25} />
         </Link>
       </div>
-      {eventDetailsItems.map((event) => (
-        <EventDetailsCard key={event.id} event={event} />
-      ))}
+      <EventDetailsCard key={event.id} event={event} />
     </div>
   );
 }
