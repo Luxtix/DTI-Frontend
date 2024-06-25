@@ -2,6 +2,7 @@
 
 import { EventType } from "@/types/event";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
@@ -68,9 +69,11 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-4 sm:mt-0">
-            <button className="btn-anim bg-luxtix-6 text-luxtix-1 px-4 py-2 rounded-lg">
-              Buy Tickets
-            </button>
+            <Link href={`/events/${event.id}/transactions`}>
+              <button className="btn-anim bg-luxtix-6 text-luxtix-1 px-4 py-2 rounded-lg">
+                Buy Tickets
+              </button>
+            </Link>
           </div>
         </div>
         <div className="py-4">
