@@ -65,7 +65,11 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             </div>
             <div className="flex items-center text-luxtix-3">
               <GiTicket size={20} className="mr-1" />
-              <span>{event.price}</span>
+              <span>
+                {event.price === 0
+                  ? "Free"
+                  : `IDR ${event.price.toLocaleString()}`}
+              </span>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-4 sm:mt-0">

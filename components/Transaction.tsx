@@ -104,7 +104,9 @@ function Transaction() {
                 <span className="text-sm font-bold text-luxtix-3 sm:text-lg">
                   <div className="flex flex-row flex-center">
                     <GiTicket size={20} className="mr-1" />
-                    {`IDR ${event.price.toLocaleString()}`}
+                    {event.price === 0
+                      ? "Free"
+                      : `IDR ${event.price.toLocaleString()}`}
                   </div>
                 </span>
                 <div className="flex items-center">
@@ -156,12 +158,12 @@ function Transaction() {
                       placeholder="Enter code"
                       value={voucherCode}
                       onChange={(e) => setVoucherCode(e.target.value)}
-                      disabled={voucherApplied}
+                      disabled={voucherApplied || initialPrice === 0}
                     />
                     <button
                       className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 rounded-lg"
                       onClick={handleApplyVoucher}
-                      disabled={voucherApplied}
+                      disabled={voucherApplied || initialPrice === 0}
                     >
                       Apply
                     </button>
@@ -186,6 +188,7 @@ function Transaction() {
                   className="mr-2"
                   checked={pointsUsed}
                   onChange={handleUsePoints}
+                  disabled={initialPrice === 0}
                 />
                 <label htmlFor="usePoints">Use Points</label>
                 <span className="ml-auto">20,000</span>
