@@ -1,11 +1,11 @@
 "use client";
 
+import { EventType } from "@/types/event";
 import Image from "next/image";
 import Link from "next/link";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
 import { useState } from "react";
-import { EventType } from "@/types/event";
 
 interface EventCardProps {
   event: EventType;

@@ -1,8 +1,8 @@
 "use client";
 import eventCardItems from "@/utils/eventCardItems";
 import EventCard from "./EventCard";
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 
 interface Filter {
   label: string;

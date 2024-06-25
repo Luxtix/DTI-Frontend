@@ -2,8 +2,8 @@
 
 import eventCardItems from "@/utils/eventCardItems";
 import EventCard from "./EventCard";
-import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useState } from "react";
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 interface Filters {
   price: string;

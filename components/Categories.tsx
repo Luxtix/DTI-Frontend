@@ -1,6 +1,6 @@
+import categoryItems from "@/utils/categoryItems";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
-import categoryItems from "@/utils/categoryItems";
 
 interface CategoryItemProps {
   name: string;

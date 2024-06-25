@@ -1,9 +1,9 @@
 "use client";
 import logo from "../public/logo.svg";
+import { PasswordField, FormField, SubmitButton, SocialSign } from "./ui";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { PasswordField, FormField, SubmitButton, SocialSign } from "./ui";
 import { FaUser, FaUserTie } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";

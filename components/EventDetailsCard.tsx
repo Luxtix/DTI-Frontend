@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { EventType } from "@/types/event";
+import Image from "next/image";
+import { useState } from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
 import { BiTimeFive, BiCalendarAlt } from "react-icons/bi";
 import { GiTicket } from "react-icons/gi";
-import { useState } from "react";
 
 interface EventDetailsCardProps {
   event: EventType;
