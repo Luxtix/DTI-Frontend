@@ -7,16 +7,19 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 interface Filters {
   price: string;
+  type: string;
   category: string;
 }
 
 const initialFilters: Filters = {
   price: "",
+  type: "",
   category: "",
 };
 
 const filterOptions = {
   price: ["Free", "Paid"],
+  type: ["Offline", "Online"],
   category: [
     "Entertainment",
     "Educational & Business",
@@ -49,13 +52,15 @@ function EventsTab() {
   const filteredEvents = eventCardItems.filter((event) => {
     const matchesPrice =
       activeFilters.price === "" ||
-      (activeFilters.price === "Free" && event.price === "Free Admission") ||
-      (activeFilters.price === "Paid" && event.price !== "Free Admission");
+      (activeFilters.price === "Free" && event.price === "Free") ||
+      (activeFilters.price === "Paid" && event.price !== "Free");
+    const matchesType =
+      activeFilters.type === "" || event.type === activeFilters.type;
     const matchesCategory =
       activeFilters.category === "" ||
       event.category === activeFilters.category;
 
-    return matchesPrice && matchesCategory;
+    return matchesPrice && matchesCategory && matchesType;
   });
 
   return (

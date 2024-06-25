@@ -15,6 +15,7 @@ const eventCardItems = [
     price: "IDR 400,000",
     interested: 14,
     category: "Entertainment",
+    type: "Offline",
     location: "Riverside Park, 1234 River Road, Central City, State, 56789",
     city: "Central City",
     host: {
@@ -36,6 +37,7 @@ const eventCardItems = [
     price: "Free",
     interested: 42,
     category: "Entertainment",
+    type: "Offline",
     location: "Central Park, 5678 Maple Avenue, Central City, State, 56789",
     city: "Central City",
     host: {
@@ -57,6 +59,7 @@ const eventCardItems = [
     price: "IDR 1,200,000",
     interested: 28,
     category: "Technology & Innovation",
+    type: "Offline",
     location:
       "City Convention Center, 9101 Tech Drive, Central City, State, 56789",
     city: "Central City",
@@ -79,6 +82,7 @@ const eventCardItems = [
     price: "IDR 500,000",
     interested: 35,
     category: "Arts & Culture",
+    type: "Offline",
     location: "Grand Ballroom, 1234 Luxury Lane, Central City, State, 56789",
     city: "Central City",
     host: {
@@ -100,9 +104,9 @@ const eventCardItems = [
     price: "IDR 150,000",
     interested: 22,
     category: "Arts & Culture",
-    location:
-      "Riverside Art Gallery, 3456 Art Lane, Central City, State, 56789",
-    city: "Central City",
+    type: "Online",
+    location: "Online",
+    city: "Online",
     host: {
       name: "Central City Art Association",
       logo: "https://placehold.co/40x40",
@@ -122,6 +126,7 @@ const eventCardItems = [
     price: "IDR 300,000",
     interested: 60,
     category: "Sports & Fitness",
+    type: "Offline",
     location: "City Square, 7890 Marathon Road, Central City, State, 56789",
     city: "Central City",
     host: {
