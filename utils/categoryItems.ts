@@ -9,32 +9,26 @@ const categoryItems = [
   {
     name: "Entertainment",
     img: cat1,
-    link: "/events/entertainment",
   },
   {
     name: "Educational & Business",
     img: cat2,
-    link: "/events/edu-business",
   },
   {
-    name: "Cultural & Arts",
+    name: "Arts & Culture",
     img: cat3,
-    link: "/events/arts",
   },
   {
     name: "Sports & Fitness",
     img: cat4,
-    link: "/events/sports",
   },
   {
     name: "Technology & Innovation",
     img: cat5,
-    link: "/events/technology",
   },
   {
     name: "Travel & Adventure",
     img: cat6,
-    link: "/events/travel",
   },
 ];
 
