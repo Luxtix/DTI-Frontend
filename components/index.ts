@@ -17,3 +17,8 @@ export { default as EventDetailsCard } from "./EventDetailsCard";
 
 export { default as Transaction } from "./Transaction";
 export { default as ThankYou } from "./ThankYou";
+
+export { default as ProfileSideMenu } from "./ProfileSideMenu";
+export { default as ProfileUser } from "./ProfileUser";
+export { default as ProfilePassword } from "./ProfilePassword";
+export { default as ProfileOrganizer } from "./ProfileOrganizer";
