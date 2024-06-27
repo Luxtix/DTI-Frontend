@@ -13,6 +13,7 @@ const eventCardItems = [
       "Attendees will enjoy a diverse lineup of jazz musicians, from classic jazz bands to modern fusion groups. Each performance is carefully curated to provide a rich and varied auditory experience, ensuring that every attendee finds something that resonates with their musical taste. Alongside the music, the festival features gourmet food trucks, artisan vendors, and interactive workshops, making it a perfect outing for families, friends, and jazz enthusiasts alike.\n\n" +
       "Set against the backdrop of the city's picturesque riverside park, the Summer Jazz Festival offers more than just music. As the sun sets and the stars begin to twinkle, the ambiance becomes magical, creating an unforgettable night. Whether you're a longtime jazz aficionado or a newcomer to the genre, this festival promises a night of great music, delicious food, and wonderful company. Don't miss out on this extraordinary celebration of jazz!",
     price: 400000,
+    vipPrice: 800000,
     interested: 14,
     category: "Entertainment",
     type: "Offline",
@@ -24,6 +25,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
   {
     id: 2,
@@ -37,6 +39,7 @@ const eventCardItems = [
       "Visitors can indulge in a variety of cuisines, sample artisanal products, and participate in cooking demonstrations led by renowned chefs. The fair also features a farmer's market, where you can purchase fresh produce and homemade delicacies to take home.\n\n" +
       "Set in the heart of the city’s central park, the Autumn Food Fair is not just about food, but also about community. Live music, family-friendly activities, and an overall festive atmosphere make this event a perfect outing for families, friends, and food lovers. Don't miss out on this feast for the senses!",
     price: 0,
+    vipPrice: 0,
     interested: 42,
     category: "Entertainment",
     type: "Offline",
@@ -48,6 +51,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
   {
     id: 3,
@@ -61,6 +65,7 @@ const eventCardItems = [
       "Attendees will have the opportunity to attend keynote speeches, participate in interactive workshops, and network with like-minded individuals. The conference covers a wide range of topics, including artificial intelligence, blockchain, cybersecurity, and more.\n\n" +
       "Held at the state-of-the-art City Convention Center, this event provides a platform for knowledge exchange, collaboration, and inspiration. Whether you are a tech professional, a startup founder, or simply passionate about technology, the Tech Innovators Conference is the place to be.",
     price: 1200000,
+    vipPrice: 8000000,
     interested: 28,
     category: "Technology & Innovation",
     type: "Offline",
@@ -73,6 +78,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
   {
     id: 4,
@@ -86,6 +92,7 @@ const eventCardItems = [
       "Guests will enjoy a gourmet dinner, live entertainment, and a silent auction featuring unique items and experiences. The evening will also include dancing to a live band, adding to the festive atmosphere.\n\n" +
       "Proceeds from the Winter Wonderland Gala support local charities, making this event not only a night of elegance and fun but also a chance to give back to the community. Join us for an unforgettable night of celebration and philanthropy.",
     price: 500000,
+    vipPrice: 1000000,
     interested: 35,
     category: "Arts & Culture",
     type: "Offline",
@@ -97,6 +104,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
   {
     id: 5,
@@ -110,6 +118,7 @@ const eventCardItems = [
       "Visitors can explore the exhibition, meet the artists, and purchase original artwork. The event also includes live art demonstrations, interactive workshops, and guided tours, providing a deeper understanding of the artistic process.\n\n" +
       "Held at the picturesque Riverside Art Gallery, the Spring Art Exhibition is a must-visit for art enthusiasts and collectors. Enjoy a day surrounded by beautiful art, inspiring conversations, and the blossoming spirit of spring.",
     price: 150000,
+    vipPrice: 300000,
     interested: 22,
     category: "Arts & Culture",
     type: "Online",
@@ -121,6 +130,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
   {
     id: 6,
@@ -134,6 +144,7 @@ const eventCardItems = [
       "The marathon course takes runners through the city's scenic routes, providing breathtaking views and a unique perspective on the city's landmarks. In addition to the full marathon, there are half marathon and 10K options, making the event accessible to a wide range of runners.\n\n" +
       "Join us for a day of fitness, fun, and community spirit. The City Marathon also includes post-race celebrations with food, music, and awards for top finishers. Lace up your running shoes and be part of this exhilarating event!",
     price: 300000,
+    vipPrice: 200000,
     interested: 60,
     category: "Sports & Fitness",
     type: "Offline",
@@ -145,6 +156,7 @@ const eventCardItems = [
       logo: "https://placehold.co/40x40",
     },
     quota: 25,
+    vipQuota: 8,
   },
 ];
 

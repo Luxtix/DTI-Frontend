@@ -1,17 +1,26 @@
 "use client";
-import { ChangeEvent, useEffect, useState } from "react";
+
+import { usePurchasedEvents } from "../contexts/PurchasedEventsContext";
+import { EventType } from "@/types/event";
 import eventCardItems from "@/utils/eventCardItems";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
 
 function Transaction() {
   const { id } = useParams();
-  const event = eventCardItems.find((event) => event.id === Number(id));
+  const router = useRouter();
+  const { addPurchasedEvent } = usePurchasedEvents();
+  const event = eventCardItems.find(
+    (event: EventType) => event.id === Number(id)
+  );
 
-  const initialPrice = event?.price || 0;
+  const [ticketTier, setTicketTier] = useState<string>("Regular");
+  const initialPrice =
+    ticketTier === "VIP" ? event?.vipPrice || 0 : event?.price || 0;
   const [people, setPeople] = useState<number>(1);
   const [subtotal, setSubtotal] = useState<number>(initialPrice * people);
   const [voucherApplied, setVoucherApplied] = useState<boolean>(false);
@@ -27,6 +36,10 @@ function Transaction() {
   }
 
   useEffect(() => {
+    setSubtotal(initialPrice * people);
+  }, [ticketTier, people]);
+
+  useEffect(() => {
     if (voucherApplied) {
       alert("Voucher successfully applied!");
     }
@@ -36,6 +49,10 @@ function Transaction() {
     const selectedPeople = Number(e.target.value);
     setPeople(selectedPeople);
     setSubtotal(initialPrice * selectedPeople);
+  };
+
+  const handleTicketTierChange = (tier: string) => {
+    setTicketTier(tier);
   };
 
   const handleApplyVoucher = () => {
@@ -57,6 +74,13 @@ function Transaction() {
     setPointsUsed(!pointsUsed);
   };
 
+  const handleCheckout = () => {
+    if (event) {
+      addPurchasedEvent(event);
+      router.push("/thank-you");
+    }
+  };
+
   const totalDiscount =
     (voucherApplied ? voucherDiscount : 0) + (pointsUsed ? pointsDiscount : 0);
   const total = subtotal - totalDiscount;
@@ -64,7 +88,7 @@ function Transaction() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
       <div className="max-w-7xl mx-auto">
-        <div className="hidden sm:block sm:py-6">
+        <div className="block py-6">
           <Link href="/" className="text-luxtix-1">
             <AiOutlineArrowLeft size={25} />
           </Link>
@@ -104,9 +128,9 @@ function Transaction() {
                 <span className="text-sm font-bold text-luxtix-3 sm:text-lg">
                   <div className="flex flex-row flex-center">
                     <GiTicket size={20} className="mr-1" />
-                    {event.price === 0
+                    {initialPrice === 0
                       ? "Free"
-                      : `IDR ${event.price.toLocaleString()}`}
+                      : `IDR ${initialPrice.toLocaleString()}`}
                   </div>
                 </span>
                 <div className="flex items-center">
@@ -121,7 +145,37 @@ function Transaction() {
                     <option value={1}>1 Person</option>
                     <option value={2}>2 Person</option>
                     <option value={3}>3 Person</option>
+                    <option value={4}>4 Person</option>
                   </select>
+                </div>
+              </div>
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Ticket Tier
+                </label>
+                <div className="flex space-x-4">
+                  <div
+                    onClick={() => handleTicketTierChange("Regular")}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      ticketTier === "Regular"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
+                  >
+                    <span className="text-luxtix-1">Regular</span>
+                    <span className="text-sm">{`IDR ${event?.price?.toLocaleString()}`}</span>
+                  </div>
+                  <div
+                    onClick={() => handleTicketTierChange("VIP")}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      ticketTier === "VIP"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
+                  >
+                    <span className="text-luxtix-1">VIP</span>
+                    <span className="text-sm">{`IDR ${event?.vipPrice?.toLocaleString()}`}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -202,20 +256,23 @@ function Transaction() {
               {voucherApplied && (
                 <div className="flex justify-between mb-2">
                   <span>Referral Voucher</span>
-                  <span>{`- IDR ${voucherDiscount.toLocaleString()}`}</span>
+                  <span>-{`IDR ${voucherDiscount.toLocaleString()}`}</span>
                 </div>
               )}
               {pointsUsed && (
-                <div className="flex justify-between mb-4">
-                  <span>Points Used</span>
-                  <span>{`- IDR ${pointsDiscount.toLocaleString()}`}</span>
+                <div className="flex justify-between mb-2">
+                  <span>Points</span>
+                  <span>-{`IDR ${pointsDiscount.toLocaleString()}`}</span>
                 </div>
               )}
-              <div className="flex justify-between font-bold text-lg mb-4">
+              <div className="flex justify-between font-bold mb-4">
                 <span>Total</span>
                 <span>{`IDR ${total.toLocaleString()}`}</span>
               </div>
-              <button className="btn-anim w-full p-3 bg-luxtix-6 text-black rounded-lg">
+              <button
+                className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 font-bold rounded-lg"
+                onClick={handleCheckout}
+              >
                 Checkout Ticket
               </button>
             </div>

@@ -2,8 +2,9 @@
 
 import eventCardItems from "@/utils/eventCardItems";
 import EventCard from "./EventCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Filters {
   price: string;
@@ -30,35 +31,85 @@ const filterOptions = {
   ],
 };
 
+const categorySlugs: { [key: string]: string } = {
+  Entertainment: "entertainment",
+  "Educational & Business": "educational-business",
+  "Arts & Culture": "arts-culture",
+  "Sports & Fitness": "sports-fitness",
+  "Technology & Innovation": "technology-innovation",
+  "Travel & Adventure": "travel-adventure",
+};
+
+const slugToCategory = Object.entries(categorySlugs).reduce(
+  (acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  },
+  {} as { [key: string]: string }
+);
+
 function EventsTab() {
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const category = searchParams.get("category");
+    const price = searchParams.get("price");
+    const type = searchParams.get("type");
+
+    setActiveFilters({
+      price: price || "",
+      type: type || "",
+      category: category ? slugToCategory[category] || "" : "",
+    });
+  }, [searchParams]);
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
   };
 
+  const updateURLParams = (filters: Filters) => {
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) {
+        if (key === "category") {
+          params.append(key, categorySlugs[value]);
+        } else {
+          params.append(key, value);
+        }
+      }
+    });
+
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    setActiveFilters({
+    const updatedFilters = {
       ...activeFilters,
       [filterType]: activeFilters[filterType] === value ? "" : value,
-    });
+    };
+    setActiveFilters(updatedFilters);
+    updateURLParams(updatedFilters);
   };
 
   const resetFilters = () => {
     setActiveFilters(initialFilters);
+    router.push("");
   };
 
   const filteredEvents = eventCardItems.filter((event) => {
     const matchesPrice =
       activeFilters.price === "" ||
-      (activeFilters.price === "Free" && event.price === "Free") ||
-      (activeFilters.price === "Paid" && event.price !== "Free");
+      (activeFilters.price === "Free" && event.price === 0) ||
+      (activeFilters.price === "Paid" && event.price !== 0);
     const matchesType =
       activeFilters.type === "" || event.type === activeFilters.type;
     const matchesCategory =
       activeFilters.category === "" ||
-      event.category === activeFilters.category;
+      event.category.toLowerCase() === activeFilters.category.toLowerCase();
 
     return matchesPrice && matchesCategory && matchesType;
   });

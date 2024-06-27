@@ -16,3 +16,4 @@ export { default as EventDetails } from "./EventDetails";
 export { default as EventDetailsCard } from "./EventDetailsCard";
 
 export { default as Transaction } from "./Transaction";
+export { default as ThankYou } from "./ThankYou";

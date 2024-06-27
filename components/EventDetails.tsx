@@ -17,7 +17,7 @@ function EventDetails() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
-      <div className="hidden sm:block sm:py-6">
+      <div className="block py-6">
         <Link href="/" className="text-luxtix-1">
           <AiOutlineArrowLeft size={25} />
         </Link>
