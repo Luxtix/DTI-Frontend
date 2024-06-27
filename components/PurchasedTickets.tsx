@@ -54,7 +54,7 @@ function PurchasedTickets() {
                     <p className="text-sm text-luxtix-7 mb-2 line-clamp-3">
                       {event.description}
                     </p>
-                    <button className="btn-anim bg-luxtix-6 text-luxtix-1 px-4 py-2 rounded-lg">
+                    <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg">
                       Tickets Details
                     </button>
                   </div>
