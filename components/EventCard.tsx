@@ -67,7 +67,9 @@ function EventCard({ event }: EventCardProps) {
           </p>
           <p className="text-xs sm:text-sm space-x-2 text-orange-500 flex items-center">
             <GiTicket className="mr-1" />
-            {event.price === 0 ? "Free" : `IDR ${event.price.toLocaleString()}`}
+            {event.price === 0
+              ? "Free"
+              : `From IDR ${event.price.toLocaleString()}`}
             <span className="text-luxtix-2">
               ★ {event.interested} interested
             </span>

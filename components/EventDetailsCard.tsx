@@ -68,7 +68,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
               <span>
                 {event.price === 0
                   ? "Free"
-                  : `IDR ${event.price.toLocaleString()}`}
+                  : `From IDR ${event.price.toLocaleString()}`}
               </span>
             </div>
           </div>

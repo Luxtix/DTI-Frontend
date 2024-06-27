@@ -7,6 +7,7 @@ export interface EventType {
   time: string;
   description: string;
   price: number;
+  vipPrice: number;
   interested: number;
   category: string;
   type: string;
@@ -15,6 +16,7 @@ export interface EventType {
   city: string;
   host: Host;
   quota: number;
+  vipQuota: number;
 }
 interface Host {
   name: string;
