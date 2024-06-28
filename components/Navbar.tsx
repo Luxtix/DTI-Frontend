@@ -14,10 +14,9 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
 
-
-  // const toggleLoginState = () => {
-  //   setIsLoggedIn((prevState) => !prevState);
-  // };
+  const toggleLoginState = () => {
+    setIsLoggedIn((prevState) => !prevState);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -48,8 +47,9 @@ function Navbar() {
             <Link
               key={index}
               href={item.path}
-              className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${pathname === item.path ? "border-b-2 border-luxtix-6" : ""
-                }`}
+              className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${
+                pathname === item.path ? "border-b-2 border-luxtix-6" : ""
+              }`}
             >
               {item.text}
             </Link>
@@ -73,8 +73,9 @@ function Navbar() {
                     <Link
                       key={index}
                       href={item.path}
-                      className={`block px-4 py-2 ${pathname === item.path ? "bg-luxtix-6" : ""
-                        }`}
+                      className={`block px-4 py-2 ${
+                        pathname === item.path ? "bg-luxtix-6" : ""
+                      }`}
                       onClick={() => setDropdownOpen(false)}
                     >
                       {item.text}
@@ -132,7 +133,7 @@ function Navbar() {
         )}
       </div>
 
-      {/* {<button onClick={toggleLoginState}>Test</button>} */}
+      {<button onClick={toggleLoginState}>Test</button>}
     </nav>
   );
 }
