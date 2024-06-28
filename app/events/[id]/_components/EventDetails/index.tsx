@@ -3,8 +3,7 @@ import eventCardItems from "@/utils/eventCardItems";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import EventDetailsCard from "./components/EventDetailsCard";
-
+import EventDetailsCard from "@/components/EventDetailsCard";
 
 function EventDetails() {
   const { id } = useParams();
