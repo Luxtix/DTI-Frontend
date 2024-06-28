@@ -14,9 +14,9 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
 
-  //   const toggleLoginState = () => {
-  //     setIsLoggedIn((prevState) => !prevState);
-  //   };
+  const toggleLoginState = () => {
+    setIsLoggedIn((prevState) => !prevState);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -132,7 +132,7 @@ function Navbar() {
           </>
         )}
       </div>
-      {/* <button onClick={toggleLoginState}>Test</button> */}
+      <button onClick={toggleLoginState}>🚨</button>
     </nav>
   );
 }

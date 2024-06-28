@@ -74,7 +74,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-4 sm:mt-0">
             <Link href={`/events/${event.id}/transactions`}>
-              <button className="btn-anim bg-luxtix-6 text-luxtix-1 px-4 py-2 rounded-lg">
+              <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg">
                 Buy Tickets
               </button>
             </Link>

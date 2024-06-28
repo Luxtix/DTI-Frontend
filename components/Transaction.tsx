@@ -215,7 +215,7 @@ function Transaction() {
                       disabled={voucherApplied || initialPrice === 0}
                     />
                     <button
-                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 rounded-lg"
+                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
                       onClick={handleApplyVoucher}
                       disabled={voucherApplied || initialPrice === 0}
                     >
@@ -270,7 +270,7 @@ function Transaction() {
                 <span>{`IDR ${total.toLocaleString()}`}</span>
               </div>
               <button
-                className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 font-bold rounded-lg"
+                className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 font-bold rounded-lg"
                 onClick={handleCheckout}
               >
                 Checkout Ticket
