@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { usePurchasedEvents } from "../contexts/PurchasedEventsContext";
+import { usePurchasedEvents } from "../../../../contexts/PurchasedEventsContext";
 import { EventType } from "@/types/event";
 import Link from "next/link";
 import { useEffect, useState } from "react";

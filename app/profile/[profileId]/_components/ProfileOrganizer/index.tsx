@@ -1,16 +1,13 @@
 "use client";
 
-import logo from "../public/logo.svg";
-import profileItems from "@/utils/profileItems";
-import ProfileSideMenu from "./ProfileSideMenu";
-import { FormField } from "./ui";
+import logo from "../../../../../public/logo.svg";
 import Image from "next/image";
-
 import { AiFillCamera } from "react-icons/ai";
+import { FormField } from "@/components/ui";
+import ProfileSideMenu from "../ProfileSideMenu";
 
-const profileReff = profileItems[1];
 
-function ProfileUser() {
+function ProfileOrganizer() {
   return (
     <div className="flex min-h-screen bg-white">
       <ProfileSideMenu />
@@ -31,32 +28,30 @@ function ProfileUser() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Organization Information
+          </h2>
           <form className="space-y-4">
             <div className="flex flex-col">
               <FormField
-                label="Full Name"
+                label="Company Name"
                 type="text"
-                placeholder="Input your Full Name"
+                placeholder="Input your company name"
               />
             </div>
             <div className="flex flex-col">
               <FormField
-                label="Phone Number"
+                label="Company Phone Number"
                 type="text"
-                placeholder="Input your Phone Number"
+                placeholder="Input your company phone number"
               />
             </div>
             <div className="flex flex-col">
               <FormField
-                label="E-Mail Address"
+                label="Company E-Mail Address"
                 type="text"
-                placeholder="Input your e-mail"
+                placeholder="Input your company e-mail"
               />
-            </div>
-            <div className="flex flex-col">
-              <label className="block text-luxtix-8 mb-2">Referral Code:</label>
-              {profileReff.referralId}
             </div>
             <div className="pt-12">
               <button
@@ -73,4 +68,4 @@ function ProfileUser() {
   );
 }
 
-export default ProfileUser;
+export default ProfileOrganizer;

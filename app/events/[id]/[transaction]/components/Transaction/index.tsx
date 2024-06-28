@@ -1,7 +1,5 @@
 "use client";
 
-import { usePurchasedEvents } from "../contexts/PurchasedEventsContext";
-import { EventType } from "@/types/event";
 import eventCardItems from "@/utils/eventCardItems";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +7,8 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
+import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
+import { EventType } from "@/types/event";
 
 function Transaction() {
   const { id } = useParams();
@@ -156,22 +156,20 @@ function Transaction() {
                 <div className="flex space-x-4">
                   <div
                     onClick={() => handleTicketTierChange("Regular")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "Regular"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "Regular"
+                      ? "border-luxtix-5"
+                      : "border-luxtix-7"
+                      }`}
                   >
                     <span className="text-luxtix-1">Regular</span>
                     <span className="text-sm">{`IDR ${event?.price?.toLocaleString()}`}</span>
                   </div>
                   <div
                     onClick={() => handleTicketTierChange("VIP")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "VIP"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "VIP"
+                      ? "border-luxtix-5"
+                      : "border-luxtix-7"
+                      }`}
                   >
                     <span className="text-luxtix-1">VIP</span>
                     <span className="text-sm">{`IDR ${event?.vipPrice?.toLocaleString()}`}</span>

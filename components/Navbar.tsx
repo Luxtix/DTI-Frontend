@@ -14,9 +14,10 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
 
-  const toggleLoginState = () => {
-    setIsLoggedIn((prevState) => !prevState);
-  };
+
+  // const toggleLoginState = () => {
+  //   setIsLoggedIn((prevState) => !prevState);
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,9 +48,8 @@ function Navbar() {
             <Link
               key={index}
               href={item.path}
-              className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${
-                pathname === item.path ? "border-b-2 border-luxtix-6" : ""
-              }`}
+              className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${pathname === item.path ? "border-b-2 border-luxtix-6" : ""
+                }`}
             >
               {item.text}
             </Link>
@@ -73,9 +73,8 @@ function Navbar() {
                     <Link
                       key={index}
                       href={item.path}
-                      className={`block px-4 py-2 ${
-                        pathname === item.path ? "bg-luxtix-6" : ""
-                      }`}
+                      className={`block px-4 py-2 ${pathname === item.path ? "bg-luxtix-6" : ""
+                        }`}
                       onClick={() => setDropdownOpen(false)}
                     >
                       {item.text}
@@ -115,7 +114,7 @@ function Navbar() {
             {navItems.navItemsRight.map((item, index) => (
               <Link
                 key={index}
-                href="/sign-up"
+                href="./sign-up"
                 className="text-white text-sm sm:text-base hover:text-luxtix-6 hidden sm:block"
               >
                 {item.text}
@@ -123,7 +122,7 @@ function Navbar() {
             ))}
             <div>
               <Link
-                href="/sign-in"
+                href="./sign-in"
                 className="bg-luxtix-6 text-black px-4 py-2 rounded-lg hover:bg-luxtix-2"
               >
                 Login
@@ -132,7 +131,8 @@ function Navbar() {
           </>
         )}
       </div>
-      <button onClick={toggleLoginState}>🚨</button>
+
+      {/* {<button onClick={toggleLoginState}>Test</button>} */}
     </nav>
   );
 }

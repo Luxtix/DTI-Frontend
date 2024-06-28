@@ -1,4 +1,5 @@
-import PurchasedTickets from "@/components/PurchasedTickets";
+import PurchasedTickets from "./components/PurchasedTickets";
+
 
 function page() {
   return (

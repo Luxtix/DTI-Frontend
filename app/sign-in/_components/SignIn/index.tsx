@@ -1,11 +1,12 @@
 "use client";
-import logo from "../public/logo.svg";
-import { PasswordField, FormField, SubmitButton, SocialSign } from "./ui";
+import logo from "../../../../public/logo.svg";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
+import { FormField, PasswordField, SocialSign, SubmitButton } from "@/components/ui";
 
 function SignIn() {
   return (

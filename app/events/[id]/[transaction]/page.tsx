@@ -1,4 +1,5 @@
-import { Footer, Navbar, Transaction } from "@/components";
+import { Footer, Navbar } from "@/components";
+import Transaction from "./components/Transaction";
 
 function page() {
   return (

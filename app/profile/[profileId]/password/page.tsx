@@ -1,4 +1,5 @@
-import { Footer, Navbar, ProfilePassword, ProfileSideMenu } from "@/components";
+import { Footer, Navbar } from "@/components";
+import ProfilePassword from "./_components/ProfilePassword";
 
 function page() {
   return (

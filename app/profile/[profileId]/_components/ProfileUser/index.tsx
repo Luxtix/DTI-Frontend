@@ -1,12 +1,14 @@
 "use client";
-
-import logo from "../public/logo.svg";
-import ProfileSideMenu from "./ProfileSideMenu";
+import logo from "../../../../../public/logo.svg";
+import profileItems from "@/utils/profileItems";
+import { FormField } from "../../../../../components/ui";
 import Image from "next/image";
 import { AiFillCamera } from "react-icons/ai";
-import { FormField } from "./ui";
+import ProfileSideMenu from "../ProfileSideMenu";
 
-function ProfileOrganizer() {
+const profileReff = profileItems[1];
+
+function ProfileUser() {
   return (
     <div className="flex min-h-screen bg-white">
       <ProfileSideMenu />
@@ -27,30 +29,32 @@ function ProfileOrganizer() {
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-4">
-            Organization Information
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
           <form className="space-y-4">
             <div className="flex flex-col">
               <FormField
-                label="Company Name"
+                label="Full Name"
                 type="text"
-                placeholder="Input your company name"
+                placeholder="Input your Full Name"
               />
             </div>
             <div className="flex flex-col">
               <FormField
-                label="Company Phone Number"
+                label="Phone Number"
                 type="text"
-                placeholder="Input your company phone number"
+                placeholder="Input your Phone Number"
               />
             </div>
             <div className="flex flex-col">
               <FormField
-                label="Company E-Mail Address"
+                label="E-Mail Address"
                 type="text"
-                placeholder="Input your company e-mail"
+                placeholder="Input your e-mail"
               />
+            </div>
+            <div className="flex flex-col">
+              <label className="block text-luxtix-8 mb-2">Referral Code:</label>
+              {profileReff.referralId}
             </div>
             <div className="pt-12">
               <button
@@ -67,4 +71,4 @@ function ProfileOrganizer() {
   );
 }
 
-export default ProfileOrganizer;
+export default ProfileUser;

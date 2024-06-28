@@ -1,6 +1,8 @@
 "use client";
-import ProfileSideMenu from "./ProfileSideMenu";
-import { FormField } from "./ui";
+import { FormField } from "@/components/ui";
+import ProfileSideMenu from "../../../_components/ProfileSideMenu";
+
+
 
 function ProfilePassword() {
   return (
