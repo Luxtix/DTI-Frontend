@@ -1,4 +1,8 @@
-import { EventsTab, Footer, HeroEvent, Navbar } from "@/components";
+import Navbar from "@/components/Navbar";
+import EventsTab from "./_components/EventsTab";
+import Footer from "@/components/Footer";
+import HeroEvent from "./_components/HeroEvent";
+
 
 function page() {
   return (
@@ -12,3 +16,4 @@ function page() {
 }
 
 export default page;
+

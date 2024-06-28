@@ -1,11 +1,11 @@
 import { Footer, Navbar } from "@/components";
-import Transaction from "./components/Transaction";
+import ProfilePassword from "./_components/ProfilePassword";
 
 function page() {
   return (
     <div>
       <Navbar />
-      <Transaction />;
+      <ProfilePassword />
       <Footer />
     </div>
   );

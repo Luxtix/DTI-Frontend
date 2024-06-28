@@ -1,3 +1,4 @@
+import profileItems from "./profileItems";
 import { AiFillStar } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { GiTicket } from "react-icons/gi";
@@ -9,10 +10,12 @@ const navItemsLeft = [
 
 const navItemsRight = [{ text: "Sign Up", path: "/sign-up" }];
 
+const profile = profileItems[0];
+
 const navItemsIcon = [
-  { icon: GiTicket, text: "Tickets", path: "/my-tickets" },
+  { icon: GiTicket, text: "Tickets", path: "/purchased-tickets" },
   { icon: AiFillStar, text: "Interested", path: "/interested" },
-  { icon: CgProfile, text: "Profile", path: "/profile" },
+  { icon: CgProfile, text: "Profile", path: `/profile/${profile.id}` },
 ];
 
 export default { navItemsLeft, navItemsRight, navItemsIcon };

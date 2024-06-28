@@ -1,4 +1,5 @@
-import { EventDetails, Footer, Navbar } from "@/components";
+import { Footer, Navbar } from "@/components";
+import EventDetails from "./_components/EventDetails";
 
 function page() {
   return (

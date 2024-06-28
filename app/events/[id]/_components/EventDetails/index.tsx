@@ -1,10 +1,10 @@
 "use client";
-
 import eventCardItems from "@/utils/eventCardItems";
-import { EventDetailsCard } from ".";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import EventDetailsCard from "./components/EventDetailsCard";
+
 
 function EventDetails() {
   const { id } = useParams();

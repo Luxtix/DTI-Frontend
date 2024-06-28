@@ -1,6 +1,5 @@
 "use client";
-import logo from "../public/logo.svg";
-import { PasswordField, FormField, SubmitButton, SocialSign } from "./ui";
+import logo from "../../../../public/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -8,6 +7,7 @@ import { FaUser, FaUserTie } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
+import { FormField, PasswordField, SocialSign, SubmitButton } from "@/components/ui";
 
 function SignUp() {
   const [registrationType, setRegistrationType] = useState<
@@ -67,22 +67,20 @@ function SignUp() {
             <div className="flex space-x-4">
               <div
                 onClick={() => handleTypeChange("user")}
-                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                  registrationType === "user"
-                    ? "border-luxtix-5"
-                    : "border-luxtix-7"
-                }`}
+                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${registrationType === "user"
+                  ? "border-luxtix-5"
+                  : "border-luxtix-7"
+                  }`}
               >
                 <FaUser size={30} className="mb-2" />
                 <span className="text-luxtix-1">User</span>
               </div>
               <div
                 onClick={() => handleTypeChange("organizer")}
-                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                  registrationType === "organizer"
-                    ? "border-luxtix-5"
-                    : "border-luxtix-7"
-                }`}
+                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${registrationType === "organizer"
+                  ? "border-luxtix-5"
+                  : "border-luxtix-7"
+                  }`}
               >
                 <FaUserTie size={30} className="mb-2" />
                 <span className="text-luxtix-1">Organizer</span>
@@ -125,7 +123,7 @@ function SignUp() {
           </form>
           <p className="mt-4 text-center text-luxtix-7">
             Already have an account?{" "}
-            <Link href="/sign-in" className="text-luxtix-8 font-bold">
+            <Link href="./sign-in" className="text-luxtix-8 font-bold">
               Log In
             </Link>
           </p>

@@ -3,7 +3,7 @@ import heroImg2 from "@/public/heroimg2.png";
 import Image from "next/image";
 import { AiOutlineSearch } from "react-icons/ai";
 
-function Hero() {
+function HeroEvent() {
   return (
     <div className="relative bg-cover bg-center h-screen sm:h-auto sm:p-24">
       <div className="absolute inset-0 w-full">
@@ -35,4 +35,4 @@ function Hero() {
   );
 }
 
-export default Hero;
+export default HeroEvent;

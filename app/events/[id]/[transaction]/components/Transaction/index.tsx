@@ -1,7 +1,5 @@
 "use client";
 
-import { usePurchasedEvents } from "../contexts/PurchasedEventsContext";
-import { EventType } from "@/types/event";
 import eventCardItems from "@/utils/eventCardItems";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +7,8 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
+import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
+import { EventType } from "@/types/event";
 
 function Transaction() {
   const { id } = useParams();
@@ -156,22 +156,20 @@ function Transaction() {
                 <div className="flex space-x-4">
                   <div
                     onClick={() => handleTicketTierChange("Regular")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "Regular"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "Regular"
+                      ? "border-luxtix-5"
+                      : "border-luxtix-7"
+                      }`}
                   >
                     <span className="text-luxtix-1">Regular</span>
                     <span className="text-sm">{`IDR ${event?.price?.toLocaleString()}`}</span>
                   </div>
                   <div
                     onClick={() => handleTicketTierChange("VIP")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "VIP"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "VIP"
+                      ? "border-luxtix-5"
+                      : "border-luxtix-7"
+                      }`}
                   >
                     <span className="text-luxtix-1">VIP</span>
                     <span className="text-sm">{`IDR ${event?.vipPrice?.toLocaleString()}`}</span>
@@ -215,7 +213,7 @@ function Transaction() {
                       disabled={voucherApplied || initialPrice === 0}
                     />
                     <button
-                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 rounded-lg"
+                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
                       onClick={handleApplyVoucher}
                       disabled={voucherApplied || initialPrice === 0}
                     >
@@ -270,7 +268,7 @@ function Transaction() {
                 <span>{`IDR ${total.toLocaleString()}`}</span>
               </div>
               <button
-                className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 font-bold rounded-lg"
+                className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 font-bold rounded-lg"
                 onClick={handleCheckout}
               >
                 Checkout Ticket

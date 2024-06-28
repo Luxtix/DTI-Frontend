@@ -1,5 +1,5 @@
 "use client";
-import logo from "../public/logo.svg";
+import logo from "../../../public/logo.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -40,7 +40,7 @@ function ThankYou() {
         </p>
         <button
           onClick={handleRedirectNow}
-          className="bg-luxtix-6 text-luxtix-1 py-2 px-4 rounded-full"
+          className="bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 py-2 px-4 rounded-full"
         >
           Redirect Now
         </button>
