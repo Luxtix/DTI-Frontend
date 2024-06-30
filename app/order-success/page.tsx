@@ -1,4 +1,5 @@
-import { Footer, Navbar } from "@/components";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import ThankYou from "./_components";
 
 function page() {

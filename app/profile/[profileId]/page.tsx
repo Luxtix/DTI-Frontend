@@ -1,4 +1,5 @@
-import { Footer, Navbar } from "@/components";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Navbar";
 import ProfileOrganizer from "./_components/ProfileOrganizer";
 import ProfileUser from "./_components/ProfileUser";
 
