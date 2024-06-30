@@ -1,5 +1,11 @@
+import CreateEvent from "./_components";
+
 function page() {
-  return <div>page</div>;
+  return (
+    <div>
+      <CreateEvent />
+    </div>
+  );
 }
 
 export default page;
