@@ -1,5 +1,6 @@
-import { Footer, Navbar } from "@/components";
+import Navbar from "@/components/Navbar";
 import EventDetails from "./_components/EventDetails";
+import Footer from "@/components/Footer";
 
 function page() {
   return (
