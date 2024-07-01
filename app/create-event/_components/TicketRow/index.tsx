@@ -22,7 +22,7 @@ function TicketRow({
           <button
             type="button"
             onClick={() => removeRow(index)}
-            className="p-2 text-luxtix-3"
+            className="btn-anim p-2 text-luxtix-3"
           >
             <CgRemove size={20} />
           </button>

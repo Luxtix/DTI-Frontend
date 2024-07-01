@@ -15,11 +15,15 @@ function VoucherRow({
       <FormField label="Voucher Quantity" type="number" placeholder="QTY 0" />
       <FormField label="Voucher Discount (%)" type="number" placeholder="0" />
       <div>
-        <label className="block text-sm font-medium mb-2">Start Date</label>
-        <Input type="date" placeholder="DD/MM/YYYY" />
+        <label className="text-md mb-2 text-luxtix-8">Start Date</label>
+        <Input
+          type="date"
+          placeholder="DD/MM/YYYY"
+          className="w-full p-2 border border-input rounded"
+        />
       </div>
       <div>
-        <label className="block text-sm font-medium mb-2">End Date</label>
+        <label className="text-md mb-2 text-luxtix-8">End Date</label>
         <Input
           type="date"
           placeholder="DD/MM/YYYY"
@@ -30,7 +34,7 @@ function VoucherRow({
         <button
           type="button"
           onClick={() => removeRow(index)}
-          className="p-2 text-luxtix-3"
+          className="btn-anim p-2 text-luxtix-3"
         >
           <CgRemove size={20} />
         </button>
