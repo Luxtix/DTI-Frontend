@@ -1,8 +1,7 @@
 import Navbar from "@/components/Navbar";
-import EventsTab from "./_components/EventsTab";
 import Footer from "@/components/Footer";
 import HeroEvent from "./_components/HeroEvent";
-
+import EventsTab from "./_components/EventsTab";
 
 function page() {
   return (
@@ -16,4 +15,3 @@ function page() {
 }
 
 export default page;
-

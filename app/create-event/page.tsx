@@ -1,12 +1,12 @@
 import Navbar from "@/components/Navbar";
-import Transaction from "./_components/Transaction";
+import CreateEvent from "./_components";
 import Footer from "@/components/Footer";
 
 function page() {
   return (
     <div>
       <Navbar />
-      <Transaction />;
+      <CreateEvent />
       <Footer />
     </div>
   );

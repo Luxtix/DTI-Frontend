@@ -77,7 +77,7 @@ function Transaction() {
   const handleCheckout = () => {
     if (event) {
       addPurchasedEvent(event);
-      router.push("/thank-you");
+      router.push("/order-success");
     }
   };
 
@@ -156,20 +156,22 @@ function Transaction() {
                 <div className="flex space-x-4">
                   <div
                     onClick={() => handleTicketTierChange("Regular")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "Regular"
-                      ? "border-luxtix-5"
-                      : "border-luxtix-7"
-                      }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      ticketTier === "Regular"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
                   >
                     <span className="text-luxtix-1">Regular</span>
                     <span className="text-sm">{`IDR ${event?.price?.toLocaleString()}`}</span>
                   </div>
                   <div
                     onClick={() => handleTicketTierChange("VIP")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${ticketTier === "VIP"
-                      ? "border-luxtix-5"
-                      : "border-luxtix-7"
-                      }`}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      ticketTier === "VIP"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
                   >
                     <span className="text-luxtix-1">VIP</span>
                     <span className="text-sm">{`IDR ${event?.vipPrice?.toLocaleString()}`}</span>
