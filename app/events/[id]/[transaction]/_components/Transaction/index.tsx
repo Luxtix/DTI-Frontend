@@ -3,10 +3,9 @@
 import eventCardItems from "@/utils/eventCardItems";
 import Image from "next/image";
 import Link from "next/link";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { GiTicket } from "react-icons/gi";
 import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
 import { EventType } from "@/types/event";
 
@@ -18,26 +17,23 @@ function Transaction() {
     (event: EventType) => event.id === Number(id)
   );
 
-  const [ticketTier, setTicketTier] = useState<string>("Regular");
-  const initialPrice =
-    ticketTier === "VIP" ? event?.vipPrice || 0 : event?.price || 0;
-  const [people, setPeople] = useState<number>(1);
-  const [subtotal, setSubtotal] = useState<number>(initialPrice * people);
+  const [regularTickets, setRegularTickets] = useState<number>(0);
+  const [vipTickets, setVipTickets] = useState<number>(0);
+  const [vvipTickets, setVvipTickets] = useState<number>(0);
   const [voucherApplied, setVoucherApplied] = useState<boolean>(false);
   const [pointsUsed, setPointsUsed] = useState<boolean>(false);
-  const [voucherCode, setVoucherCode] = useState<string>("");
+  const [selectedVoucher, setSelectedVoucher] = useState<string>("");
   const [voucherAlert, setVoucherAlert] = useState<string>("");
 
-  const voucherDiscount = 20000;
-  const pointsDiscount = 20000;
+  const availableVouchers = [
+    { code: "888", discount: 10, label: "Voucher 888 - 10% Off" },
+    { code: "SAVE10", discount: 5, label: "SAVE10 - 5% Off" },
+    // Add more vouchers as needed
+  ];
 
   if (!event) {
     return <p>Event not found</p>;
   }
-
-  useEffect(() => {
-    setSubtotal(initialPrice * people);
-  }, [ticketTier, people]);
 
   useEffect(() => {
     if (voucherApplied) {
@@ -45,18 +41,29 @@ function Transaction() {
     }
   }, [voucherApplied]);
 
-  const handlePeopleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const selectedPeople = Number(e.target.value);
-    setPeople(selectedPeople);
-    setSubtotal(initialPrice * selectedPeople);
+  const handleIncreaseTickets = (type: string) => {
+    if (type === "Regular" && regularTickets < event.quota) {
+      setRegularTickets(regularTickets + 1);
+    } else if (type === "VIP" && vipTickets < event.vipQuota) {
+      setVipTickets(vipTickets + 1);
+    } else if (type === "VVIP" && vvipTickets < event.vvipQuota) {
+      setVvipTickets(vvipTickets + 1);
+    }
   };
 
-  const handleTicketTierChange = (tier: string) => {
-    setTicketTier(tier);
+  const handleDecreaseTickets = (type: string) => {
+    if (type === "Regular" && regularTickets > 0) {
+      setRegularTickets(regularTickets - 1);
+    } else if (type === "VIP" && vipTickets > 0) {
+      setVipTickets(vipTickets - 1);
+    } else if (type === "VVIP" && vvipTickets > 0) {
+      setVvipTickets(vvipTickets - 1);
+    }
   };
 
   const handleApplyVoucher = () => {
-    if (voucherCode === "888") {
+    const voucher = availableVouchers.find((v) => v.code === selectedVoucher);
+    if (voucher) {
       setVoucherApplied(true);
       setVoucherAlert("");
     } else {
@@ -66,7 +73,7 @@ function Transaction() {
 
   const handleRemoveVoucher = () => {
     setVoucherApplied(false);
-    setVoucherCode("");
+    setSelectedVoucher("");
     setVoucherAlert("");
   };
 
@@ -76,14 +83,34 @@ function Transaction() {
 
   const handleCheckout = () => {
     if (event) {
+      const totalTickets = regularTickets + vipTickets + vvipTickets;
+      if (totalTickets === 0 && event.price !== 0) {
+        alert("Ticket quantity must be at least 1");
+        return;
+      }
       addPurchasedEvent(event);
       router.push("/order-success");
     }
   };
 
-  const totalDiscount =
-    (voucherApplied ? voucherDiscount : 0) + (pointsUsed ? pointsDiscount : 0);
-  const total = subtotal - totalDiscount;
+  const regularPrice = event.price || 0;
+  const vipPrice = event.vipPrice || 0;
+  const vvipPrice = event.vvipPrice || 0;
+
+  const subtotal =
+    regularTickets * regularPrice +
+    vipTickets * vipPrice +
+    vvipTickets * vvipPrice;
+  const voucherDiscount = voucherApplied
+    ? Math.round(
+        (subtotal *
+          (availableVouchers.find((v) => v.code === selectedVoucher)
+            ?.discount || 0)) /
+          100
+      )
+    : 0;
+  const pointsDiscount = pointsUsed ? 20000 : 0;
+  const total = subtotal - voucherDiscount - pointsDiscount;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
@@ -102,6 +129,8 @@ function Transaction() {
               className="w-full rounded-lg"
               src={event.image}
               alt="Event Image"
+              width={500}
+              height={500}
             />
             <div className="mt-4">
               <div className="flex items-center mb-2">
@@ -124,57 +153,90 @@ function Transaction() {
               </div>
               <p className="text-sm sm:text-md">{event.time}</p>
               <p className="mt-2 text-luxtix-8">{event.location}</p>
-              <div className="flex justify-between items-center mt-4">
-                <span className="text-sm font-bold text-luxtix-3 sm:text-lg">
-                  <div className="flex flex-row flex-center">
-                    <GiTicket size={20} className="mr-1" />
-                    {initialPrice === 0
-                      ? "Free"
-                      : `IDR ${initialPrice.toLocaleString()}`}
-                  </div>
-                </span>
-                <div className="flex items-center">
-                  <span className="text-xs sm:text-sm text-luxtix-7">
-                    {event.quota} Remaining
-                  </span>
-                  <select
-                    className="ml-2 p-2 border rounded-lg"
-                    value={people}
-                    onChange={handlePeopleChange}
-                  >
-                    <option value={1}>1 Person</option>
-                    <option value={2}>2 Person</option>
-                    <option value={3}>3 Person</option>
-                    <option value={4}>4 Person</option>
-                  </select>
-                </div>
-              </div>
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Ticket Tier
+                <label className="block text-sm font-bold text-luxtix-8 pb-4">
+                  Ticket Tiers
                 </label>
-                <div className="flex space-x-4">
-                  <div
-                    onClick={() => handleTicketTierChange("Regular")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "Regular"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
-                  >
-                    <span className="text-luxtix-1">Regular</span>
-                    <span className="text-sm">{`IDR ${event?.price?.toLocaleString()}`}</span>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border border-luxtix-5 rounded-lg p-4">
+                    <div className="flex flex-col">
+                      <span className="text-luxtix-1">Regular</span>
+                      <span className="text-sm">{`IDR ${regularPrice.toLocaleString()}`}</span>
+                      <span className="text-xs text-luxtix-7">{`${
+                        event.quota - regularTickets
+                      } Remaining`}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleDecreaseTickets("Regular")}
+                        disabled={regularTickets === 0}
+                      >
+                        -
+                      </button>
+                      <span className="mx-2">{regularTickets}</span>
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleIncreaseTickets("Regular")}
+                        disabled={regularTickets >= event.quota}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  <div
-                    onClick={() => handleTicketTierChange("VIP")}
-                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-                      ticketTier === "VIP"
-                        ? "border-luxtix-5"
-                        : "border-luxtix-7"
-                    }`}
-                  >
-                    <span className="text-luxtix-1">VIP</span>
-                    <span className="text-sm">{`IDR ${event?.vipPrice?.toLocaleString()}`}</span>
+                  <div className="flex items-center justify-between border border-luxtix-5 rounded-lg p-4">
+                    <div className="flex flex-col">
+                      <span className="text-luxtix-1">VIP</span>
+                      <span className="text-sm">
+                        {`IDR ${vipPrice.toLocaleString()}`}
+                      </span>
+                      <span className="text-xs text-luxtix-7">{`${
+                        event.vipQuota - vipTickets
+                      } Remaining`}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleDecreaseTickets("VIP")}
+                        disabled={vipTickets === 0}
+                      >
+                        -
+                      </button>
+                      <span className="mx-2">{vipTickets}</span>
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleIncreaseTickets("VIP")}
+                        disabled={vipTickets >= event.vipQuota}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between border border-luxtix-5 rounded-lg p-4">
+                    <div className="flex flex-col">
+                      <span className="text-luxtix-1">VVIP</span>
+                      <span className="text-sm">{`IDR ${vvipPrice.toLocaleString()}`}</span>
+                      <span className="text-xs text-luxtix-7">{`${
+                        event.vvipQuota - vvipTickets
+                      } Remaining`}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleDecreaseTickets("VVIP")}
+                        disabled={vvipTickets === 0}
+                      >
+                        -
+                      </button>
+                      <span className="mx-2">{vvipTickets}</span>
+                      <button
+                        className="px-2 py-1 border rounded-lg"
+                        onClick={() => handleIncreaseTickets("VVIP")}
+                        disabled={vvipTickets >= event.vvipQuota}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -204,34 +266,40 @@ function Transaction() {
               </div>
               <div className="flex items-center mb-4">
                 <div className="w-3/4">
-                  <p className="font-light text-luxtix-8">Have voucher?</p>
-                  <div className="flex flex-row">
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg flex-1"
-                      placeholder="Enter code"
-                      value={voucherCode}
-                      onChange={(e) => setVoucherCode(e.target.value)}
-                      disabled={voucherApplied || initialPrice === 0}
-                    />
+                  <label className="block text-sm font-bold text-luxtix-8 pb-4">
+                    Select Voucher
+                  </label>
+                  <select
+                    value={selectedVoucher}
+                    onChange={(e) => setSelectedVoucher(e.target.value)}
+                    className="w-3/5 mr-2 p-2 border rounded-lg"
+                    disabled={voucherApplied || total === 0}
+                  >
+                    <option value="">Select Voucher</option>
+                    {availableVouchers.map((voucher) => (
+                      <option key={voucher.code} value={voucher.code}>
+                        {voucher.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    className="btn-anim mt-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
+                    onClick={handleApplyVoucher}
+                    disabled={voucherApplied || total === 0}
+                    hidden={total === 0}
+                  >
+                    Apply
+                  </button>
+                  {voucherApplied && (
                     <button
-                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
-                      onClick={handleApplyVoucher}
-                      disabled={voucherApplied || initialPrice === 0}
+                      className="btn-anim mt-2 ml-2 p-2 text-sm underline text-luxtix-1 rounded-lg"
+                      onClick={handleRemoveVoucher}
                     >
-                      Apply
+                      Remove
                     </button>
-                    {voucherApplied && (
-                      <button
-                        className="btn-anim ml-2 p-2 text-sm underline text-luxtix-1 rounded-lg"
-                        onClick={handleRemoveVoucher}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
+                  )}
                   {voucherAlert && (
-                    <p className="text-red-500 text-sm">{voucherAlert}</p>
+                    <p className="text-red-500 text-sm mt-2">{voucherAlert}</p>
                   )}
                 </div>
               </div>
@@ -242,27 +310,28 @@ function Transaction() {
                   className="mr-2"
                   checked={pointsUsed}
                   onChange={handleUsePoints}
-                  disabled={initialPrice === 0}
+                  disabled={total === 0}
                 />
                 <label htmlFor="usePoints">Use Points</label>
                 <span className="ml-auto">20,000</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span>
-                  Subtotal ({people} item{people > 1 ? "s" : ""})
+                  Subtotal ({regularTickets + vipTickets + vvipTickets} item
+                  {regularTickets + vipTickets + vvipTickets > 1 ? "s" : ""})
                 </span>
                 <span>{`IDR ${subtotal.toLocaleString()}`}</span>
               </div>
               {voucherApplied && (
                 <div className="flex justify-between mb-2">
-                  <span>Referral Voucher</span>
-                  <span>-{`IDR ${voucherDiscount.toLocaleString()}`}</span>
+                  <span>Discount</span>
+                  <span>{`-${voucherDiscount.toLocaleString()}`}</span>
                 </div>
               )}
               {pointsUsed && (
                 <div className="flex justify-between mb-2">
                   <span>Points</span>
-                  <span>-{`IDR ${pointsDiscount.toLocaleString()}`}</span>
+                  <span>{`-20,000`}</span>
                 </div>
               )}
               <div className="flex justify-between font-bold mb-4">

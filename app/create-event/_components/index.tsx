@@ -114,6 +114,14 @@ function CreateEvent() {
           <label className="text-md text-luxtix-8 mb-2">Session</label>
           <div className="grid grid-cols-2 gap-x-4 sm:grid-cols-3">
             <div className="mb-4">
+              <label className="text-sm mb-2 text-luxtix-7">Event Date</label>
+              <Input
+                type="date"
+                placeholder="DD/MM/YYYY"
+                className="w-full p-2 border border-input rounded"
+              />
+            </div>
+            <div className="mb-4">
               <label className="text-sm mb-2 text-luxtix-7">Start Time</label>
               <Input
                 type="time"

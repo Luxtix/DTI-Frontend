@@ -14,6 +14,7 @@ const eventCardItems = [
       "Set against the backdrop of the city's picturesque riverside park, the Summer Jazz Festival offers more than just music. As the sun sets and the stars begin to twinkle, the ambiance becomes magical, creating an unforgettable night. Whether you're a longtime jazz aficionado or a newcomer to the genre, this festival promises a night of great music, delicious food, and wonderful company. Don't miss out on this extraordinary celebration of jazz!",
     price: 400000,
     vipPrice: 800000,
+    vvipPrice: 1000000,
     interested: 14,
     category: "Entertainment",
     type: "Offline",
@@ -26,6 +27,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
   {
     id: 2,
@@ -40,6 +42,7 @@ const eventCardItems = [
       "Set in the heart of the city’s central park, the Autumn Food Fair is not just about food, but also about community. Live music, family-friendly activities, and an overall festive atmosphere make this event a perfect outing for families, friends, and food lovers. Don't miss out on this feast for the senses!",
     price: 0,
     vipPrice: 0,
+    vvipPrice: 1000000,
     interested: 42,
     category: "Entertainment",
     type: "Offline",
@@ -52,6 +55,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
   {
     id: 3,
@@ -66,6 +70,7 @@ const eventCardItems = [
       "Held at the state-of-the-art City Convention Center, this event provides a platform for knowledge exchange, collaboration, and inspiration. Whether you are a tech professional, a startup founder, or simply passionate about technology, the Tech Innovators Conference is the place to be.",
     price: 1200000,
     vipPrice: 8000000,
+    vvipPrice: 10000000,
     interested: 28,
     category: "Technology & Innovation",
     type: "Offline",
@@ -79,6 +84,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
   {
     id: 4,
@@ -93,6 +99,7 @@ const eventCardItems = [
       "Proceeds from the Winter Wonderland Gala support local charities, making this event not only a night of elegance and fun but also a chance to give back to the community. Join us for an unforgettable night of celebration and philanthropy.",
     price: 500000,
     vipPrice: 1000000,
+    vvipPrice: 2000000,
     interested: 35,
     category: "Arts & Culture",
     type: "Offline",
@@ -105,6 +112,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
   {
     id: 5,
@@ -119,6 +127,7 @@ const eventCardItems = [
       "Held at the picturesque Riverside Art Gallery, the Spring Art Exhibition is a must-visit for art enthusiasts and collectors. Enjoy a day surrounded by beautiful art, inspiring conversations, and the blossoming spirit of spring.",
     price: 150000,
     vipPrice: 300000,
+    vvipPrice: 1000000,
     interested: 22,
     category: "Arts & Culture",
     type: "Online",
@@ -131,6 +140,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
   {
     id: 6,
@@ -145,6 +155,7 @@ const eventCardItems = [
       "Join us for a day of fitness, fun, and community spirit. The City Marathon also includes post-race celebrations with food, music, and awards for top finishers. Lace up your running shoes and be part of this exhilarating event!",
     price: 300000,
     vipPrice: 200000,
+    vvipPrice: 1000000,
     interested: 60,
     category: "Sports & Fitness",
     type: "Offline",
@@ -157,6 +168,7 @@ const eventCardItems = [
     },
     quota: 25,
     vipQuota: 8,
+    vvipQuota: 5,
   },
 ];
 

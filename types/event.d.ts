@@ -8,17 +8,18 @@ export interface EventType {
   description: string;
   price: number;
   vipPrice: number;
+  vvipPrice: number;
   interested: number;
   category: string;
   type: string;
   venue: string;
   location: string;
   city: string;
-  host: Host;
+  host: {
+    name: string;
+    logo: string;
+  };
   quota: number;
   vipQuota: number;
-}
-interface Host {
-  name: string;
-  logo: string;
+  vvipQuota: number;
 }
