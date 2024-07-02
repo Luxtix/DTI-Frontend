@@ -22,11 +22,14 @@ function Transaction() {
   const [vvipTickets, setVvipTickets] = useState<number>(0);
   const [voucherApplied, setVoucherApplied] = useState<boolean>(false);
   const [pointsUsed, setPointsUsed] = useState<boolean>(false);
-  const [voucherCode, setVoucherCode] = useState<string>("");
+  const [selectedVoucher, setSelectedVoucher] = useState<string>("");
   const [voucherAlert, setVoucherAlert] = useState<string>("");
 
-  const voucherDiscount = 20000;
-  const pointsDiscount = 20000;
+  const availableVouchers = [
+    { code: "888", discount: 10, label: "Voucher 888 - 10% Off" },
+    { code: "SAVE10", discount: 5, label: "SAVE10 - 5% Off" },
+    // Add more vouchers as needed
+  ];
 
   if (!event) {
     return <p>Event not found</p>;
@@ -59,7 +62,8 @@ function Transaction() {
   };
 
   const handleApplyVoucher = () => {
-    if (voucherCode === "888") {
+    const voucher = availableVouchers.find((v) => v.code === selectedVoucher);
+    if (voucher) {
       setVoucherApplied(true);
       setVoucherAlert("");
     } else {
@@ -69,7 +73,7 @@ function Transaction() {
 
   const handleRemoveVoucher = () => {
     setVoucherApplied(false);
-    setVoucherCode("");
+    setSelectedVoucher("");
     setVoucherAlert("");
   };
 
@@ -97,9 +101,16 @@ function Transaction() {
     regularTickets * regularPrice +
     vipTickets * vipPrice +
     vvipTickets * vvipPrice;
-  const totalDiscount =
-    (voucherApplied ? voucherDiscount : 0) + (pointsUsed ? pointsDiscount : 0);
-  const total = subtotal - totalDiscount;
+  const voucherDiscount = voucherApplied
+    ? Math.round(
+        (subtotal *
+          (availableVouchers.find((v) => v.code === selectedVoucher)
+            ?.discount || 0)) /
+          100
+      )
+    : 0;
+  const pointsDiscount = pointsUsed ? 20000 : 0;
+  const total = subtotal - voucherDiscount - pointsDiscount;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
@@ -118,6 +129,8 @@ function Transaction() {
               className="w-full rounded-lg"
               src={event.image}
               alt="Event Image"
+              width={500}
+              height={500}
             />
             <div className="mt-4">
               <div className="flex items-center mb-2">
@@ -253,34 +266,40 @@ function Transaction() {
               </div>
               <div className="flex items-center mb-4">
                 <div className="w-3/4">
-                  <p className="font-light text-luxtix-8">Have voucher?</p>
-                  <div className="flex flex-row">
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-lg flex-1"
-                      placeholder="Enter code"
-                      value={voucherCode}
-                      onChange={(e) => setVoucherCode(e.target.value)}
-                      disabled={voucherApplied || total === 0}
-                    />
+                  <label className="block text-sm font-bold text-luxtix-8 pb-4">
+                    Select Voucher
+                  </label>
+                  <select
+                    value={selectedVoucher}
+                    onChange={(e) => setSelectedVoucher(e.target.value)}
+                    className="w-3/5 mr-2 p-2 border rounded-lg"
+                    disabled={voucherApplied || total === 0}
+                  >
+                    <option value="">Select Voucher</option>
+                    {availableVouchers.map((voucher) => (
+                      <option key={voucher.code} value={voucher.code}>
+                        {voucher.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    className="btn-anim mt-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
+                    onClick={handleApplyVoucher}
+                    disabled={voucherApplied || total === 0}
+                    hidden={total === 0}
+                  >
+                    Apply
+                  </button>
+                  {voucherApplied && (
                     <button
-                      className="btn-anim ml-2 p-2 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 rounded-lg cursor-pointer"
-                      onClick={handleApplyVoucher}
-                      disabled={voucherApplied || total === 0}
+                      className="btn-anim mt-2 ml-2 p-2 text-sm underline text-luxtix-1 rounded-lg"
+                      onClick={handleRemoveVoucher}
                     >
-                      Apply
+                      Remove
                     </button>
-                    {voucherApplied && (
-                      <button
-                        className="btn-anim ml-2 p-2 text-sm underline text-luxtix-1 rounded-lg"
-                        onClick={handleRemoveVoucher}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
+                  )}
                   {voucherAlert && (
-                    <p className="text-red-500 text-sm">{voucherAlert}</p>
+                    <p className="text-red-500 text-sm mt-2">{voucherAlert}</p>
                   )}
                 </div>
               </div>
@@ -305,14 +324,14 @@ function Transaction() {
               </div>
               {voucherApplied && (
                 <div className="flex justify-between mb-2">
-                  <span>Referral Voucher</span>
-                  <span>{`-IDR ${voucherDiscount.toLocaleString()}`}</span>
+                  <span>Discount</span>
+                  <span>{`-${voucherDiscount.toLocaleString()}`}</span>
                 </div>
               )}
               {pointsUsed && (
                 <div className="flex justify-between mb-2">
                   <span>Points</span>
-                  <span>{`-IDR ${pointsDiscount.toLocaleString()}`}</span>
+                  <span>{`-20,000`}</span>
                 </div>
               )}
               <div className="flex justify-between font-bold mb-4">
