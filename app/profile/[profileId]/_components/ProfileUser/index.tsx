@@ -3,9 +3,9 @@
 import logo from "@/public/logo.svg";
 import profileItems from "@/utils/profileItems";
 import { FormField } from "@/components/ui";
+import ProfileSideMenu from "../ProfileSideMenu";
 import Image from "next/image";
 import { AiFillCamera } from "react-icons/ai";
-import ProfileSideMenu from "../ProfileSideMenu";
 import { useState } from "react";
 
 const profileReff = profileItems[1];
