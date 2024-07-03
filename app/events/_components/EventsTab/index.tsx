@@ -133,8 +133,9 @@ function EventsTab() {
       </div>
 
       <div
-        className={`${showFilters ? "block" : "hidden"
-          } sm:block w-full sm:w-1/4 p-4 border-r`}
+        className={`${
+          showFilters ? "block" : "hidden"
+        } sm:block w-full sm:w-1/4 p-4 border-r`}
       >
         <h2 className="text-xl font-semibold mb-4">Filters</h2>
         {Object.keys(filterOptions).map((filterType) => (
@@ -149,10 +150,11 @@ function EventsTab() {
                   onClick={() =>
                     handleFilterChange(filterType as keyof Filters, filter)
                   }
-                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${activeFilters[filterType as keyof Filters] === filter
-                    ? "bg-luxtix-4 text-luxtix-1"
-                    : "border-luxtix-7 text-luxtix-7"
-                    }`}
+                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${
+                    activeFilters[filterType as keyof Filters] === filter
+                      ? "bg-luxtix-4 text-luxtix-1"
+                      : "border-luxtix-7 text-luxtix-7"
+                  }`}
                 >
                   {filter}
                 </div>
@@ -171,14 +173,6 @@ function EventsTab() {
       <div className="w-full sm:w-3/4 p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Events</h2>
-          <div className="flex items-center">
-            <span className="mr-2">Sort by:</span>
-            <select className="border p-2 rounded">
-              <option>Relevance</option>
-              <option>Date</option>
-              <option>Price</option>
-            </select>
-          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {filteredEvents.map((event) => (
