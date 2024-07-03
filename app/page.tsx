@@ -3,8 +3,8 @@ import Footer from "@/components/Footer";
 import Categories from "./components/Categories";
 import PopularEvents from "./components/PopularEvents";
 import OnlineEvents from "./components/OnlineEvents";
-import Newsletter from "./components/Newsletter";
 import Hero from "./components/Hero";
+import CTA from "./components/CTA";
 
 function page() {
   return (
@@ -14,7 +14,7 @@ function page() {
       <Categories />
       <PopularEvents />
       <OnlineEvents />
-      <Newsletter />
+      <CTA />
       <Footer />
     </div>
   );
