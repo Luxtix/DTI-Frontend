@@ -28,7 +28,6 @@ function Transaction() {
   const availableVouchers = [
     { code: "888", discount: 10, label: "Voucher 888 - 10% Off" },
     { code: "SAVE10", discount: 5, label: "SAVE10 - 5% Off" },
-    // Add more vouchers as needed
   ];
 
   if (!event) {
@@ -84,7 +83,7 @@ function Transaction() {
   const handleCheckout = () => {
     if (event) {
       const totalTickets = regularTickets + vipTickets + vvipTickets;
-      if (totalTickets === 0 && event.price !== 0) {
+      if (totalTickets === 0) {
         alert("Ticket quantity must be at least 1");
         return;
       }
