@@ -21,9 +21,6 @@ function Review() {
             <AiOutlineArrowRight size={20} className="btn-anim text-luxtix-1" />
           </button>
         </div>
-        <button className="btn-anim mt-4 bg-luxtix-4 text-luxtix-1 py-2 px-4 rounded-lg hover:bg-luxtix-2">
-          Add Review
-        </button>
       </div>
     </div>
   );

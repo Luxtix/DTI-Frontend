@@ -8,7 +8,6 @@ function page() {
     <div>
       <Navbar />
       <EventDetails />
-      <Review />
       <Footer />
     </div>
   );
