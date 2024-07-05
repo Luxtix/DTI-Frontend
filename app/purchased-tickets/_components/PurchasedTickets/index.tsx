@@ -54,18 +54,24 @@ function PurchasedTickets() {
                     <p className="text-md font-bold">{event.date}</p>
                   </div>
                   <div>
-                    <p className="text-sm">TIME</p>
-                    <p className="text-md font-bold">{event.time}</p>
-                  </div>
-                  <div className="col-span-3">
                     <p className="text-sm">VENUE</p>
                     <p className="text-lg font-bold">{event.venue}</p>
                   </div>
+                  <div className="col-span-2">
+                    <p className="text-sm">TIME</p>
+                    <p className="text-md font-bold">{event.time}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm col-span-1">QTY</p>
+                    <p className="text-lg font-bold">2</p>
+                  </div>
                 </div>
                 <p className="text-[10px] px-8 text-center font-light italic">
-                  Please scan the barcode at the venue to receive your entry
-                  ticket. Double-check your quantity and tier before leaving the
-                  ticketing area.
+                  {`${
+                    event.type === "Offline"
+                      ? "Please scan the barcode at the venue to receive your entry ticket. Double-check your quantity and tier before leaving the ticketing area."
+                      : "Online event link will be sent to your email 1 hour before the event starts."
+                  }`}
                 </p>
                 <div className="p-4 flex flex-center">
                   <Barcode
