@@ -1,13 +1,14 @@
 import Navbar from "@/components/Navbar";
-import EventDetails from "./_components/EventDetails";
+import Dashboard from "./_components";
+import Review from "./_components/Review";
 import Footer from "@/components/Footer";
-import Review from "../../dashboard/_components/Review";
 
 function page() {
   return (
     <div>
       <Navbar />
-      <EventDetails />
+      <Dashboard />
+      <Review />
       <Footer />
     </div>
   );
