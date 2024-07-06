@@ -11,12 +11,18 @@ const footerItems = [
   {
     title: "Categories",
     links: [
-      { text: "Entertainment", url: "/events/entertainment" },
-      { text: "Educational & Business", url: "/events/business" },
-      { text: "Cultural & Arts", url: "/events/arts" },
-      { text: "Sports & Fitness", url: "/events/sports" },
-      { text: "Technology & Innovation", url: "/events/technology" },
-      { text: "Travel & Outdoor", url: "/events/travel" },
+      { text: "Entertainment", url: "/events?category=entertainment" },
+      {
+        text: "Educational & Business",
+        url: "/events?category=educational-business",
+      },
+      { text: "Cultural & Arts", url: "/events?category=arts-culture" },
+      { text: "Sports & Fitness", url: "/events?category=sports-fitness" },
+      {
+        text: "Technology & Innovation",
+        url: "/events?category=technology-innovation",
+      },
+      { text: "Travel & Outdoor", url: "/events?category=travel-adventure" },
     ],
   },
 ];

@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
 import { EventType } from "@/types/event";
+import AddReview from "../AddReview";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
@@ -13,9 +14,13 @@ function PurchasedTickets() {
   const { purchasedEvents } = usePurchasedEvents();
   const [events, setEvents] = useState<EventType[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
 
-  const openModal = (event: EventType) => setSelectedEvent(event);
-  const closeModal = () => setSelectedEvent(null);
+  const openEventDetailsModal = (event: EventType) => setSelectedEvent(event);
+  const closeEventDetailsModal = () => setSelectedEvent(null);
+
+  const openReviewModal = () => setReviewModalOpen(true);
+  const closeReviewModal = () => setReviewModalOpen(false);
 
   useEffect(() => {
     const eventsArray = Array.from(purchasedEvents.values());
@@ -60,12 +65,15 @@ function PurchasedTickets() {
                     </h3>
                     <div className="flex justify-between gap-4 mt-4">
                       <button
-                        onClick={() => openModal(event)}
+                        onClick={() => openEventDetailsModal(event)}
                         className="w-full btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
                       >
                         Tickets Details
                       </button>
-                      <button className="w-full btn-anim bg-luxtix-4 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg">
+                      <button
+                        onClick={openReviewModal}
+                        className="w-full btn-anim bg-luxtix-4 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
+                      >
                         Add Review
                       </button>
                     </div>
@@ -79,7 +87,7 @@ function PurchasedTickets() {
         )}
       </div>
 
-      <Modal isOpen={selectedEvent !== null} onClose={closeModal}>
+      <Modal isOpen={selectedEvent !== null} onClose={closeEventDetailsModal}>
         {selectedEvent && (
           <div className="py-4">
             <div className="max-w-sm mx-auto bg-luxtix-4 text-luxtix-1 rounded-2xl">
@@ -130,7 +138,7 @@ function PurchasedTickets() {
                     : "Online event link will be sent to your email 1 hour before the event starts."
                 }`}
               </p>
-              <div className="p-4 flex flex-center">
+              <div className="p-4 flex justify-center">
                 <Barcode
                   value={`${selectedEvent.id}${new Date(
                     selectedEvent.date
@@ -142,6 +150,10 @@ function PurchasedTickets() {
             </div>
           </div>
         )}
+      </Modal>
+
+      <Modal isOpen={isReviewModalOpen} onClose={closeReviewModal}>
+        <AddReview />
       </Modal>
     </div>
   );
