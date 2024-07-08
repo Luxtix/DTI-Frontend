@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { PurchasedEventsProvider } from "@/contexts/PurchasedEventsContext";
+import { ToastProvider } from "@radix-ui/react-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <PurchasedEventsProvider>
         <body className={inter.className}>{children}</body>
+        <Toaster />
       </PurchasedEventsProvider>
     </html>
   );

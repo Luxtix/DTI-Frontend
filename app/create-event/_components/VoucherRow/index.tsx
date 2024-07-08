@@ -1,4 +1,3 @@
-import { FormField } from "@/components/ui";
 import { Input } from "@/components/ui/input";
 import { CgRemove } from "react-icons/cg";
 
@@ -11,9 +10,9 @@ function VoucherRow({
 }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 mb-4">
-      <FormField label="Voucher Name" type="text" placeholder="Voucher Name" />
+      {/* <FormField label="Voucher Name" type="text" placeholder="Voucher Name" />
       <FormField label="Voucher Quantity" type="number" placeholder="QTY 0" />
-      <FormField label="Voucher Discount (%)" type="number" placeholder="0" />
+      <FormField label="Voucher Discount (%)" type="number" placeholder="0" /> */}
       <div>
         <label className="text-md mb-2 text-luxtix-8">Start Date</label>
         <Input

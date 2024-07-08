@@ -2,7 +2,7 @@
 
 import TicketRow from "./TicketRow";
 import VoucherRow from "./VoucherRow";
-import { FormField } from "@/components/ui";
+// import { FormField } from "@/components/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
@@ -68,11 +68,11 @@ function CreateEvent() {
 
       <section className="mb-6">
         <h2 className="text-3xl font-semibold mb-4">Event Details</h2>
-        <FormField
+        {/* <FormField
           label="Event Title"
           type="text"
           placeholder="Enter the name of your event"
-        />
+        /> */}
         <div className="mb-4">
           <label className="text-md mb-2 text-luxtix-8">Event Category</label>
           <select className="w-full p-2 border border-input rounded">
@@ -142,16 +142,16 @@ function CreateEvent() {
       </section>
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-4">Location</h2>
-        <FormField
+        {/* <FormField
           label="Where will your event take place?"
           type="text"
           placeholder="Venue Name"
-        />
-        <FormField
+        /> */}
+        {/* <FormField
           label="Where is the venue located?"
           type="text"
           placeholder="Venue Address"
-        />
+        /> */}
         <div className="mb-4">
           <label className="text-md mb-2 text-luxtix-8">City</label>
           <select
@@ -264,8 +264,8 @@ function CreateEvent() {
             </div>
             {showReferralVoucher && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <FormField label="Name" type="text" placeholder="Name" />
-                <FormField label="QTY" type="number" placeholder="QTY 0" />
+                {/* <FormField label="Name" type="text" placeholder="Name" />
+                <FormField label="QTY" type="number" placeholder="QTY 0" /> */}
               </div>
             )}
           </section>
