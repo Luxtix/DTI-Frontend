@@ -1,21 +1,112 @@
 "use client";
-import logo from "../../../../public/logo.svg";
+
+import logo from "@/public/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaUser, FaUserTie } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaUser, FaUserTie } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
-import { FormField, PasswordField, SocialSign, SubmitButton } from "@/components/ui";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import SocialSign from "@/components/ui/SocialSign";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
+
+const userSchema = z.object({
+  displayName: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  referral: z.string().optional().default(""),
+});
+
+const organizerSchema = z.object({
+  displayName: z.string().min(2, "Company name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  referral: z.string().optional().default(""),
+});
 
 function SignUp() {
   const [registrationType, setRegistrationType] = useState<
-    "user" | "organizer"
-  >("user");
+    "USER" | "ORGANIZER"
+  >("USER");
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const handleTypeChange = (type: "user" | "organizer") => {
+  const form = useForm({
+    resolver: zodResolver(
+      registrationType === "USER" ? userSchema : organizerSchema
+    ),
+    defaultValues: {
+      displayName: "",
+      email: "",
+      password: "",
+      referral: "",
+    },
+  });
+
+  const handleTypeChange = (type: "USER" | "ORGANIZER") => {
     setRegistrationType(type);
+    form.reset();
+  };
+
+  const onSubmit = async (
+    data: z.infer<typeof userSchema> | z.infer<typeof organizerSchema>
+  ) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...data,
+            role: registrationType === "USER" ? "USER" : "ORGANIZER",
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Registration failed");
+      }
+
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been created successfully.",
+      });
+      router.push("/sign-in");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        title: "Registration Failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -34,8 +125,9 @@ function SignUp() {
           </p>
         </div>
       </div>
+
       <div className="w-full bg-white p-10 sm:p-24 flex flex-col justify-center sm:rounded-l-3xl">
-        <div className="">
+        <div>
           <div className="hidden sm:flex justify-end mb-4">
             <Link href="/" className="btn-anim text-luxtix-8 font-bold">
               <AiOutlineArrowLeft size={25} />
@@ -62,65 +154,139 @@ function SignUp() {
             <hr className="flex-1 border-luxtix-7" />
           </div>
 
-          <div className="mb-6">
-            <label className="block text-luxtix-1 mb-2">Register As:</label>
-            <div className="flex space-x-4">
-              <div
-                onClick={() => handleTypeChange("user")}
-                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${registrationType === "user"
-                  ? "border-luxtix-5"
-                  : "border-luxtix-7"
-                  }`}
-              >
-                <FaUser size={30} className="mb-2" />
-                <span className="text-luxtix-1">User</span>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="mb-6">
+                <FormLabel>Register As:</FormLabel>
+                <div className="flex space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => handleTypeChange("USER")}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      registrationType === "USER"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
+                  >
+                    <FaUser size={30} className="mb-2" />
+                    <span className="text-luxtix-1">User</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleTypeChange("ORGANIZER")}
+                    className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
+                      registrationType === "ORGANIZER"
+                        ? "border-luxtix-5"
+                        : "border-luxtix-7"
+                    }`}
+                  >
+                    <FaUserTie size={30} className="mb-2" />
+                    <span className="text-luxtix-1">Organizer</span>
+                  </button>
+                </div>
               </div>
-              <div
-                onClick={() => handleTypeChange("organizer")}
-                className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${registrationType === "organizer"
-                  ? "border-luxtix-5"
-                  : "border-luxtix-7"
-                  }`}
-              >
-                <FaUserTie size={30} className="mb-2" />
-                <span className="text-luxtix-1">Organizer</span>
-              </div>
-            </div>
-          </div>
 
-          <form>
-            <FormField
-              label={registrationType === "user" ? "Full Name" : "Company Name"}
-              type="text"
-              placeholder={
-                registrationType === "user"
-                  ? "Enter your name"
-                  : "Enter your company name"
-              }
-            />
-            <FormField
-              label={
-                registrationType === "user"
-                  ? "E-mail Address"
-                  : "Company E-mail Address"
-              }
-              type="email"
-              placeholder={
-                registrationType === "user"
-                  ? "Enter your e-mail"
-                  : "Enter your company e-mail"
-              }
-            />
-            <PasswordField />
-            {registrationType === "user" ? (
               <FormField
-                label="Referral (Optional)"
-                type="text"
-                placeholder="Enter referral"
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {registrationType === "USER"
+                        ? "Full Name"
+                        : "Company Name"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={
+                          registrationType === "USER"
+                            ? "Enter your name"
+                            : "Enter your company name"
+                        }
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            ) : null}
-            <SubmitButton text="Create Account" />
-          </form>
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {registrationType === "USER"
+                        ? "E-mail Address"
+                        : "Company E-mail Address"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          {...field}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={togglePasswordVisibility}
+                        >
+                          {showPassword ? (
+                            <FaEyeSlash className="h-4 w-4" />
+                          ) : (
+                            <FaEye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {registrationType === "USER" && (
+                <FormField
+                  control={form.control}
+                  name="referral"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Referral (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter referral" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <Button
+                type="submit"
+                className="w-full bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2"
+              >
+                Create Account
+              </Button>
+            </form>
+          </Form>
+
           <p className="mt-4 text-center text-luxtix-7">
             Already have an account?{" "}
             <Link href="./sign-in" className="text-luxtix-8 font-bold">

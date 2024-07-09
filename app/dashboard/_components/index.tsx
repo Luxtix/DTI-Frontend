@@ -4,13 +4,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
-      <div className="block sm:py-6">
-        <Link href="/" className="text-luxtix-1">
-          <AiOutlineArrowLeft size={25} />
-        </Link>
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-center mb-6">
+      <div className="flex flex-col sm:flex-row items-center mb-6 pt-16">
         <label htmlFor="event-select" className="mr-4 mb-2 sm:mb-0">
           Select your created events
         </label>

@@ -2,7 +2,6 @@
 
 import logo from "@/public/logo.svg";
 import profileItems from "@/utils/profileItems";
-import { FormField } from "@/components/ui";
 import ProfileSideMenu from "../ProfileSideMenu";
 import Image from "next/image";
 import { AiFillCamera } from "react-icons/ai";
@@ -55,7 +54,7 @@ function Profile() {
               </h2>
               <form className="space-y-4">
                 <div className="flex flex-col">
-                  <FormField
+                  {/* <FormField
                     label="Full Name"
                     type="text"
                     placeholder="Input your Full Name"
@@ -73,7 +72,7 @@ function Profile() {
                     label="E-Mail Address"
                     type="text"
                     placeholder="Input your e-mail"
-                  />
+                  /> */}
                 </div>
                 <div className="flex flex-col">
                   <label className="block text-luxtix-8 mb-2">
@@ -100,7 +99,7 @@ function Profile() {
               </h2>
               <form className="space-y-4">
                 <div className="flex flex-col">
-                  <FormField
+                  {/* <FormField
                     label="Company Name"
                     type="text"
                     placeholder="Input your company name"
@@ -118,7 +117,7 @@ function Profile() {
                     label="Company E-Mail Address"
                     type="text"
                     placeholder="Input your company e-mail"
-                  />
+                  /> */}
                 </div>
                 <div className="pt-12">
                   <button

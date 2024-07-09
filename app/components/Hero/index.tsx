@@ -1,7 +1,7 @@
 "use client";
+import SearchBar from "@/components/SearchBar";
 import heroImg from "@/public/heroimg.png";
 import Image from "next/image";
-import { AiOutlineSearch } from "react-icons/ai";
 
 function Hero() {
   return (
@@ -21,16 +21,7 @@ function Hero() {
           happening locally and globally.
         </h2>
         <div className="flex items-center bg-white rounded-full shadow-lg overflow-hidden w-full max-w-3xl">
-          <div className="flex items-center px-4">
-            <button className="btn-anim ">
-              <AiOutlineSearch className="text-black size-6" />
-            </button>
-          </div>
-          <input
-            type="text"
-            className="flex-grow py-3 px-4 text-zinc-700 placeholder-zinc-400 focus:outline-none"
-            placeholder="Search Events, Categories, ..."
-          />
+          <SearchBar />
         </div>
       </div>
     </div>
