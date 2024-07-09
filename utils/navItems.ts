@@ -1,6 +1,7 @@
 import profileItems from "./profileItems";
 import { AiFillStar } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
+import { FaChartBar } from "react-icons/fa";
 import { GiTicket } from "react-icons/gi";
 
 const navItemsLeft = [
@@ -18,4 +19,14 @@ const navItemsIcon = [
   { icon: CgProfile, text: "Profile", path: `/profile/${profile.id}` },
 ];
 
-export default { navItemsLeft, navItemsRight, navItemsIcon };
+const organizerNavItemsIcon = [
+  { icon: FaChartBar, text: "Dashboard", path: "/dashboard" },
+  { icon: CgProfile, text: "Profile", path: `/profile/${profile.id}` },
+];
+
+export default {
+  navItemsLeft,
+  navItemsRight,
+  navItemsIcon,
+  organizerNavItemsIcon,
+};

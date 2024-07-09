@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -40,6 +41,16 @@ function SignIn() {
       password: "",
     },
   });
+
+  interface DecodedToken {
+    sub: string;
+    isReferral: boolean;
+    scope: string;
+    iss: string;
+    id: number;
+    exp: number;
+    iat: number;
+  }
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     try {
@@ -60,13 +71,31 @@ function SignIn() {
       }
 
       const result = await response.json();
-      toast({
-        title: "Login Successful",
-        description: "You have been successfully logged in.",
-      });
 
-      {
-        router.push("/");
+      if (result.body && result.body.data && result.body.data.token) {
+        const token = result.body.data.token;
+        localStorage.setItem("authToken", token);
+
+        const decodedToken = jwtDecode<DecodedToken>(token);
+
+        if (decodedToken.scope === "ORGANIZER") {
+          localStorage.setItem("userType", "ORGANIZER");
+        } else {
+          localStorage.setItem("userType", "USER");
+        }
+
+        toast({
+          title: "Login Successful",
+          description: "You have been successfully logged in.",
+        });
+
+        if (decodedToken.scope === "ORGANIZER") {
+          router.push("/dashboard");
+        } else {
+          router.push("/");
+        }
+      } else {
+        throw new Error("Token not found in the response");
       }
     } catch (error) {
       console.error("Login error:", error);
