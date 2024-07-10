@@ -1,10 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Categories from "./components/Categories";
-import PopularEvents from "./components/PopularEvents";
-import OnlineEvents from "./components/OnlineEvents";
-import Hero from "./components/Hero";
-import CTA from "./components/CTA";
+import Categories from "./_components/Categories";
+import PopularEvents from "./_components/PopularEvents";
+import OnlineEvents from "./_components/OnlineEvents";
+import Hero from "./_components/Hero";
+import CTA from "./_components/CTA";
 
 function page() {
   return (
