@@ -8,6 +8,17 @@ import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { FaUserCircle, FaCaretDown } from "react-icons/fa";
 import { CiLogout } from "react-icons/ci";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -136,12 +147,32 @@ function Navbar() {
                       <span className="text-xs">{item.text}</span>
                     </Link>
                   ))}
-              <button
-                onClick={handleLogout}
-                className="text-white text-sm sm:text-base hover:text-luxtix-6"
-              >
-                Logout
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button className="text-white text-sm sm:text-base hover:text-luxtix-6">
+                    Logout
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you sure you want to log out?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action will end your current session.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleLogout}
+                      className="bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2"
+                    >
+                      Log out
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </>
         ) : (

@@ -3,9 +3,7 @@
 import logo from "@/public/logo.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { BsFacebook } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -140,20 +138,6 @@ function SignIn() {
           <h2 className="text-3xl font-bold mb-6 text-center sm:text-left">
             Login
           </h2>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6 text-sm">
-            <Button variant="outline" className="flex-1">
-              <FcGoogle className="mr-2" /> Sign in with Google
-            </Button>
-            <Button variant="outline" className="flex-1">
-              <BsFacebook className="mr-2" /> Sign in with Facebook
-            </Button>
-          </div>
-
-          <div className="flex items-center mb-6">
-            <hr className="flex-1 border-luxtix-7" />
-            <span className="px-4 text-zinc-400">OR</span>
-            <hr className="flex-1 border-luxtix-7" />
-          </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
