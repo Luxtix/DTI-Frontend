@@ -25,14 +25,14 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
       <div className="relative">
         <Image
           className="w-full h-auto sm:h-96 rounded-lg sm:pb-8"
-          src={event.image}
+          src={event.eventImage}
           alt="Event Banner"
         />
       </div>
       <div className="py-4">
         <div className="flex items-center justify-between py-4 sm:pb-8">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-luxtix-1">
-            {event.title}
+            {event.eventName}
           </h1>
           <button onClick={toggleInterested} className="btn-anim">
             {interested ? (
@@ -56,19 +56,21 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             <div className="flex items-center text-luxtix-8">
               <BiCalendarAlt size={20} className="mr-1" />
               <span>
-                {event.day}, {event.date}
+                {event.eventDay}, {event.eventDate}
               </span>
             </div>
             <div className="flex items-center text-luxtix-8">
               <BiTimeFive size={20} className="mr-1" />
-              <span>{event.time}</span>
+              <span>
+                {event.startTime} - {event.endTime}
+              </span>
             </div>
             <div className="flex items-center text-luxtix-3">
               <GiTicket size={20} className="mr-1" />
               <span>
-                {event.price === 0
+                {event.ticketPrice === 0
                   ? "Free"
-                  : `From IDR ${event.price.toLocaleString()}`}
+                  : `From IDR ${event.ticketPrice}`}
               </span>
             </div>
           </div>
@@ -84,7 +86,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
           <h2 className="text-lg font-semibold text-luxtix-5">Location</h2>
           <div className="flex items-center text-luxtix-8">
             <CiLocationOn size={20} className="mr-1" />
-            <span>{event.location}</span>
+            <span>{event.address}</span>
           </div>
         </div>
         <div className="py-4">
@@ -92,17 +94,17 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
           <div className="flex items-center">
             <img
               className="h-10 w-10 rounded-full"
-              src={event.host.logo}
+              src={event.organizerName}
               alt="Host Logo"
             />
-            <span className="ml-2 text-luxtix-1">{event.host.name}</span>
+            <span className="ml-2 text-luxtix-1">{event.organizerAvatar}</span>
           </div>
         </div>
         <div className="py-4">
           <h2 className="text-lg font-semibold text-luxtix-5">
             Event Description
           </h2>
-          <p className="text-luxtix-1 mt-1">{event.description}</p>
+          <p className="text-luxtix-1 mt-1">{event.descriptions}</p>
         </div>
       </div>
     </div>

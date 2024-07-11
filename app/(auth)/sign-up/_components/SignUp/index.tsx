@@ -5,15 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaUser, FaUserTie } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { BsFacebook } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import SocialSign from "@/components/ui/SocialSign";
 import {
   Form,
   FormControl,
@@ -136,23 +133,6 @@ function SignUp() {
           <h2 className="text-3xl font-bold mb-6 text-center sm:text-left">
             Create Account
           </h2>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6 text-sm">
-            <a className="btn-anim">
-              <SocialSign provider={<FcGoogle />} text="Sign up with Google" />
-            </a>
-            <a className="btn-anim">
-              <SocialSign
-                provider={<BsFacebook />}
-                text="Sign up with Facebook"
-              />
-            </a>
-          </div>
-
-          <div className="flex items-center mb-6">
-            <hr className="flex-1 border-luxtix-7" />
-            <span className="px-4 text-zinc-400">OR</span>
-            <hr className="flex-1 border-luxtix-7" />
-          </div>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
