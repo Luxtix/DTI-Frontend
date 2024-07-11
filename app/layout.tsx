@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { PurchasedEventsProvider } from "@/contexts/PurchasedEventsContext";
 import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <PurchasedEventsProvider>
-        <body className={inter.className}>
-          {children}
-          <Toaster />
-        </body>
+        <SessionProvider>
+          <body className={inter.className}>
+            {children}
+            <Toaster />
+          </body>
+        </SessionProvider>
       </PurchasedEventsProvider>
     </html>
   );

@@ -1,25 +1,21 @@
 export interface EventType {
   id: number;
-  title: string;
-  image: StaticImageData;
-  day: string;
-  date: string;
-  time: string;
-  description: string;
-  price: number;
-  vipPrice: number;
-  vvipPrice: number;
-  interested: number;
-  category: string;
-  type: string;
-  venue: string;
-  location: string;
-  city: string;
-  host: {
-    name: string;
-    logo: string;
-  };
-  quota: number;
-  vipQuota: number;
-  vvipQuota: number;
+  address: string;
+  venueName: string;
+  eventImage: StaticImageData;
+  descriptions: string;
+  ticketPrice: number;
+  priceCategory: string;
+  categoryName: string;
+  cityName: string;
+  favoriteCount: number;
+  eventDate: string;
+  eventDay: string;
+  startTime: string;
+  endTime: string;
+  eventName: string;
+  online: boolean;
+  favorite: boolean;
+  organizerName: string;
+  organizerAvatar: StaticImageData;
 }
