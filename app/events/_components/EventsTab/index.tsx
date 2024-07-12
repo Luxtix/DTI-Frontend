@@ -1,10 +1,10 @@
 "use client";
 
-import eventCardItems from "@/utils/eventCardItems";
-import EventCard from "../../../../components/EventCard";
+import EventCard from "@/components/EventCard";
 import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useEvents } from "@/hooks/useEvents";
 
 interface Filters {
   price: string;
@@ -49,6 +49,7 @@ const slugToCategory = Object.entries(categorySlugs).reduce(
 );
 
 function EventsTab() {
+  const { events, loading, error } = useEvents();
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
   const searchParams = useSearchParams();
@@ -100,19 +101,38 @@ function EventsTab() {
     router.push("");
   };
 
-  const filteredEvents = eventCardItems.filter((event) => {
+  const filteredEvents = events.filter((event) => {
     const matchesPrice =
       activeFilters.price === "" ||
-      (activeFilters.price === "Free" && event.price === 0) ||
-      (activeFilters.price === "Paid" && event.price !== 0);
+      (activeFilters.price === "Free" && event.ticketPrice === 0) ||
+      (activeFilters.price === "Paid" && event.ticketPrice !== 0);
     const matchesType =
-      activeFilters.type === "" || event.type === activeFilters.type;
+      activeFilters.type === "" ||
+      (activeFilters.type === "Online" && event.isOnline) ||
+      (activeFilters.type === "Offline" && !event.isOnline);
     const matchesCategory =
       activeFilters.category === "" ||
-      event.category.toLowerCase() === activeFilters.category.toLowerCase();
+      event.categoryName.toLowerCase() === activeFilters.category.toLowerCase();
 
     return matchesPrice && matchesCategory && matchesType;
   });
+
+  const CircularLoader = () => (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-luxtix-2"></div>
+    </div>
+  );
+  if (loading) {
+    return (
+      <div className="flex flex-center">
+        <CircularLoader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error loading events</div>;
+  }
 
   return (
     <div className="flex flex-col md:flex-row max-w-7xl mx-auto px-4 py-4 sm:py-8">

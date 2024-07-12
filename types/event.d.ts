@@ -14,7 +14,7 @@ export interface EventType {
   startTime: string;
   endTime: string;
   eventName: string;
-  online: boolean;
+  isOnline: boolean;
   favorite: boolean;
   organizerName: string;
   organizerAvatar: StaticImageData;
