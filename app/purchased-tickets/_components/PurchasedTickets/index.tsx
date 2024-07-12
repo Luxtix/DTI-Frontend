@@ -9,9 +9,11 @@ import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import Barcode from "react-barcode";
 import Modal from "@/components/Modal";
+import { useTransactionContext } from "@/contexts/TicketListContext";
 
 function PurchasedTickets() {
   const { purchasedEvents } = usePurchasedEvents();
+  const { transactionList } = useTransactionContext();
   const [events, setEvents] = useState<EventType[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
@@ -22,10 +24,10 @@ function PurchasedTickets() {
   const openReviewModal = () => setReviewModalOpen(true);
   const closeReviewModal = () => setReviewModalOpen(false);
 
-  useEffect(() => {
-    const eventsArray = Array.from(purchasedEvents.values());
-    setEvents(eventsArray);
-  }, [purchasedEvents]);
+  // useEffect(() => {
+  //   const eventsArray = Array.from(transactionList.values());
+  //   setEvents(eventsArray);
+  // }, [purchasedEvents]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
@@ -39,16 +41,16 @@ function PurchasedTickets() {
         <h2 className="text-2xl font-bold mb-4">Purchased Tickets</h2>
         {events.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {events.map((event) => (
+            {transactionList.map((transaction) => (
               <div
-                key={event.id}
+                key={transaction.eventId}
                 className="border rounded-lg overflow-hidden shadow-sm relative"
               >
                 <div className="relative">
-                  <Link href={`/event/${event.id}`}>
+                  <Link href={`/event/${transaction.eventId}`}>
                     <Image
-                      src={event.image}
-                      alt={event.title}
+                      src={transaction.eventImage}
+                      alt={transaction.eventName}
                       className="w-full h-40 object-cover cursor-pointer"
                     />
                   </Link>
@@ -56,16 +58,16 @@ function PurchasedTickets() {
                 <div className="p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-bold text-luxtix-5">
-                      {event.date}
+                      {transaction.eventDate.toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <h3 className="text-lg font-semibold text-luxtix-1 mb-2">
-                      {event.title}
+                      {transaction.eventName}
                     </h3>
                     <div className="flex justify-between gap-4 mt-4">
                       <button
-                        onClick={() => openEventDetailsModal(event)}
+                        // onClick={() => openEventDetailsModal(transaction)}
                         className="w-full btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
                       >
                         Tickets Details
@@ -87,7 +89,7 @@ function PurchasedTickets() {
         )}
       </div>
 
-      <Modal isOpen={selectedEvent !== null} onClose={closeEventDetailsModal}>
+      {/* <Modal isOpen={selectedEvent !== null} onClose={closeEventDetailsModal}>
         {selectedEvent && (
           <div className="py-4">
             <div className="max-w-sm mx-auto bg-luxtix-4 text-luxtix-1 rounded-2xl">
@@ -132,11 +134,10 @@ function PurchasedTickets() {
                 </div>
               </div>
               <p className="text-[10px] px-8 text-center font-light italic">
-                {`${
-                  selectedEvent.type === "Offline"
-                    ? "Please scan the barcode at the venue to receive your entry ticket. Double-check your quantity and tier before leaving the ticketing area."
-                    : "Online event link will be sent to your email 1 hour before the event starts."
-                }`}
+                {`${selectedEvent.type === "Offline"
+                  ? "Please scan the barcode at the venue to receive your entry ticket. Double-check your quantity and tier before leaving the ticketing area."
+                  : "Online event link will be sent to your email 1 hour before the event starts."
+                  }`}
               </p>
               <div className="p-4 flex justify-center">
                 <Barcode
@@ -150,7 +151,7 @@ function PurchasedTickets() {
             </div>
           </div>
         )}
-      </Modal>
+      </Modal> */}
 
       <Modal isOpen={isReviewModalOpen} onClose={closeReviewModal}>
         <AddReview />
