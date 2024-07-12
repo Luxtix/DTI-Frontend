@@ -1,4 +1,3 @@
-// hooks/useEvents.ts
 import { useState, useEffect } from "react";
 import { EventType } from "@/types/event";
 import { useSession } from "next-auth/react";

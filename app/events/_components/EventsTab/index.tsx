@@ -1,6 +1,5 @@
 "use client";
 
-import eventCardItems from "@/utils/eventCardItems";
 import EventCard from "@/components/EventCard";
 import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";

@@ -20,13 +20,19 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
     setInterested(!interested);
   };
 
+  {
+    console.log(event);
+  }
+
   return (
     <div>
       <div className="relative">
         <Image
-          className="w-full h-auto sm:h-96 rounded-lg sm:pb-8"
+          className="w-full h-auto sm:h-96 rounded-lg sm:pb-8 object-cover"
           src={event.eventImage}
           alt="Event Banner"
+          width={1200}
+          height={600}
         />
       </div>
       <div className="py-4">
@@ -92,12 +98,12 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
         <div className="py-4">
           <h2 className="text-lg font-semibold text-luxtix-5">Hosted by</h2>
           <div className="flex items-center">
-            <img
+            <Image
               className="h-10 w-10 rounded-full"
-              src={event.organizerName}
+              src={event.organizerAvatar}
               alt="Host Logo"
             />
-            <span className="ml-2 text-luxtix-1">{event.organizerAvatar}</span>
+            <span className="ml-2 text-luxtix-1">{event.organizerName}</span>
           </div>
         </div>
         <div className="py-4">
