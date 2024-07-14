@@ -27,9 +27,8 @@ function AddReview() {
             <div
               key={value}
               onClick={() => handleRating(value)}
-              className={`cursor-pointer ${
-                rating >= value ? "text-luxtix-2" : "text-luxtix-7"
-              }`}
+              className={`cursor-pointer ${rating >= value ? "text-luxtix-2" : "text-luxtix-7"
+                }`}
             >
               {rating >= value ? (
                 <AiFillStar size={30} />
@@ -46,11 +45,10 @@ function AddReview() {
             <button
               key={option}
               onClick={() => handleOptionClick(option)}
-              className={`p-2 border rounded-full text-xs ${
-                selectedOption === option
-                  ? "bg-luxtix-4 text-luxtix-1"
-                  : "bg-white text-luxtix-1"
-              }`}
+              className={`p-2 border rounded-full text-xs ${selectedOption === option
+                ? "bg-luxtix-4 text-luxtix-1"
+                : "bg-white text-luxtix-1"
+                }`}
             >
               {option}
             </button>

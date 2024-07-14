@@ -20,16 +20,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <PurchasedEventsProvider>
-        <SessionProvider>
+
+      <SessionProvider>
+        <PurchasedEventsProvider>
           <TicketProvider>
             <body className={inter.className}>
               {children}
               <Toaster />
             </body>
           </TicketProvider>
-        </SessionProvider>
-      </PurchasedEventsProvider>
+        </PurchasedEventsProvider>
+      </SessionProvider>
+
     </html>
   );
 }

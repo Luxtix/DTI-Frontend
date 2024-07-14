@@ -17,12 +17,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
+import { signIn } from "next-auth/react";
 
+
+interface formValues {
+  email: string;
+  password: string
+}
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
@@ -108,6 +114,16 @@ function SignIn() {
     }
   };
 
+
+  const handleLogin = async (values: any) => {
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      // redirect: true,
+      // callbackUrl: "/",
+    });
+  }
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -140,7 +156,7 @@ function SignIn() {
           </h2>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="email"

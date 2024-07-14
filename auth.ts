@@ -1,6 +1,6 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { cookies } from "next/headers";
+import NextAuth from 'next-auth'
+import Credentials from 'next-auth/providers/credentials'
+import { cookies } from 'next/headers'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXT_PUBLIC_SECRET,
@@ -8,69 +8,72 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: {},
-        password: {},
+        email: { label: 'email', type: 'text' },
+        password: { label: 'password', type: 'password' },
       },
       authorize: async (credentials) => {
-        const { email, password } = credentials;
-
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, password }),
-            }
-          );
+          const response = await fetch(`http://localhost:8080/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+            credentials: 'include',
+          })
 
           if (!response.ok) {
-            throw new Error("Failed to log in");
+            throw new Error('Failed to log in')
           }
 
-          const { data } = await response.json();
+          const data = await response.json()
 
-          const cookieStore = cookies();
-          cookieStore.set("sid", data.token);
+          const useCookies = cookies()
+          useCookies.set('sid', data.accessToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 6000,
+            path: '/',
+          })
 
           return {
             id: data.id,
-            name: data.name,
             email: data.email,
+            sub: data.email,
             role: data.role,
-            accessToken: data.token,
-          };
+            accessToken: data.accessToken,
+          }
         } catch (error) {
-          console.log(error);
-          return null;
+          console.log(error)
+          return null
         }
       },
     }),
   ],
   callbacks: {
-    authorized: async ({ auth }) => {
-      return !!auth;
+    async authorized({ auth }) {
+      return !!auth
     },
-    session: async ({ token, session }) => {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
-
-      if (token.role && session.user) {
-        session.user.role = token.role;
-      }
-
-      return session;
+    async session({ token, session }) {
+      if (token.email) session.user.email = token.email
+      if (token.role) session.user.role = token.role
+      return session
     },
-    jwt: async ({ token, user }) => {
-      if (user) token.role = user.role;
-      console.log(token);
-      return token;
+    async jwt({ token, user }) {
+      if (user && user.email) {
+        token.sub = user.email
+        token.email = user.email
+      }
+      if (user && user.role) {
+        token.role = user.role
+      }
+      return token
     },
   },
-  session: { strategy: "jwt", maxAge: 60 * 60 * 1 },
+  session: { strategy: 'jwt', maxAge: 60 * 60 * 1 },
   pages: {
-    signIn: "/sign-in",
+    signIn: '/sign-in',
   },
   jwt: {
     maxAge: 60 * 60 * 1,
@@ -80,8 +83,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: `session-jwt`,
       options: {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: 'lax',
       },
     },
   },
-});
+})
