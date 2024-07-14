@@ -1,6 +1,6 @@
 "use client";
 
-import { EventType } from "@/types/event";
+import { EventDetailType } from "@/types/event";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { BiTimeFive, BiCalendarAlt } from "react-icons/bi";
 import { GiTicket } from "react-icons/gi";
 
 interface EventDetailsCardProps {
-  event: EventType;
+  event: EventDetailType;
 }
 
 function EventDetailsCard({ event }: EventDetailsCardProps) {
@@ -19,10 +19,6 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
   const toggleInterested = () => {
     setInterested(!interested);
   };
-
-  {
-    console.log(event);
-  }
 
   return (
     <div>
@@ -61,9 +57,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             </h2>
             <div className="flex items-center text-luxtix-8">
               <BiCalendarAlt size={20} className="mr-1" />
-              <span>
-                {event.eventDay}, {event.eventDate}
-              </span>
+              <span>{event.eventDate}</span>
             </div>
             <div className="flex items-center text-luxtix-8">
               <BiTimeFive size={20} className="mr-1" />
@@ -74,9 +68,11 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             <div className="flex items-center text-luxtix-3">
               <GiTicket size={20} className="mr-1" />
               <span>
-                {event.ticketPrice === 0
+                {event.tickets.length === 0
                   ? "Free"
-                  : `From IDR ${event.ticketPrice}`}
+                  : `From IDR ${Math.min(
+                      ...event.tickets.map((ticket) => ticket.price)
+                    )}`}
               </span>
             </div>
           </div>
@@ -102,6 +98,8 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
               className="h-10 w-10 rounded-full"
               src={event.organizerAvatar}
               alt="Host Logo"
+              width={40}
+              height={40}
             />
             <span className="ml-2 text-luxtix-1">{event.organizerName}</span>
           </div>
@@ -110,7 +108,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
           <h2 className="text-lg font-semibold text-luxtix-5">
             Event Description
           </h2>
-          <p className="text-luxtix-1 mt-1">{event.descriptions}</p>
+          <p className="text-luxtix-1 mt-1">{event.description}</p>
         </div>
       </div>
     </div>

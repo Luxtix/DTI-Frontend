@@ -3,11 +3,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import EventDetailsCard from "@/components/EventDetailsCard";
-import { useEvents } from "@/hooks/useEvents";
+import { useEventById } from "@/hooks/useEventById";
 
 function EventDetails() {
   const { id } = useParams();
-  const { events, loading, error } = useEvents();
+  const { event, loading, error } = useEventById(Number(id));
 
   const CircularLoader = () => (
     <div className="flex justify-center items-center h-64">
@@ -23,8 +23,6 @@ function EventDetails() {
     return <p>Error loading event</p>;
   }
 
-  const event = events.find((event) => event.id === Number(id));
-
   if (!event) {
     return <p>Event not found</p>;
   }
@@ -36,7 +34,7 @@ function EventDetails() {
           <AiOutlineArrowLeft size={25} />
         </Link>
       </div>
-      <EventDetailsCard key={event.id} event={event} />
+      <EventDetailsCard event={event} />
     </div>
   );
 }
