@@ -94,13 +94,13 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
         <div className="py-4">
           <h2 className="text-lg font-semibold text-luxtix-5">Hosted by</h2>
           <div className="flex items-center">
-            {/* <Image
+            <Image
               className="h-10 w-10 rounded-full"
               src={event.organizerAvatar}
               alt="Host Logo"
               width={40}
               height={40}
-            /> */}
+            />
             <span className="ml-2 text-luxtix-1">{event.organizerName}</span>
           </div>
         </div>
