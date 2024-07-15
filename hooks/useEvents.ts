@@ -20,7 +20,9 @@ export function useEvents(queryParams: string = "") {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const endpoint = session ? `/api/events` : `/api/events/public`;
+        const endpoint = session
+          ? `/api/events${queryParams ? `?${queryParams}` : ""}`
+          : `/api/events/public${queryParams ? `?${queryParams}` : ""}`;
 
         const response = await fetch(`http://localhost:8080${endpoint}`);
         if (!response.ok) {
