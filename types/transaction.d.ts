@@ -1,14 +1,16 @@
-export interface TransactionDetail {
+interface Ticket {
   id: number
+  ticketName: string
+  ticketQty: number
+}
+export interface TransactionDetail {
   eventName: string
   eventImage: string
   eventDate: string
   startTime: string
   endTime: string
-  eventDay: string
   venueName: string
-  ticketName: string
-  ticketQty: number
   cityName: string
   isOnline: boolean
+  tickets: Ticket[]
 }

@@ -1,19 +1,83 @@
 "use client";
-
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
 import { Textarea } from "@/components/ui/textarea";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
-import React, { useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
-function AddReview() {
-  const [rating, setRating] = useState(0);
-  const [selectedOption, setSelectedOption] = useState("");
 
-  const handleRating = (value: number) => {
-    setRating(value === rating ? 0 : value);
+interface ReviewProps {
+  id: number
+  onClose: (reviewData?: ReviewFormValues) => void;
+}
+
+const reviewSchema = z.object({
+  rating: z.number().min(1, "Please select a rating").max(5),
+  reviewType: z.enum(["Overall Experience", "Quality of Events", "Improvement"], {
+    errorMap: () => ({ message: "Please select a review type" }),
+  }),
+  comment: z.string().min(1, "Please enter a comment").max(500, "Comment must be 500 characters or less"),
+});
+
+type ReviewFormValues = z.infer<typeof reviewSchema>;
+
+const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
+  const form = useForm<ReviewFormValues>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      rating: 0,
+      reviewType: undefined,
+      comment: "",
+    },
+  });
+
+  const onSubmit = async (data: ReviewFormValues) => {
+    const formData = {
+      id,
+      rating: data.rating,
+      comments: data.comment,
+      type: getReviewType(data.reviewType)
+    };
+    try {
+      const response = await fetch(`http://localhost:8080/api/event-review`, {
+        credentials: "include",
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Review Submited",
+        });
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      } else {
+        console.error('Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
   };
 
-  const handleOptionClick = (option: string) => {
-    setSelectedOption(option);
+  const getReviewType = (type: ReviewFormValues['reviewType']) => {
+    switch (type) {
+      case 'Overall Experience':
+        return 'Overall';
+      case 'Quality of Events':
+        return 'Quality';
+      case 'Improvement':
+        return 'Improvement';
+      default:
+        throw new Error(`Invalid review type: ${type}`);
+    }
   };
 
   return (
@@ -21,44 +85,81 @@ function AddReview() {
       <div className="flex items-center mb-8">
         <h1 className="text-lg font-semibold">Add Review</h1>
       </div>
-      <div className="flex justify-center mb-4">
-        <div className="flex space-x-2">
-          {[1, 2, 3, 4, 5].map((value) => (
-            <div
-              key={value}
-              onClick={() => handleRating(value)}
-              className={`cursor-pointer ${rating >= value ? "text-luxtix-2" : "text-luxtix-7"
-                }`}
-            >
-              {rating >= value ? (
-                <AiFillStar size={30} />
-              ) : (
-                <AiOutlineStar size={30} />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="flex justify-center space-x-2 mb-4">
-        {["Overall Experience", "Quality of Events", "Improvement"].map(
-          (option) => (
-            <button
-              key={option}
-              onClick={() => handleOptionClick(option)}
-              className={`p-2 border rounded-full text-xs ${selectedOption === option
-                ? "bg-luxtix-4 text-luxtix-1"
-                : "bg-white text-luxtix-1"
-                }`}
-            >
-              {option}
-            </button>
-          )
-        )}
-      </div>
-      <Textarea />
-      <button className="btn-anim bg-luxtix-6 hover:bg-luxtix-2 w-full p-2 my-2 rounded-lg">
-        Submit Review
-      </button>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="rating"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="flex justify-center space-x-2">
+                    {[1, 2, 3, 4, 5].map((value) => (
+                      <div
+                        key={value}
+                        onClick={() => field.onChange(value === field.value ? 0 : value)}
+                        className="cursor-pointer"
+                      >
+                        {field.value >= value ? (
+                          <AiFillStar size={30} className="text-luxtix-2" />
+                        ) : (
+                          <AiOutlineStar size={30} className="text-luxtix-7" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="reviewType"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="flex justify-center space-x-2">
+                    {["Overall Experience", "Quality of Events", "Improvement"].map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => field.onChange(option)}
+                        className={`p-2 border rounded-full text-xs ${field.value === option
+                          ? "bg-luxtix-4 text-luxtix-1"
+                          : "bg-white text-luxtix-1"
+                          }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="comment"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className="w-full bg-luxtix-6 hover:bg-luxtix-2">
+            Submit Review
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 }
