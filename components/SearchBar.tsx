@@ -1,3 +1,4 @@
+"use client";
 import { GoLocation } from "react-icons/go";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useState, useEffect } from "react";
@@ -30,10 +31,13 @@ function SearchBar() {
     const fetchCities = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/events/public?city=${debouncedCitySearchTerm}`
+          `http://localhost:8080/api/cities?name=${debouncedCitySearchTerm}`,
+          {
+            credentials: "include",
+          }
         );
         const data = await response.json();
-        setCities(data.data);
+        setCities(data.data.slice(0, 5));
       } catch (error) {
         console.error("Error fetching cities:", error);
       }
@@ -51,7 +55,10 @@ function SearchBar() {
       try {
         let endpoint = session ? "/api/events" : "/api/events/public";
         const response = await fetch(
-          `http://localhost:8080${endpoint}?eventName=${debouncedEventSearchTerm}`
+          `http://localhost:8080${endpoint}?eventName=${debouncedEventSearchTerm}`,
+          {
+            credentials: "include",
+          }
         );
         const data = await response.json();
         setSuggestions(data.data);
@@ -108,14 +115,14 @@ function SearchBar() {
         </div>
       )}
       {cities.length > 0 && (
-        <div className="absolute right-0 left-0 sm:left-auto sm:w-1/2 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-          <ul className="right-0 w-1/2 bg-white border border-gray-300 mt-1 shadow-lg z-10">
+        <div className="absolute text-luxtix-1 right-0 left-0 sm:left-auto sm:w-1/2 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+          <ul>
             {cities.map((city) => (
               <li
                 key={city.id}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
-                {city.name}
+                <a href={`/events?city=${city.name}`}>{city.name}</a>
               </li>
             ))}
           </ul>
