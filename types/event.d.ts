@@ -1,10 +1,8 @@
-import { StaticImageData } from "next/image";
-
 export interface EventType {
   id: number;
   address: string;
   venueName: string;
-  eventImage: StaticImageData;
+  eventImage: string;
   descriptions: string;
   ticketPrice: number;
   priceCategory: string;
@@ -25,7 +23,7 @@ export interface EventDetailType {
   eventName: string;
   cityName: string;
   address: string;
-  eventImage: StaticImageData;
+  eventImage: string;
   venueName: string;
   description: string;
   eventDate: string;
@@ -35,7 +33,7 @@ export interface EventDetailType {
   isDone: boolean;
   priceCategory: string;
   organizerName: string;
-  organizerAvatar: StaticImageData;
+  organizerAvatar: string;
   favoriteCounts: number;
   isFavorite: boolean;
   tickets: {
