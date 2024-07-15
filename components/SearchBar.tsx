@@ -2,6 +2,8 @@ import { GoLocation } from "react-icons/go";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import useDebounce from "@/hooks/useDebounce";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface City {
   id: string;
@@ -12,25 +14,26 @@ interface City {
 
 interface Event {
   id: string;
-  name: string;
+  eventName: string;
 }
 
 function SearchBar() {
   const [eventSearchTerm, setEventSearchTerm] = useState<string>("");
   const [citySearchTerm, setCitySearchTerm] = useState<string>("");
   const [cities, setCities] = useState<City[]>([]);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [suggestions, setSuggestions] = useState<Event[]>([]);
   const debouncedEventSearchTerm = useDebounce(eventSearchTerm, 500);
   const debouncedCitySearchTerm = useDebounce(citySearchTerm, 1000);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchCities = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cities?q=${debouncedCitySearchTerm}`
+          `http://localhost:8080/api/events/public?city=${debouncedCitySearchTerm}`
         );
         const data = await response.json();
-        setCities(data);
+        setCities(data.data);
       } catch (error) {
         console.error("Error fetching cities:", error);
       }
@@ -46,11 +49,12 @@ function SearchBar() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        let endpoint = session ? "/api/events" : "/api/events/public";
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events?q=${debouncedEventSearchTerm}`
+          `http://localhost:8080${endpoint}?eventName=${debouncedEventSearchTerm}`
         );
         const data = await response.json();
-        setEvents(data);
+        setSuggestions(data.data);
       } catch (error) {
         console.error("Error fetching events:", error);
       }
@@ -59,45 +63,53 @@ function SearchBar() {
     if (debouncedEventSearchTerm) {
       fetchEvents();
     } else {
-      setEvents([]);
+      setSuggestions([]);
     }
   }, [debouncedEventSearchTerm]);
 
   return (
-    <div className="flex justify-between items-center bg-white rounded-full shadow-lg overflow-hidden w-full max-w-3xl">
-      <div className="flex items-center px-4">
-        <AiOutlineSearch className="text-luxtix-1 size-6" />
+    <div className="w-full max-w-3xl relative">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="flex items-center px-4 w-full sm:w-auto">
+          <AiOutlineSearch className="text-luxtix-1 size-6" />
+          <input
+            type="text"
+            value={eventSearchTerm}
+            onChange={(e) => setEventSearchTerm(e.target.value)}
+            className="flex-grow py-3 px-4 text-luxtix-1 placeholder-zinc-400 focus:outline-none"
+            placeholder="Search Events, ..."
+          />
+        </div>
+        <div className="flex items-center px-4 w-full sm:w-auto">
+          <GoLocation className="text-luxtix-1" />
+          <input
+            type="text"
+            value={citySearchTerm}
+            onChange={(e) => setCitySearchTerm(e.target.value)}
+            className="flex-1 py-3 px-4 text-luxtix-1 placeholder-zinc-400 border-none focus:outline-none"
+            placeholder="City"
+          />
+        </div>
       </div>
-      <input
-        type="text"
-        value={eventSearchTerm}
-        onChange={(e) => setEventSearchTerm(e.target.value)}
-        className="flex-grow py-3 px-4 text-luxtix-1 placeholder-zinc-400 focus:outline-none"
-        placeholder="Search Events, Categories, ..."
-      />
-      {events.length > 0 && (
-        <ul className="absolute bg-white shadow-md rounded-md mt-2">
-          {events.map((event) => (
-            <li
-              key={event.id}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-            >
-              {event.name}
-            </li>
-          ))}
-        </ul>
+      {suggestions && suggestions.length > 0 && (
+        <div className="absolute left-0 right-0 mt-1 text-luxtix-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+          <ul>
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.id}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              >
+                <Link href={`/events/${suggestion.id}`}>
+                  {suggestion.eventName}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
-      <div className="flex flex-center text-luxtix-1">
-        <GoLocation />
-        <input
-          type="text"
-          value={citySearchTerm}
-          onChange={(e) => setCitySearchTerm(e.target.value)}
-          className="flex-1 py-3 px-4 text-luxtix-1 placeholder-zinc-400 border-none focus:outline-none"
-          placeholder="City"
-        />
-        {cities.length > 0 && (
-          <ul className="absolute bg-white shadow-md rounded-md mt-2">
+      {cities.length > 0 && (
+        <div className="absolute right-0 left-0 sm:left-auto sm:w-1/2 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+          <ul className="right-0 w-1/2 bg-white border border-gray-300 mt-1 shadow-lg z-10">
             {cities.map((city) => (
               <li
                 key={city.id}
@@ -107,8 +119,8 @@ function SearchBar() {
               </li>
             ))}
           </ul>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
