@@ -11,7 +11,7 @@ interface ApiResponse {
   currentPage: number;
 }
 
-export function useEvents(queryParams: string = "") {
+export function useEvents(queryParams: string = "", size?: number) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,11 +20,21 @@ export function useEvents(queryParams: string = "") {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const endpoint = session
-          ? `/api/events${queryParams ? `?${queryParams}` : ""}`
-          : `/api/events/public${queryParams ? `?${queryParams}` : ""}`;
+        let endpoint = session ? "/api/events" : "/api/events/public";
+        let params = new URLSearchParams(queryParams);
 
-        const response = await fetch(`http://localhost:8080${endpoint}`);
+        if (size) {
+          params.append("size", size.toString());
+        }
+
+        if (params.toString()) {
+          endpoint += `?${params.toString()}`;
+        }
+
+        const response = await fetch(`http://localhost:8080${endpoint}`, {
+          credentials: "include",
+        });
+
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
@@ -38,7 +48,7 @@ export function useEvents(queryParams: string = "") {
     };
 
     fetchEvents();
-  }, [queryParams, session]);
+  }, [queryParams, size, session]);
 
   return { events, loading, error };
 }
