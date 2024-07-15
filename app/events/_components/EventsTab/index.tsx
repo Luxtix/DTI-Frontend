@@ -49,7 +49,8 @@ const slugToCategory = Object.entries(categorySlugs).reduce(
 );
 
 function EventsTab() {
-  const { events, loading, error } = useEvents();
+  const [queryParams, setQueryParams] = useState("");
+  const { events, loading, error } = useEvents(queryParams);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
   const searchParams = useSearchParams();
@@ -74,17 +75,16 @@ function EventsTab() {
   const updateURLParams = (filters: Filters) => {
     const params = new URLSearchParams();
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        if (key === "category") {
-          params.append(key, categorySlugs[value]);
-        } else {
-          params.append(key, value);
-        }
-      }
-    });
+    if (filters.price === "Paid") params.append("isPaid", "true");
+    if (filters.price === "Free") params.append("isPaid", "false");
+    if (filters.type === "Online") params.append("isOnline", "true");
+    if (filters.type === "Offline") params.append("isOnline", "false");
+    if (filters.category)
+      params.append("category", categorySlugs[filters.category]);
 
-    router.push(`?${params.toString()}`, { scroll: false });
+    const newQueryParams = params.toString();
+    setQueryParams(newQueryParams);
+    router.push(`?${newQueryParams}`, { scroll: false });
   };
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
@@ -98,30 +98,16 @@ function EventsTab() {
 
   const resetFilters = () => {
     setActiveFilters(initialFilters);
+    setQueryParams("");
     router.push("");
   };
-
-  const filteredEvents = events.filter((event) => {
-    const matchesPrice =
-      activeFilters.price === "" ||
-      (activeFilters.price === "Free" && event.ticketPrice === 0) ||
-      (activeFilters.price === "Paid" && event.ticketPrice !== 0);
-    const matchesType =
-      activeFilters.type === "" ||
-      (activeFilters.type === "Online" && event.isOnline) ||
-      (activeFilters.type === "Offline" && !event.isOnline);
-    const matchesCategory =
-      activeFilters.category === "" ||
-      event.categoryName.toLowerCase() === activeFilters.category.toLowerCase();
-
-    return matchesPrice && matchesCategory && matchesType;
-  });
 
   const CircularLoader = () => (
     <div className="flex justify-center items-center h-64">
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-luxtix-2"></div>
     </div>
   );
+
   if (loading) {
     return (
       <div className="flex flex-center">
@@ -195,7 +181,7 @@ function EventsTab() {
           <h2 className="text-xl font-semibold">Events</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredEvents.map((event) => (
+          {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>

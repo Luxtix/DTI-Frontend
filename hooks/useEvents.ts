@@ -20,13 +20,9 @@ export function useEvents(queryParams: string = "") {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const endpoint = session
-          ? `/api/events${queryParams}`
-          : `/api/events/public${queryParams}`;
+        const endpoint = session ? `/api/events` : `/api/events/public`;
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`
-        );
+        const response = await fetch(`http://localhost:8080${endpoint}`);
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
