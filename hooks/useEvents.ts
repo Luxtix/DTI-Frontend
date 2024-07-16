@@ -21,12 +21,18 @@ export function useEvents(queryParams: string = '') {
     const fetchEvents = async () => {
       try {
         const endpoint = session
-          ? `/api/events${queryParams ? `?${queryParams}` : ''}`
+          ? `/api/events`
           : `/api/events/public${queryParams ? `?${queryParams}` : ''}`
 
-        const response = await fetch(`http://localhost:8080${endpoint}`, {
-          credentials: 'include',
-        })
+        const response = await fetch(
+          `https://dti-backend-lg2iizcpdq-uc.a.run.app/${endpoint}`,
+          {
+            credentials: 'include',
+            headers: {
+              Authorization: `Bearer ${session?.user.accessToken}`,
+            },
+          }
+        )
         if (!response.ok) {
           throw new Error('Failed to fetch events')
         }

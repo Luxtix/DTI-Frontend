@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import logo from "@/public/logo.svg";
 import navItems from "@/utils/navItems";
@@ -19,33 +19,32 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import handleLogout from "./SignOut";
+import { useSession } from "next-auth/react";
+import { Session } from "inspector";
+
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isOrganizer, setIsOrganizer] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
+  const { data } = useSession();
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const userType = localStorage.getItem("userType");
-    if (token) {
-      setIsLoggedIn(true);
-      if (userType === "ORGANIZER") {
-        setIsOrganizer(true);
-      } else {
-        setIsOrganizer(false);
+    if (data?.user.role == "USER") {
+      setIsLoggedIn(true)
+      setIsOrganizer(false)
+    } else {
+      if (data?.user.role == "ORGANIZER") {
+        setIsLoggedIn(true)
+        setIsOrganizer(true)
       }
     }
-  }, []);
+    console.log(data)
+  }, [data]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userType");
-    setIsLoggedIn(false);
-    router.push("/");
-  };
+
 
   const toggleDropdown = () => {
     setDropdownOpen((prevState) => !prevState);
@@ -67,9 +66,8 @@ function Navbar() {
                 <Link
                   key={index}
                   href={item.path}
-                  className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${
-                    pathname === item.path ? "border-b-2 border-luxtix-6" : ""
-                  }`}
+                  className={`text-white text-sm sm:text-base hover:text-luxtix-6 ${pathname === item.path ? "border-b-2 border-luxtix-6" : ""
+                    }`}
                 >
                   {item.text}
                 </Link>
@@ -92,31 +90,29 @@ function Navbar() {
                 <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg z-50">
                   {isOrganizer
                     ? navItems.organizerNavItemsIcon.map((item, index) => (
-                        <Link
-                          key={index}
-                          href={item.path}
-                          className={`block px-4 py-2 ${
-                            pathname === item.path ? "bg-luxtix-6" : ""
+                      <Link
+                        key={index}
+                        href={item.path}
+                        className={`block px-4 py-2 ${pathname === item.path ? "bg-luxtix-6" : ""
                           }`}
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          {item.text}
-                        </Link>
-                      ))
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        {item.text}
+                      </Link>
+                    ))
                     : navItems.navItemsIcon.map((item, index) => (
-                        <Link
-                          key={index}
-                          href={item.path}
-                          className={`block px-4 py-2 ${
-                            pathname === item.path ? "bg-luxtix-6" : ""
+                      <Link
+                        key={index}
+                        href={item.path}
+                        className={`block px-4 py-2 ${pathname === item.path ? "bg-luxtix-6" : ""
                           }`}
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          {item.text}
-                        </Link>
-                      ))}
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        {item.text}
+                      </Link>
+                    ))}
                   <button
-                    onClick={handleLogout}
+                    onClick={() => handleLogout()}
                     className="px-4 py-2 hover:bg-gray-200 w-full text-left flex flex-row items-center gap-2"
                   >
                     <CiLogout />
@@ -128,25 +124,25 @@ function Navbar() {
             <div className="hidden sm:flex space-x-2 sm:space-x-4 items-center">
               {isOrganizer
                 ? navItems.organizerNavItemsIcon.map((item, index) => (
-                    <Link
-                      key={index}
-                      href={item.path}
-                      className="text-white hover:text-luxtix-6 flex flex-col items-center"
-                    >
-                      <item.icon className="text-xl" />
-                      <span className="text-xs">{item.text}</span>
-                    </Link>
-                  ))
+                  <Link
+                    key={index}
+                    href={item.path}
+                    className="text-white hover:text-luxtix-6 flex flex-col items-center"
+                  >
+                    <item.icon className="text-xl" />
+                    <span className="text-xs">{item.text}</span>
+                  </Link>
+                ))
                 : navItems.navItemsIcon.map((item, index) => (
-                    <Link
-                      key={index}
-                      href={item.path}
-                      className="text-white hover:text-luxtix-6 flex flex-col items-center"
-                    >
-                      <item.icon className="text-xl" />
-                      <span className="text-xs">{item.text}</span>
-                    </Link>
-                  ))}
+                  <Link
+                    key={index}
+                    href={item.path}
+                    className="text-white hover:text-luxtix-6 flex flex-col items-center"
+                  >
+                    <item.icon className="text-xl" />
+                    <span className="text-xs">{item.text}</span>
+                  </Link>
+                ))}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <button className="text-white text-sm sm:text-base hover:text-luxtix-6">
@@ -165,7 +161,7 @@ function Navbar() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={handleLogout}
+                      onClick={() => handleLogout()}
                       className="bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2"
                     >
                       Log out

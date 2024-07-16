@@ -1,37 +1,22 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { auth } from '@/auth'
+import { NextResponse } from 'next/server'
 
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|assets|images|favicon.ico|event|sign-in|sign-up|events).*)',
+  ],
+}
 export default auth((req) => {
+  const reqUrl = new URL(req.url)
   if (
     !req.auth &&
-    (req.nextUrl.pathname.startsWith("/user") ||
-      req.nextUrl.pathname.startsWith("/organizer"))
+    reqUrl?.pathname !== '/' &&
+    reqUrl?.pathname !== '/sign-in'
   ) {
-    const newUrl = new URL("/sign-in", req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
+    return NextResponse.redirect(new URL(`/sign-in`, req.url))
   }
 
-  if (
-    req.auth &&
-    (req.nextUrl.pathname === "/sign-in" || req.nextUrl.pathname === "/sign-up")
-  ) {
-    const newUrl = new URL("/", req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
+  if (req.auth?.user.role == 'USER' && reqUrl?.pathname == '/dashboard') {
+    return NextResponse.redirect(new URL('/', req.url))
   }
-
-  if (
-    req.auth?.user.role === "ORGANIZER" &&
-    req.nextUrl.pathname.startsWith("/user")
-  ) {
-    const newUrl = new URL("/", req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
-  }
-
-  if (
-    req.auth?.user.role === "USER" &&
-    req.nextUrl.pathname.startsWith("/organizer")
-  ) {
-    const newUrl = new URL("/", req.nextUrl.origin);
-    return NextResponse.redirect(newUrl);
-  }
-});
+})
