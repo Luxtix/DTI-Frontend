@@ -1,9 +1,6 @@
 'use client'
-import useTransactionList from '@/hooks/transactionList';
-import transactionDetail from '@/hooks/transactionDetail';
-import { TransactionDetail } from '@/types/transaction';
+import useTransactionList from '@/hooks/useTransactionList';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-import TransactionList from '@/hooks/transactionList';
 
 interface TransactionList {
   data: Transaction[];
@@ -17,6 +14,7 @@ type Transaction = {
   eventName: string;
   eventImage: string;
   isDone: boolean;
+  canReview: boolean
 }
 
 interface TransactionTicketContextType {

@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import Barcode from "react-barcode";
 import Modal from "@/components/Modal";
-import { useTransactionContext } from "@/contexts/TicketListContext";
-import { TransactionDetail } from "@/types/transaction";
 import { formatTime } from "@/utils/formatTime";
-import transactionDetail from "@/hooks/transactionDetail";
+import transactionDetail from "@/hooks/useTransactionDetail";
 import { format } from 'date-fns';
 import { useInView } from 'react-intersection-observer';
 import { toast } from "@/components/ui/use-toast";
+import { useTransactionContext } from "@/contexts/TicketListContext";
+import { TransactionDetail } from "@/types/transaction";
+
 
 
 
@@ -27,9 +28,7 @@ function PurchasedTickets() {
   const [isTransactionDetailModalOpen, setTransactionDetailModalOpen] = useState(false);
   const { getDetailTransaction } = transactionDetail();
 
-  const { ref, inView } = useInView({
-    threshold: 1.0,
-  });
+  const { ref, inView } = useInView();
   const { transactionLimit, setTransactionLimit } = useTransactionContext();
 
 
@@ -62,7 +61,7 @@ function PurchasedTickets() {
   const closeReviewModal = () => setReviewModalOpen(false);
   const handleReviewTime = () => toast({
     title: "Review Forbidden",
-    description: "You can only review when the event is done",
+    description: "You can not review the event",
     variant: "destructive"
   });
 
@@ -117,7 +116,7 @@ function PurchasedTickets() {
                         Tickets Details
                       </button>
                       <button
-                        onClick={transaction.isDone == false ? () => handleReviewTime() : () => openReviewModal(transaction.eventId)}
+                        onClick={(transaction.isDone == false) || (transaction.canReview == false) ? () => handleReviewTime() : () => openReviewModal(transaction.eventId)}
                         className="w-full btn-anim bg-luxtix-4 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
                       >
                         Add Review

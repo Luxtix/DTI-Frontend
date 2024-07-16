@@ -3,6 +3,7 @@ import {
   useTransactionContext,
 } from '@/contexts/TicketListContext'
 import React, { use, useEffect, useState } from 'react'
+import useTransactionDetail from './useTransactionDetail'
 
 export interface TransactionList {
   data: Transaction[]
@@ -16,9 +17,10 @@ export type Transaction = {
   eventName: string
   eventImage: string
   isDone: boolean
+  canReview: boolean
 }
 
-const TransactionList = () => {
+const useTransactionList = () => {
   const [transactionList, setTransactionList] = useState<TransactionList>()
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<unknown>(null)
@@ -54,4 +56,4 @@ const TransactionList = () => {
   }
 }
 
-export default TransactionList
+export default useTransactionList

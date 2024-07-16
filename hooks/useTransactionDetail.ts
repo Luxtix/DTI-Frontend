@@ -1,7 +1,7 @@
 import { TransactionDetail } from '@/types/transaction'
 import { useEffect, useState } from 'react'
 
-const transactionDetail = () => {
+const useTransactionDetail = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<unknown>(null)
 
@@ -30,4 +30,4 @@ const transactionDetail = () => {
   }
 }
 
-export default transactionDetail
+export default useTransactionDetail
