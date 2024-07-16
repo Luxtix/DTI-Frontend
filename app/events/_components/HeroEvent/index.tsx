@@ -18,7 +18,7 @@ function HeroEvent() {
         <h2 className="text-2xl sm:text-3xl font-semibold mb-8">
           Explore a world of events. Find what excites you!
         </h2>
-        <div className="flex items-center bg-white rounded-full shadow-lg overflow-hidden w-full max-w-3xl">
+        <div className="w-full max-w-3xl mt-8">
           <SearchBar />
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { EventType } from '@/types/event'
 import { useSession } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 
 interface ApiResponse {
   statusCode: number
@@ -11,17 +12,19 @@ interface ApiResponse {
   currentPage: number
 }
 
-export function useEvents(queryParams: string = '') {
+export function useEvents(queryParams: string = '', size?: number) {
   const [events, setEvents] = useState<EventType[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()
+  const search = useSearchParams()
+  const city = search.get('city') || ''
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const endpoint = session
-          ? `/api/events`
+          ? `/api/events${queryParams ? `?${queryParams}` : ''}`
           : `/api/events/public${queryParams ? `?${queryParams}` : ''}`
 
         const response = await fetch(
@@ -46,7 +49,7 @@ export function useEvents(queryParams: string = '') {
     }
 
     fetchEvents()
-  }, [queryParams, session])
+  }, [queryParams, size, session])
 
   return { events, loading, error }
 }
