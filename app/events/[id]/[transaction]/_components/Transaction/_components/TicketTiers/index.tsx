@@ -8,7 +8,6 @@ interface TicketTierProps {
   qty: number;
   remainingQty: number;
   onTicketCountChange: (ticketCount: number, price: number, previousCount: number) => void;
-  control: any
   index: number
   addTicketRow: (id: number, qty: number, price: number) => void;
   removeTicketRow: (id: number) => void
@@ -21,7 +20,7 @@ const ticketSchema = z.object({
   qty: z.number().min(1),
 });
 
-const TicketTiers: React.FC<TicketTierProps> = ({ id, name, price, qty, remainingQty, onTicketCountChange, control, index, addTicketRow, removeTicketRow }) => {
+const TicketTiers: React.FC<TicketTierProps> = ({ id, name, price, qty, remainingQty, onTicketCountChange, index, addTicketRow, removeTicketRow }) => {
   const [ticketCount, setTicketCount] = useState<number>(0);
 
   const handleIncreaseTickets = () => {

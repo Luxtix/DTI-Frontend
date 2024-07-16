@@ -12,6 +12,10 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useCalculateTransaction from "@/hooks/useCalculateTransaction";
+import { create } from "domain";
+import { toast } from "@/components/ui/use-toast";
+import useCheckoutTransaction from "@/hooks/useCheckoutTransaction";
 
 
 const voucherSchema = z.object({
@@ -29,13 +33,13 @@ interface TicketRow {
 
 
 const createTransactionSchema = z.object({
-  eventId: z.number(),
+  eventId: z.string(),
   voucherId: z.number().nullable(),
   totalQty: z.number().min(1, "Ticket qty is required"),
   finalPrice: z.number(),
   totalDiscount: z.number(),
   originalPrice: z.number(),
-  usePoint: z.number(),
+  usePoint: z.number().nullable(),
   tickets: z.array(
     z.object({
       ticketId: z.number(),
@@ -46,12 +50,14 @@ const createTransactionSchema = z.object({
 });
 
 
-
 function Transaction() {
   const { id } = useParams();
+  const router = useRouter();
   const { event, loading, error } = useEventById(Number(id));
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [totalQty, setTotalQty] = useState<number>(0)
+  const { calculateTransaction } = useCalculateTransaction();
+  const { checkoutTransaction } = useCheckoutTransaction();
   const { userPoint } = useTotalUserPoint();
   const [selectedVoucher, setSelectedVoucher] = useState<string>("");
   const [userPointUsed, setUserPointUsed] = useState<boolean>(false);
@@ -60,43 +66,25 @@ function Transaction() {
   const [finalPrice, setFinalPrice] = useState<number>(0);
   const [ticketRows, setTicketRows] = useState<TicketRow[]>([]);
 
-  const form = useForm<z.infer<typeof createTransactionSchema>>({
-    resolver: zodResolver(createTransactionSchema),
-    defaultValues: {
-      eventId: 0,
-      voucherId: null,
-      totalQty: 0,
-      finalPrice: 0,
-      totalDiscount: 0,
-      originalPrice: 0,
-      usePoint: 0,
-      tickets: []
-    },
-  });
+
 
 
   useEffect(() => {
-    console.log(ticketRows)
+    if (totalPrice == 0) {
+      setUserPointUsed(false)
+    }
     const handleApplyClick = async () => {
       const data = {
         voucherId: voucherIdValue === null ? null : voucherIdValue,
         originalPrice: totalPrice,
         usePoint: userPointUsed ? userPoint?.points : 0,
       };
-
       try {
         const result = voucherSchema.parse(data);
-        const response = await fetch('http://localhost:8080/api/transaction/calculate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(result),
-          credentials: 'include',
-        });
-        const responseData = await response.json();
-        console.log(responseData.data);
-        if (responseData.data.finalPrice !== undefined || responseData.data.totalDiscount !== undefined) {
-          setFinalPrice(responseData.data.finalPrice);
-          setTotalDiscount(responseData.data.totalDiscount);
+        const resultData = await calculateTransaction(result);
+        if (resultData.finalPrice !== undefined || resultData.totalDiscount !== undefined) {
+          setFinalPrice(resultData.finalPrice);
+          setTotalDiscount(resultData.totalDiscount);
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
@@ -122,13 +110,22 @@ function Transaction() {
 
 
   const handlePointUsage = () => {
-    if (totalPrice !== 0 || userPoint?.points !== 0) {
+    if (userPoint?.points && (userPoint.points <= totalPrice || userPoint.points != 0)) {
       setUserPointUsed((prev) => !prev);
     }
   }
 
 
   const handleCheckout = async () => {
+    if (totalQty == 0) {
+      toast({
+        title: "Checkout Failed",
+        description:
+          "You have to buy at least 1 ticket",
+        variant: "destructive",
+      });
+      return;
+    }
     const data = {
       eventId: id,
       voucherId: voucherIdValue === null ? null : voucherIdValue,
@@ -141,19 +138,17 @@ function Transaction() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/transaction', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
+      const result = createTransactionSchema.parse(data);
+      const response = await checkoutTransaction(result);
+      if (response.success == true) {
+        toast({
+          title: "Checkout Success",
+          description:
+            "Your checkout was a success",
+          className: "bg-green-600 text-white",
+        });
+        router.push('/order-success')
         console.log('Checkout successful!');
-      } else {
-        console.error('Checkout failed:', response.statusText);
       }
     } catch (error) {
       console.error('An error occurred during checkout:', error);
@@ -164,7 +159,6 @@ function Transaction() {
     const selectedVoucherId = e.target.value === "null" ? null : parseInt(e.target.value);
     setVoucherIdValue(selectedVoucherId);
     setSelectedVoucher(e.target.value);
-
   };
 
 
@@ -195,7 +189,6 @@ function Transaction() {
   }
 
   return (
-
     <div className="max-w-7xl mx-auto px-4 py-4">
       <div className="max-w-7xl mx-auto">
         <div className="block py-6">
@@ -242,7 +235,7 @@ function Transaction() {
                 </label>
                 <div className="space-y-4">
                   {event.tickets.map((ticket, index) => (
-                    <TicketTiers {...ticket} key={ticket.id} control={form.control} index={index} onTicketCountChange={handleTicketCountChange} addTicketRow={addTicketRow} removeTicketRow={removeTicketRow} />
+                    <TicketTiers {...ticket} key={ticket.id} index={index} onTicketCountChange={handleTicketCountChange} addTicketRow={addTicketRow} removeTicketRow={removeTicketRow} />
                   ))}
                 </div>
               </div>
@@ -279,7 +272,7 @@ function Transaction() {
                     value={selectedVoucher}
                     onChange={handleVoucherChange}
                     className="w-full mr-2 p-2 border rounded-lg"
-                  // disabled={voucherApplied || total === 0}
+                    disabled={totalPrice == 0}
                   >
                     <option value="null">Select Voucher</option>
                     {event.vouchers.map((voucher) => (
@@ -289,7 +282,6 @@ function Transaction() {
                       </option>
                     ))}
                   </select>
-
                 </div>
               </div>
               <div className="flex items-center mb-4">
