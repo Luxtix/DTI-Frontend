@@ -19,6 +19,7 @@ type Transaction = {
 
 interface TransactionTicketContextType {
   userTransactionList: TransactionList;
+  getLists: () => void;
   error: unknown;
   loading: boolean;
   transactionLimit: number;
@@ -32,6 +33,7 @@ const defaultTransactionList: TransactionList = {
 
 export const TransactionContext = createContext<TransactionTicketContextType>({
   userTransactionList: defaultTransactionList,
+  getLists: () => { },
   error: null,
   loading: false,
   transactionLimit: 1,
@@ -39,7 +41,7 @@ export const TransactionContext = createContext<TransactionTicketContextType>({
 });
 
 const TicketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { transactionList, error, loading, transactionLimit, setTransactionLimit } = useTransactionList();
+  const { transactionList, error, loading, transactionLimit, setTransactionLimit, getLists } = useTransactionList();
   const [userTransactionList, setUserTransactionList] = useState<TransactionList>(defaultTransactionList);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const TicketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
 
   return (
-    <TransactionContext.Provider value={{ userTransactionList, error, loading, transactionLimit, setTransactionLimit }}>
+    <TransactionContext.Provider value={{ userTransactionList, error, loading, transactionLimit, setTransactionLimit, getLists }}>
       {children}
     </TransactionContext.Provider>
   )

@@ -32,10 +32,12 @@ function PurchasedTickets() {
   const { transactionLimit, setTransactionLimit } = useTransactionContext();
 
 
+
+
+
   useEffect(() => {
     if (inView) {
       setTransactionLimit(transactionLimit + 1)
-      console.log(transactionLimit)
     }
   }, [inView, setTransactionLimit])
 
@@ -59,12 +61,6 @@ function PurchasedTickets() {
   }
 
   const closeReviewModal = () => setReviewModalOpen(false);
-  const handleReviewTime = () => toast({
-    title: "Review Forbidden",
-    description: "You can not review the event",
-    variant: "destructive"
-  });
-
 
   const modalTicket = "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative h-4/5 custom-scrollbar overflow-y-scroll";
   const modalReview = "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative";
@@ -115,12 +111,19 @@ function PurchasedTickets() {
                       >
                         Tickets Details
                       </button>
-                      <button
-                        onClick={(transaction.isDone == false) || (transaction.canReview == false) ? () => handleReviewTime() : () => openReviewModal(transaction.eventId)}
-                        className="w-full btn-anim bg-luxtix-4 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
-                      >
-                        Add Review
-                      </button>
+                      {(transaction.isDone == false) || (transaction.canReview == false) ?
+                        <></>
+                        :
+                        <>
+                          <button
+                            onClick={() => openReviewModal(transaction.eventId)}
+                            className="w-full btn-anim bg-luxtix-4 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
+                          >
+                            Add Review
+                          </button>
+                        </>
+                      }
+
                     </div>
                   </div>
                 </div>
@@ -201,8 +204,6 @@ function PurchasedTickets() {
           ))}
         </div>
       </Modal >
-
-
       <Modal isOpen={isReviewModalOpen} onClose={closeReviewModal} modalDesign={modalReview}>
         <AddReview id={transactionEventId} onClose={closeReviewModal} />
       </Modal>

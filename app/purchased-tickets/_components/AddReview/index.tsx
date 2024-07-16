@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from "@/components/ui/textarea";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { toast } from "@/components/ui/use-toast";
+import { useTransactionContext } from '@/contexts/TicketListContext';
 
 
 interface ReviewProps {
@@ -26,6 +27,7 @@ const reviewSchema = z.object({
 type ReviewFormValues = z.infer<typeof reviewSchema>;
 
 const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
+  const { getLists } = useTransactionContext()
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
@@ -58,7 +60,9 @@ const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
         });
         setTimeout(() => {
           onClose();
+          getLists();
         }, 1000);
+
       } else {
         console.error('Failed to submit review');
       }
@@ -141,7 +145,6 @@ const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="comment"
@@ -154,7 +157,6 @@ const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
               </FormItem>
             )}
           />
-
           <Button type="submit" className="w-full bg-luxtix-6 hover:bg-luxtix-2">
             Submit Review
           </Button>
