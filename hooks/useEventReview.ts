@@ -1,40 +1,40 @@
-import { useSession } from 'next-auth/react'
-import React, { useEffect, useState } from 'react'
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 
 const useEventReview = () => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const { data: session } = useSession()
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const fetchEventReview = async (id: number | null, page: number) => {
     if (id != null) {
       try {
-        const endpoint = `/api/event-review/${id}`
-        const headers: HeadersInit = {}
+        const endpoint = `/api/event-review/${id}`;
+        const headers: HeadersInit = {};
         if (session) {
-          headers['Authorization'] = `Bearer ${session.user.accessToken}`
+          headers["Authorization"] = `Bearer ${session.user.accessToken}`;
         }
 
         const response = await fetch(
-          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}?page=${page}&size=1`,
+          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}?page=${page}`,
           {
-            credentials: 'include',
+            credentials: "include",
             headers,
           }
-        )
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch events')
+          throw new Error("Failed to fetch events");
         }
-        const data = await response.json()
-        return data
+        const data = await response.json();
+        return data;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-  }
-  return { fetchEventReview }
-}
+  };
+  return { fetchEventReview };
+};
 
-export default useEventReview
+export default useEventReview;
