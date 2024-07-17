@@ -10,13 +10,10 @@ import TicketTiers from "./_components/TicketTiers";
 import useTotalUserPoint from "@/hooks/useTotalUserPoint";
 import { z } from "zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import useCalculateTransaction from "@/hooks/useCalculateTransaction";
-import { create } from "domain";
 import { toast } from "@/components/ui/use-toast";
 import useCheckoutTransaction from "@/hooks/useCheckoutTransaction";
-
+import CircularLoader from "@/components/ui/circular-loader";
 
 const voucherSchema = z.object({
   voucherId: z.number().nullable(),
@@ -29,8 +26,6 @@ interface TicketRow {
   price: number;
   qty: number;
 }
-
-
 
 const createTransactionSchema = z.object({
   eventId: z.string(),
@@ -49,13 +44,12 @@ const createTransactionSchema = z.object({
   ),
 });
 
-
 function Transaction() {
   const { id } = useParams();
   const router = useRouter();
   const { event, loading, error } = useEventById(Number(id));
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [totalQty, setTotalQty] = useState<number>(0)
+  const [totalQty, setTotalQty] = useState<number>(0);
   const { calculateTransaction } = useCalculateTransaction();
   const { checkoutTransaction } = useCheckoutTransaction();
   const { userPoint } = useTotalUserPoint();
@@ -66,12 +60,9 @@ function Transaction() {
   const [finalPrice, setFinalPrice] = useState<number>(0);
   const [ticketRows, setTicketRows] = useState<TicketRow[]>([]);
 
-
-
-
   useEffect(() => {
     if (totalPrice == 0) {
-      setUserPointUsed(false)
+      setUserPointUsed(false);
     }
     const handleApplyClick = async () => {
       const data = {
@@ -82,15 +73,18 @@ function Transaction() {
       try {
         const result = voucherSchema.parse(data);
         const resultData = await calculateTransaction(result);
-        if (resultData.finalPrice !== undefined || resultData.totalDiscount !== undefined) {
+        if (
+          resultData.finalPrice !== undefined ||
+          resultData.totalDiscount !== undefined
+        ) {
           setFinalPrice(resultData.finalPrice);
           setTotalDiscount(resultData.totalDiscount);
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
-          console.error('Validation error:', error.errors);
+          console.error("Validation error:", error.errors);
         } else {
-          console.error('API error:', error);
+          console.error("API error:", error);
         }
       }
     };
@@ -98,30 +92,34 @@ function Transaction() {
     handleApplyClick();
   }, [totalPrice, userPointUsed, selectedVoucher]);
 
-  const handleTicketCountChange = (ticketCount: number, price: number, previousCount: number) => {
+  const handleTicketCountChange = (
+    ticketCount: number,
+    price: number,
+    previousCount: number
+  ) => {
     const priceDifference = (ticketCount - previousCount) * price;
-    setTotalPrice(prevTotal => prevTotal + priceDifference);
-    setTotalQty(prevQty => prevQty + (ticketCount - previousCount));
+    setTotalPrice((prevTotal) => prevTotal + priceDifference);
+    setTotalQty((prevQty) => prevQty + (ticketCount - previousCount));
   };
 
   if (!event) {
-    return <p>Event not found</p>;
+    return <CircularLoader />;
   }
-
 
   const handlePointUsage = () => {
-    if (userPoint?.points && (userPoint.points <= totalPrice || userPoint.points != 0)) {
+    if (
+      userPoint?.points &&
+      (userPoint.points <= totalPrice || userPoint.points != 0)
+    ) {
       setUserPointUsed((prev) => !prev);
     }
-  }
-
+  };
 
   const handleCheckout = async () => {
     if (totalQty == 0) {
       toast({
         title: "Checkout Failed",
-        description:
-          "You have to buy at least 1 ticket",
+        description: "You have to buy at least 1 ticket",
         variant: "destructive",
       });
       return;
@@ -143,28 +141,28 @@ function Transaction() {
       if (response.success == true) {
         toast({
           title: "Checkout Success",
-          description:
-            "Your checkout was a success",
+          description: "Your checkout was a success",
           className: "bg-green-600 text-white",
         });
-        router.push('/order-success')
-        console.log('Checkout successful!');
+        router.push("/order-success");
+        console.log("Checkout successful!");
       }
     } catch (error) {
-      console.error('An error occurred during checkout:', error);
+      console.error("An error occurred during checkout:", error);
     }
   };
 
   const handleVoucherChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedVoucherId = e.target.value === "null" ? null : parseInt(e.target.value);
+    const selectedVoucherId =
+      e.target.value === "null" ? null : parseInt(e.target.value);
     setVoucherIdValue(selectedVoucherId);
     setSelectedVoucher(e.target.value);
   };
 
-
-
   const addTicketRow = (id: number, qty: number, price: number) => {
-    const existingTicketIndex = ticketRows.findIndex((row) => row.ticketId === id);
+    const existingTicketIndex = ticketRows.findIndex(
+      (row) => row.ticketId === id
+    );
     if (existingTicketIndex !== -1) {
       const updatedTicketRows = [...ticketRows];
       updatedTicketRows[existingTicketIndex] = {
@@ -183,10 +181,17 @@ function Transaction() {
     }
   };
 
-
   const removeTicketRow = (id: number) => {
     const updatedRows = ticketRows.filter((row) => row.ticketId !== id);
-    setTicketRows(updatedRows)
+    setTicketRows(updatedRows);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-center">
+        <CircularLoader />
+      </div>
+    );
   }
 
   return (
@@ -225,10 +230,21 @@ function Transaction() {
               <h2 className="text-2xl font-bold">{event.eventName}</h2>
               <div className="flex items-center text-luxtix-8 mt-2">
                 <span className="text-sm sm:text-md">
-                  {format(new Date(event.eventDate), "cccc")}, {format(new Date(event.eventDate), "d MMMM yyyy")}
+                  {format(new Date(event.eventDate), "cccc")},{" "}
+                  {format(new Date(event.eventDate), "d MMMM yyyy")}
                 </span>
               </div>
-              <p className="text-sm sm:text-md">{format(new Date(`${event.eventDate}T${event.startTime}`), "hh:mm a")} - {format(new Date(`${event.eventDate}T${event.endTime}`), "hh:mm a")}</p>
+              <p className="text-sm sm:text-md">
+                {format(
+                  new Date(`${event.eventDate}T${event.startTime}`),
+                  "hh:mm a"
+                )}{" "}
+                -{" "}
+                {format(
+                  new Date(`${event.eventDate}T${event.endTime}`),
+                  "hh:mm a"
+                )}
+              </p>
               <p className="mt-2 text-luxtix-8">{event.address}</p>
               <div className="mt-4">
                 <label className="block text-sm font-bold text-luxtix-8 pb-4">
@@ -236,7 +252,14 @@ function Transaction() {
                 </label>
                 <div className="space-y-4">
                   {event.tickets.map((ticket, index) => (
-                    <TicketTiers {...ticket} key={ticket.id} index={index} onTicketCountChange={handleTicketCountChange} addTicketRow={addTicketRow} removeTicketRow={removeTicketRow} />
+                    <TicketTiers
+                      {...ticket}
+                      key={ticket.id}
+                      index={index}
+                      onTicketCountChange={handleTicketCountChange}
+                      addTicketRow={addTicketRow}
+                      removeTicketRow={removeTicketRow}
+                    />
                   ))}
                 </div>
               </div>
@@ -250,11 +273,22 @@ function Transaction() {
               <div className="border-b border-luxtix-7 mb-4"></div>
               <div className="flex justify-between mb-2">
                 <span>Date</span>
-                {format(new Date(event.eventDate), "cccc")}, {format(new Date(event.eventDate), "d MMMM yyyy")}
+                {format(new Date(event.eventDate), "cccc")},{" "}
+                {format(new Date(event.eventDate), "d MMMM yyyy")}
               </div>
               <div className="flex justify-between mb-2">
                 <span>Time</span>
-                <span>{format(new Date(`${event.eventDate}T${event.startTime}`), "hh:mm a")} - {format(new Date(`${event.eventDate}T${event.endTime}`), "hh:mm a")}</span>
+                <span>
+                  {format(
+                    new Date(`${event.eventDate}T${event.startTime}`),
+                    "hh:mm a"
+                  )}{" "}
+                  -{" "}
+                  {format(
+                    new Date(`${event.eventDate}T${event.endTime}`),
+                    "hh:mm a"
+                  )}
+                </span>
               </div>
               <div className="flex justify-between mb-2">
                 <span>City</span>
@@ -277,9 +311,12 @@ function Transaction() {
                   >
                     <option value="null">Select Voucher</option>
                     {event.vouchers.map((voucher) => (
-                      <option key={voucher.voucherId} value={voucher.voucherId} className="flex justify-between items-center">
-                        {voucher.voucherName + "\t"}
-                        ({voucher.voucherRate}%)
+                      <option
+                        key={voucher.voucherId}
+                        value={voucher.voucherId}
+                        className="flex justify-between items-center"
+                      >
+                        {voucher.voucherName + "\t"}({voucher.voucherRate}%)
                       </option>
                     ))}
                   </select>
@@ -294,19 +331,29 @@ function Transaction() {
                   checked={userPointUsed}
                 />
                 <label htmlFor="usePoints">Use Points</label>
-                <span className="ml-auto">{userPoint?.points.toLocaleString('de-DE', { minimumFractionDigits: 0 })}</span>
+                <span className="ml-auto">
+                  {userPoint?.points.toLocaleString("de-DE", {
+                    minimumFractionDigits: 0,
+                  })}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Total ({totalQty} item)</span>
-                <span>{`IDR ${totalPrice.toLocaleString('de-DE', { minimumFractionDigits: 0 })}`}</span>
+                <span>{`IDR ${totalPrice.toLocaleString("de-DE", {
+                  minimumFractionDigits: 0,
+                })}`}</span>
               </div>
               <div className="flex justify-between">
                 <span>Total Discount</span>
-                <span>{`IDR ${totalDiscount.toLocaleString('de-DE', { minimumFractionDigits: 0 })}`}</span>
+                <span>{`IDR ${totalDiscount.toLocaleString("de-DE", {
+                  minimumFractionDigits: 0,
+                })}`}</span>
               </div>
               <div className="flex justify-between font-bold mb-4">
                 <span>Final Price</span>
-                <span>{`IDR ${finalPrice.toLocaleString('de-DE', { minimumFractionDigits: 0 })}`}</span>
+                <span>{`IDR ${finalPrice.toLocaleString("de-DE", {
+                  minimumFractionDigits: 0,
+                })}`}</span>
               </div>
               <button
                 className="btn-anim w-full py-2 px-4 bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 font-bold rounded-lg"
