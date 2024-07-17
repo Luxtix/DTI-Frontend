@@ -104,6 +104,7 @@ function CreateEvent() {
 
   const onSubmit = async (data: z.infer<typeof createEventSchema>) => {
     try {
+      console.log(data)
       const result = await createEvent(data);
       if (result) {
         toast({
