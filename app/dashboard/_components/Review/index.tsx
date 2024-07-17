@@ -1,8 +1,13 @@
+'use client'
 import { AiOutlineArrowRight, AiOutlineArrowLeft } from "react-icons/ai";
 import reviews from "@/utils/reviewItems";
 import ReviewCard from "./ReviewCard";
+import useEventReview from "@/hooks/useEventReview";
+import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
 
 function Review() {
+  const { eventId } = usePurchasedEvents();
+  const { eventReview } = useEventReview(eventId)
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 pb-8">
       <h2 className="text-lg font-semibold text-luxtix-5 mb-4">Reviews</h2>
@@ -14,8 +19,8 @@ function Review() {
         <div className="col-span-1">Rating</div>
       </div>
       <div>
-        {reviews.map((review, index) => (
-          <ReviewCard key={index} review={review} />
+        {eventReview?.data.map((review, index) => (
+          <ReviewCard key={index} {...review} index={index} />
         ))}
       </div>
 

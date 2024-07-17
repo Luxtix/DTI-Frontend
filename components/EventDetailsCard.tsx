@@ -71,8 +71,8 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
                 {event.tickets.length === 0
                   ? "Free"
                   : `From IDR ${Math.min(
-                      ...event.tickets.map((ticket) => ticket.price)
-                    )}`}
+                    ...event.tickets.map((ticket) => ticket.price)
+                  )}`}
               </span>
             </div>
           </div>
