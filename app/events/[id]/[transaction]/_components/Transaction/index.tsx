@@ -183,6 +183,7 @@ function Transaction() {
     }
   };
 
+
   const removeTicketRow = (id: number) => {
     const updatedRows = ticketRows.filter((row) => row.ticketId !== id);
     setTicketRows(updatedRows)

@@ -21,6 +21,11 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { signIn } from "next-auth/react";
 
+
+interface formValues {
+  email: string;
+  password: string
+}
 const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
@@ -41,10 +46,18 @@ function SignIn() {
     const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
-      redirect: true,
-      callbackUrl: "/",
     });
   };
+
+
+  const handleLogin = async (values: any) => {
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      // redirect: true,
+      // callbackUrl: "/",
+    });
+  }
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -128,15 +141,6 @@ function SignIn() {
                   </FormItem>
                 )}
               />
-
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-luxtix-8 font-bold"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
 
               <Button
                 type="submit"

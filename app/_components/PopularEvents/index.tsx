@@ -6,7 +6,7 @@ import EventCard from "@/components/EventCard";
 import Link from "next/link";
 
 function PopularEvents() {
-  const { events, loading, error } = useEvents();
+  const { events, loading, error } = useEvents("", 6);
 
   if (loading) {
     return (

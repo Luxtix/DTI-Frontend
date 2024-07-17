@@ -13,15 +13,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          const response = await fetch(`http://localhost:8080/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-            credentials: 'include',
-          })
+          const response = await fetch(
+            `https://dti-backend-lg2iizcpdq-uc.a.run.app/api/auth/login`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            }
+          )
 
           if (!response.ok) {
             throw new Error('Failed to log in')
@@ -30,13 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const data = await response.json()
 
           const useCookies = cookies()
-          useCookies.set('Sid', data.accessToken, {
-            httpOnly: true,
-            secure: false,
-            maxAge: 6000,
-            path: '/',
-          })
-
+          useCookies.set('Sid', data.accessToken)
           return {
             id: data.id,
             email: data.email,
@@ -52,26 +48,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async authorized({ auth }) {
-      return !!auth
-    },
     async session({ token, session }) {
       if (token.email) session.user.email = token.email
       if (token.role) session.user.role = token.role
-
+      if (token.accessToken) session.user.accessToken = token.accessToken
       return session
     },
     async jwt({ token, user }) {
-      if (user && user.email) {
-        token.sub = user.email
-        token.email = user.email
-      }
-      if (user && user.role) {
+      if (user) {
+        token.id = user.id
+        if (user && user.email) {
+          token.sub = user.email
+          token.email = user.email
+        }
         token.role = user.role
+        token.accessToken = user.accessToken
       }
       return token
     },
+    async redirect({ baseUrl }) {
+      return '/dashboard'
+    },
   },
+
   session: { strategy: 'jwt', maxAge: 60 * 60 * 1 },
   pages: {
     signIn: '/sign-in',

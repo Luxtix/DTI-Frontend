@@ -31,23 +31,6 @@ const filterOptions = {
   ],
 };
 
-const categorySlugs: { [key: string]: string } = {
-  Entertainment: "entertainment",
-  "Educational & Business": "educational-business",
-  "Arts & Culture": "arts-culture",
-  "Sports & Fitness": "sports-fitness",
-  "Technology & Innovation": "technology-innovation",
-  "Travel & Adventure": "travel-adventure",
-};
-
-const slugToCategory = Object.entries(categorySlugs).reduce(
-  (acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  },
-  {} as { [key: string]: string }
-);
-
 function EventsTab() {
   const [queryParams, setQueryParams] = useState("");
   const { events, loading, error } = useEvents(queryParams);
@@ -58,13 +41,23 @@ function EventsTab() {
 
   useEffect(() => {
     const category = searchParams.get("category");
-    const price = searchParams.get("price");
-    const type = searchParams.get("type");
+    const price =
+      searchParams.get("isPaid") === "true"
+        ? "Paid"
+        : searchParams.get("isPaid") === "false"
+        ? "Free"
+        : "";
+    const type =
+      searchParams.get("isOnline") === "true"
+        ? "Online"
+        : searchParams.get("isOnline") === "false"
+        ? "Offline"
+        : "";
 
     setActiveFilters({
-      price: price || "",
-      type: type || "",
-      category: category ? slugToCategory[category] || "" : "",
+      price: price,
+      type: type,
+      category: category || "",
     });
   }, [searchParams]);
 
@@ -79,8 +72,7 @@ function EventsTab() {
     if (filters.price === "Free") params.append("isPaid", "false");
     if (filters.type === "Online") params.append("isOnline", "true");
     if (filters.type === "Offline") params.append("isOnline", "false");
-    if (filters.category)
-      params.append("category", categorySlugs[filters.category]);
+    if (filters.category) params.append("category", filters.category);
 
     const newQueryParams = params.toString();
     setQueryParams(newQueryParams);
@@ -88,10 +80,9 @@ function EventsTab() {
   };
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    const updatedFilters = {
-      ...activeFilters,
-      [filterType]: activeFilters[filterType] === value ? "" : value,
-    };
+    const updatedFilters = { ...activeFilters };
+    updatedFilters[filterType] =
+      updatedFilters[filterType] === value ? "" : value;
     setActiveFilters(updatedFilters);
     updateURLParams(updatedFilters);
   };

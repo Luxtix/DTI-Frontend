@@ -6,6 +6,8 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 interface PurchasedEventsContextType {
   purchasedEvents: Map<number, EventType>;
   addPurchasedEvent: (event: EventType) => void;
+  eventId: number | null;
+  setEventId: (id: number) => void;
 }
 
 const PurchasedEventsContext = createContext<
@@ -20,6 +22,8 @@ export const PurchasedEventsProvider = ({
   const [purchasedEvents, setPurchasedEvents] = useState<
     Map<number, EventType>
   >(new Map());
+  const [eventId, setEventId] = useState<number | null>(null);
+
 
   const addPurchasedEvent = (event: EventType) => {
     setPurchasedEvents(new Map(purchasedEvents.set(event.id, event)));
@@ -27,7 +31,7 @@ export const PurchasedEventsProvider = ({
 
   return (
     <PurchasedEventsContext.Provider
-      value={{ purchasedEvents, addPurchasedEvent }}
+      value={{ purchasedEvents, addPurchasedEvent, eventId, setEventId }}
     >
       {children}
     </PurchasedEventsContext.Provider>
