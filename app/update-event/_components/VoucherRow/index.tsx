@@ -1,7 +1,5 @@
 
-
 import { useFormContext, useWatch } from "react-hook-form";
-
 import {
   FormControl,
   FormField,
@@ -13,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CgRemove } from "react-icons/cg";
 import { number, z } from "zod";
+
 
 const voucherRowSchema = z.object({
   name: z.string().min(1, "Voucher name is required"),
@@ -46,6 +45,7 @@ function VoucherRow({
       setValue(`vouchers.${index}.rate`, 10);
     }
   };
+
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-6 gap-x-4 mb-4">
@@ -152,7 +152,7 @@ function VoucherRow({
           </FormItem>
         )}
       />
-      <div className="flex flex-center justify-end">
+      <div className="flex items-end justify-end">
         <FormField
           control={control}
           name={`vouchers.${index}.referralOnly`}
