@@ -8,6 +8,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
 import { BiTimeFive, BiCalendarAlt } from "react-icons/bi";
 import { GiTicket } from "react-icons/gi";
+import { format } from "date-fns";
 
 interface EventDetailsCardProps {
   event: EventDetailType;
@@ -57,12 +58,23 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
             </h2>
             <div className="flex items-center text-luxtix-8">
               <BiCalendarAlt size={20} className="mr-1" />
-              <span>{event.eventDate}</span>
+              <span>
+                {format(new Date(event.eventDate), "cccc")},{" "}
+                {format(new Date(event.eventDate), "d MMMM yyyy")}
+              </span>
             </div>
             <div className="flex items-center text-luxtix-8">
               <BiTimeFive size={20} className="mr-1" />
               <span>
-                {event.startTime} - {event.endTime}
+                {format(
+                  new Date(`${event.eventDate}T${event.startTime}`),
+                  "hh:mm a"
+                )}{" "}
+                -{" "}
+                {format(
+                  new Date(`${event.eventDate}T${event.endTime}`),
+                  "hh:mm a"
+                )}
               </span>
             </div>
             <div className="flex items-center text-luxtix-3">

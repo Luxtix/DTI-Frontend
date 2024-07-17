@@ -4,13 +4,14 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
 interface ApiResponse {
-  statusCode: number;
-  message: string;
-  success: boolean;
-  data: EventType[];
-  totalPages: number;
-  currentPage: number;
+  statusCode: number
+  message: string
+  success: boolean
+  data: EventType[]
+  totalPages: number
+  currentPage: number
 }
+
 
 export function useEvents(queryParams: string = "", size?: number) {
   const [events, setEvents] = useState<EventType[]>([]);
@@ -39,19 +40,18 @@ export function useEvents(queryParams: string = "", size?: number) {
           }
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch events");
+          throw new Error('Failed to fetch events')
         }
-        const data: ApiResponse = await response.json();
-        setEvents(data.data);
+        const data: ApiResponse = await response.json()
+        setEvents(data.data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-
+    }
     fetchEvents();
   }, [queryParams, size, session]);
 
-  return { events, loading, error };
+  return { events, loading, error }
 }

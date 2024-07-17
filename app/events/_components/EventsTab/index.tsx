@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEvents } from "@/hooks/useEvents";
+import CircularLoader from "@/components/ui/circular-loader";
 
 interface Filters {
   price: string;
@@ -92,12 +93,6 @@ function EventsTab() {
     setQueryParams("");
     router.push("");
   };
-
-  const CircularLoader = () => (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-luxtix-2"></div>
-    </div>
-  );
 
   if (loading) {
     return (

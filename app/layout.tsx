@@ -4,7 +4,9 @@ import "./globals.css";
 import { PurchasedEventsProvider } from "@/contexts/PurchasedEventsContext";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
+import TicketProvider from "@/contexts/TicketListContext";
 import { auth } from "@/auth";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,12 +23,15 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
+
       <PurchasedEventsProvider>
         <SessionProvider session={session} refetchInterval={120}>
+         <TicketProvider>
           <body className={inter.className}>
             {children}
             <Toaster />
           </body>
+         </TicketProvider>
         </SessionProvider>
       </PurchasedEventsProvider>
     </html>
