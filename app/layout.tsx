@@ -5,6 +5,8 @@ import { PurchasedEventsProvider } from "@/contexts/PurchasedEventsContext";
 import { Toaster } from "@/components/ui/toaster";
 import { SessionProvider } from "next-auth/react";
 import TicketProvider from "@/contexts/TicketListContext";
+import { auth } from "@/auth";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,25 +15,25 @@ export const metadata: Metadata = {
   description: "Your luxurious ticket gateway",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en">
 
-      <SessionProvider>
-        <PurchasedEventsProvider>
-          <TicketProvider>
-            <body className={inter.className}>
-              {children}
-              <Toaster />
-            </body>
-          </TicketProvider>
-        </PurchasedEventsProvider>
-      </SessionProvider>
-
+      <PurchasedEventsProvider>
+        <SessionProvider session={session} refetchInterval={120}>
+         <TicketProvider>
+          <body className={inter.className}>
+            {children}
+            <Toaster />
+          </body>
+         </TicketProvider>
+        </SessionProvider>
+      </PurchasedEventsProvider>
     </html>
   );
 }

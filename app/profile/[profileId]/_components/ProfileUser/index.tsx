@@ -1,136 +1,164 @@
 "use client";
 
-import logo from "@/public/logo.svg";
-import profileItems from "@/utils/profileItems";
-import ProfileSideMenu from "../ProfileSideMenu";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import { AiFillCamera } from "react-icons/ai";
-import { useState } from "react";
+import ProfileSideMenu from "../ProfileSideMenu";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-const profileReff = profileItems[1];
+const DEFAULT_AVATAR =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
+
+const formSchema = z.object({
+  displayName: z.string().min(2, "Display name must be at least 2 characters"),
+  phoneNumber: z
+    .string()
+    .min(10, "Phone number must be at least 10 characters"),
+});
 
 function Profile() {
-  const [isUserProfile, setIsUserProfile] = useState(true);
+  const { userProfile } = useUserProfile();
+  const { data: session } = useSession();
+  const { toast } = useToast();
+  const [avatarPreview, setAvatarPreview] = useState(
+    session?.user?.image || DEFAULT_AVATAR
+  );
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
-  const toggleProfile = () => {
-    setIsUserProfile(!isUserProfile);
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      displayName: session?.user?.name || "",
+      phoneNumber: "",
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const formData = new FormData();
+      formData.append("displayName", values.displayName);
+      formData.append("phoneNumber", values.phoneNumber);
+      if (avatarFile) {
+        formData.append("avatar", avatarFile);
+      }
+
+      const response = await fetch("http://localhost:8080/api/users/profile", {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Failed to update profile");
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-white">
       <ProfileSideMenu />
       <main className="w-3/4 p-2 sm:p-10">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">
-            {isUserProfile ? "Account Information" : "Organization Information"}
-          </h1>
-          <button
-            onClick={toggleProfile}
-            className="btn-anim bg-luxtix-6 text-luxtix-1 py-2 px-4 rounded hover:bg-luxtix-2 transition duration-300"
-          >
-            {isUserProfile
-              ? "Switch to Organizer Profile Test"
-              : "Switch to User Profile Test"}
-          </button>
-        </div>
-        <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Profile Photo</h2>
-          <div className="relative w-24 h-24 mx-auto mb-4">
-            <Image
-              src={logo}
-              alt="Profile Photo"
-              className="rounded-full w-full h-full object-cover"
+        <h1 className="text-2xl font-bold mb-8">Account Information</h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="relative w-24 h-24 mx-auto mb-4">
+              <Image
+                src={avatarPreview}
+                alt="Avatar"
+                width={96}
+                height={96}
+                className="rounded-full object-cover"
+              />
+              <label
+                htmlFor="avatar-upload"
+                className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer"
+              >
+                <AiFillCamera />
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <button className="absolute bottom-0 right-0 bg-white rounded-full p-2">
-              <AiFillCamera />
-            </button>
-          </div>
-        </section>
-        {isUserProfile ? (
-          <>
-            <section>
-              <h2 className="text-xl font-semibold mb-4">
-                Profile Information
-              </h2>
-              <form className="space-y-4">
-                <div className="flex flex-col">
-                  {/* <FormField
-                    label="Full Name"
-                    type="text"
-                    placeholder="Input your Full Name"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <FormField
-                    label="Phone Number"
-                    type="text"
-                    placeholder="Input your Phone Number"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <FormField
-                    label="E-Mail Address"
-                    type="text"
-                    placeholder="Input your e-mail"
-                  /> */}
-                </div>
-                <div className="flex flex-col">
-                  <label className="block text-luxtix-8 mb-2">
-                    Referral Code:
-                  </label>
-                  {profileReff.referralId}
-                </div>
-                <div className="pt-12">
-                  <button
-                    type="submit"
-                    className="btn-anim bg-luxtix-6 text-luxtix-1 py-2 px-4 rounded hover:bg-luxtix-2 transition duration-300"
-                  >
-                    Save My Profile
-                  </button>
-                </div>
-              </form>
-            </section>
-          </>
-        ) : (
-          <>
-            <section>
-              <h2 className="text-xl font-semibold mb-4">
-                Organization Information
-              </h2>
-              <form className="space-y-4">
-                <div className="flex flex-col">
-                  {/* <FormField
-                    label="Company Name"
-                    type="text"
-                    placeholder="Input your company name"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <FormField
-                    label="Company Phone Number"
-                    type="text"
-                    placeholder="Input your company phone number"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <FormField
-                    label="Company E-Mail Address"
-                    type="text"
-                    placeholder="Input your company e-mail"
-                  /> */}
-                </div>
-                <div className="pt-12">
-                  <button
-                    type="submit"
-                    className="btn-anim bg-luxtix-6 text-luxtix-1 py-2 px-4 rounded hover:bg-luxtix-2 transition duration-300"
-                  >
-                    Save My Profile
-                  </button>
-                </div>
-              </form>
-            </section>
-          </>
-        )}
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="bg-luxtix-6 text-luxtix-1 py-2 px-4 rounded hover:bg-luxtix-2"
+            >
+              Save My Profile
+            </Button>
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold mb-2">Referral Code</h2>
+              <div className="w-1/4 bg-luxtix-7 p-4 rounded-md">
+                {userProfile?.referralCode}
+              </div>
+            </div>
+          </form>
+        </Form>
       </main>
     </div>
   );

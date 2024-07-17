@@ -1,15 +1,36 @@
 "use client";
 
-import TicketRow from "./TicketRow";
-import VoucherRow from "./VoucherRow";
-// import { FormField } from "@/components/ui";
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import { BsDoorOpen } from "react-icons/bs";
-import { BsCurrencyDollar } from "react-icons/bs";
+import { BsDoorOpen, BsCurrencyDollar } from "react-icons/bs";
+import TicketRow from "./TicketRow";
+import VoucherRow from "./VoucherRow";
+import { useCreateEvent } from "@/hooks/useCreateEvent";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { useCities } from "@/hooks/useCities";
 
 const eventCategories = [
   "Entertainment",
@@ -20,14 +41,85 @@ const eventCategories = [
   "Travel & Adventure",
 ];
 
-function CreateEvent() {
-  const [showReferralVoucher, setShowReferralVoucher] = useState(false);
-  const [isTicketedEvent, setIsTicketedEvent] = useState(true);
+const createEventSchema = z.object({
+  name: z.string().min(1, "Event name is required"),
+  category: z.number().min(1, "Event category is required"),
+  isOnline: z.boolean(),
+  eventDate: z.string().min(1, "Event date is required"),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+  venue: z.string().min(1, "Venue name is required"),
+  address: z.string().min(1, "Venue address is required"),
+  city: z.number().min(1, "City is required"),
+  description: z.string(),
+  isPaid: z.boolean(),
+  tickets: z.array(
+    z.object({
+      name: z.string(),
+      price: z.number(),
+      qty: z.number(),
+    })
+  ),
+  vouchers: z.array(
+    z.object({
+      name: z.string(),
+      qty: z.number(),
+      rate: z.number(),
+      startDate: z.string(),
+      endDate: z.string(),
+      referralOnly: z.boolean(),
+    })
+  ),
+  acceptReferralVoucher: z.boolean(),
+  referralVoucherName: z.string().optional(),
+  referralVoucherQuantity: z.number().optional(),
+});
 
-  const toggleEventType = (type: boolean) => {
-    setIsTicketedEvent(type === true);
-    if (type !== true) {
-      setShowReferralVoucher(false);
+function CreateEvent() {
+  const router = useRouter();
+  const { createEvent, isLoading, error } = useCreateEvent();
+  const { toast } = useToast();
+  const { cities, loading } = useCities();
+
+  const form = useForm<z.infer<typeof createEventSchema>>({
+    resolver: zodResolver(createEventSchema),
+    defaultValues: {
+      name: "",
+      category: 1,
+      isOnline: false,
+      eventDate: "",
+      startTime: "",
+      endTime: "",
+      venue: "",
+      address: "",
+      city: 1,
+      description: "",
+      isPaid: false,
+      tickets: [],
+      vouchers: [],
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof createEventSchema>) => {
+    try {
+      const result = await createEvent(data);
+      if (result) {
+        toast({
+          title: "Event Created",
+          description: "Your event has been successfully created.",
+          duration: 3000,
+        });
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Failed to create event:", err);
+      toast({
+        title: "Error",
+        description: "Failed to create event. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -59,228 +151,330 @@ function CreateEvent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-4">
-      <div className="block sm:py-6">
-        <Link href="/" className="text-luxtix-1">
-          <AiOutlineArrowLeft size={25} />
-        </Link>
-      </div>
+    <Form {...form}>
+      <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="block sm:py-6">
+          <Link href="/" className="text-luxtix-1">
+            <AiOutlineArrowLeft size={25} />
+          </Link>
+        </div>
 
-      <section className="mb-6">
-        <h2 className="text-3xl font-semibold mb-4">Event Details</h2>
-        {/* <FormField
-          label="Event Title"
-          type="text"
-          placeholder="Enter the name of your event"
-        /> */}
-        <div className="mb-4">
-          <label className="text-md mb-2 text-luxtix-8">Event Category</label>
-          <select className="w-full p-2 border border-input rounded">
-            <option value="">Please select one</option>
-            {eventCategories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Date & Time</h2>
-        <div className="mb-4">
-          <label className="text-md mb-2 text-luxtix-8">Event Type</label>
-        </div>
-        <div className="flex items-center space-x-4 mb-4">
-          <label>
-            <input
-              type="radio"
-              name="eventType"
-              value="offline"
-              className="mr-2"
-            />
-            Offline
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="eventType"
-              value="online"
-              className="mr-2"
-            />
-            Online
-          </label>
-        </div>
-        <div className="flex flex-col">
-          <label className="text-md text-luxtix-8 mb-2">Session</label>
-          <div className="grid grid-cols-2 gap-x-4 sm:grid-cols-3">
-            <div className="mb-4">
-              <label className="text-sm mb-2 text-luxtix-7">Event Date</label>
-              <Input
-                type="date"
-                placeholder="DD/MM/YYYY"
-                className="w-full p-2 border border-input rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="text-sm mb-2 text-luxtix-7">Start Time</label>
-              <Input
-                type="time"
-                placeholder="HH/MM"
-                className="w-full p-2 border border-input rounded"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="text-sm mb-2 text-luxtix-7">End Time</label>
-              <Input
-                type="time"
-                placeholder="HH/MM"
-                className="w-full p-2 border border-input rounded"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Location</h2>
-        {/* <FormField
-          label="Where will your event take place?"
-          type="text"
-          placeholder="Venue Name"
-        /> */}
-        {/* <FormField
-          label="Where is the venue located?"
-          type="text"
-          placeholder="Venue Address"
-        /> */}
-        <div className="mb-4">
-          <label className="text-md mb-2 text-luxtix-8">City</label>
-          <select
-            name="city"
-            className="w-full p-2 border border-input rounded"
-          >
-            <option value="">Please select one</option>
-          </select>
-        </div>
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
-        <Textarea placeholder="Describe what's special about your event & other important details." />
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Upload Image</h2>
-        <div className="mb-4">
-          <input
-            type="file"
-            className="w-full p-2 border border-input rounded"
+        <section className="mb-6">
+          <h2 className="text-3xl font-semibold mb-4">Event Details</h2>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter the name of your event"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <p className="text-sm mb-2 text-luxtix-7">
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Category</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {eventCategories.map((category, index) => (
+                      <SelectItem key={category} value={(index + 1).toString()}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Date & Time</h2>
+          <FormField
+            control={form.control}
+            name="isOnline"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Type</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    value={field.value.toString()}
+                    className="flex space-x-4"
+                  >
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <RadioGroupItem value="false" />
+                      </FormControl>
+                      <FormLabel className="font-normal">Offline</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <RadioGroupItem value="true" />
+                      </FormControl>
+                      <FormLabel className="font-normal">Online</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+            <FormField
+              control={form.control}
+              name="eventDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="startTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Start Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="endTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>End Time</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Location</h2>
+          <FormField
+            control={form.control}
+            name="venue"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Venue Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Where will your event take place?"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Venue Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Where is the venue located?" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a city" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {loading ? (
+                      <SelectItem value="loading">Loading cities...</SelectItem>
+                    ) : (
+                      cities
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Describe what's special about your event & other important details."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </section>
+
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Upload Image</h2>
+          <Input type="file" />
+          <p className="text-sm text-luxtix-7 mt-2">
             Feature Image must be at least 1170 pixels wide by 504 pixels high.
             Valid file formats: JPG, GIF, PNG.
           </p>
-        </div>
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          What type of event are you running?
-        </h2>
-        <div className="grid grid-cols-2 space-x-4">
-          <button
-            type="button"
-            className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-              isTicketedEvent === true ? "border-luxtix-5" : "border-luxtix-7"
-            }`}
-            onClick={() => toggleEventType(true)}
-          >
-            <BsCurrencyDollar size={30} className="mb-2" />
-            <span className="text-luxtix-1">Paid Event</span>
-          </button>
-          <button
-            type="button"
-            className={`flex-1 p-4 border-2 rounded-lg cursor-pointer flex flex-col items-center ${
-              isTicketedEvent === false ? "border-luxtix-5" : "border-luxtix-7"
-            }`}
-            onClick={() => toggleEventType(false)}
-          >
-            <BsDoorOpen size={30} className="mb-2" />
-            <span className="text-luxtix-1">Free Event</span>
-          </button>
-        </div>
-      </section>
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          What tickets are you selling?
-        </h2>
-        <div className="py-2">
-          {ticketRows.map((_, index) => (
-            <TicketRow key={index} index={index} removeRow={removeTicketRow} />
-          ))}
+        </section>
 
-          <button
-            onClick={addTicketRow}
-            className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
-          >
-            Add Ticket
-          </button>
-        </div>
-      </section>
-
-      {isTicketedEvent && (
-        <>
-          <section className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Do you want to create promotional voucher?
-            </h2>
-            <div className="py-2">
-              {voucherRows.map((_, index) => (
-                <VoucherRow
-                  key={index}
-                  index={index}
-                  removeRow={removeVoucherRow}
-                />
-              ))}
-              <button
-                onClick={addVoucherRow}
-                className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
-              >
-                Add Voucher
-              </button>
-            </div>
-          </section>
-
-          <section className="mb-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Do you accept referral voucher?
-            </h2>
-            <div className="flex items-center space-x-4 mb-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="acceptReferralVoucher"
-                  className="mr-2"
-                  onClick={() => setShowReferralVoucher(!showReferralVoucher)}
-                />
-                Yes
-              </label>
-            </div>
-            {showReferralVoucher && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {/* <FormField label="Name" type="text" placeholder="Name" />
-                <FormField label="QTY" type="number" placeholder="QTY 0" /> */}
-              </div>
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">
+            What type of event are you running?
+          </h2>
+          <FormField
+            control={form.control}
+            name="isPaid"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => field.onChange(value === "true")}
+                    value={field.value.toString()}
+                    className="flex space-x-4"
+                  >
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <RadioGroupItem value="true" />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        <BsCurrencyDollar className="inline-block mr-2" />
+                        Paid Event
+                      </FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2">
+                      <FormControl>
+                        <RadioGroupItem value="false" />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        <BsDoorOpen className="inline-block mr-2" />
+                        Free Event
+                      </FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </section>
-        </>
-      )}
+          />
+        </section>
 
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
-        >
-          Save & Continue
-        </button>
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">
+            What tickets are you selling?
+          </h2>
+          <div className="py-2">
+            {ticketRows.map((_, index) => (
+              <TicketRow
+                key={index}
+                index={index}
+                removeRow={removeTicketRow}
+              />
+            ))}
+            <button
+              onClick={addTicketRow}
+              className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
+            >
+              Add Ticket
+            </button>
+          </div>
+        </section>
+
+        {form.watch("isPaid") && (
+          <>
+            <section className="mb-6">
+              <h2 className="text-xl font-semibold mb-4">
+                Do you want to create promotional voucher?
+              </h2>
+              <div className="py-2">
+                {voucherRows.map((_, index) => (
+                  <VoucherRow
+                    key={index}
+                    index={index}
+                    removeRow={removeVoucherRow}
+                  />
+                ))}
+                <button
+                  onClick={addVoucherRow}
+                  className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
+                >
+                  Add Voucher
+                </button>
+              </div>
+            </section>
+          </>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isLoading}
+          >
+            {isLoading ? "Creating..." : "Save & Continue"}
+          </button>
+        </div>
       </div>
-    </div>
+    </Form>
   );
 }
 

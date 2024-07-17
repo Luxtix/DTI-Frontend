@@ -1,10 +1,10 @@
 "use client";
 
-import eventCardItems from "@/utils/eventCardItems";
-import EventCard from "../../../../components/EventCard";
+import EventCard from "@/components/EventCard";
 import { useEffect, useState } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useEvents } from "@/hooks/useEvents";
 
 interface Filters {
   price: string;
@@ -31,24 +31,9 @@ const filterOptions = {
   ],
 };
 
-const categorySlugs: { [key: string]: string } = {
-  Entertainment: "entertainment",
-  "Educational & Business": "educational-business",
-  "Arts & Culture": "arts-culture",
-  "Sports & Fitness": "sports-fitness",
-  "Technology & Innovation": "technology-innovation",
-  "Travel & Adventure": "travel-adventure",
-};
-
-const slugToCategory = Object.entries(categorySlugs).reduce(
-  (acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  },
-  {} as { [key: string]: string }
-);
-
 function EventsTab() {
+  const [queryParams, setQueryParams] = useState("");
+  const { events, loading, error } = useEvents(queryParams);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
   const searchParams = useSearchParams();
@@ -56,13 +41,23 @@ function EventsTab() {
 
   useEffect(() => {
     const category = searchParams.get("category");
-    const price = searchParams.get("price");
-    const type = searchParams.get("type");
+    const price =
+      searchParams.get("isPaid") === "true"
+        ? "Paid"
+        : searchParams.get("isPaid") === "false"
+        ? "Free"
+        : "";
+    const type =
+      searchParams.get("isOnline") === "true"
+        ? "Online"
+        : searchParams.get("isOnline") === "false"
+        ? "Offline"
+        : "";
 
     setActiveFilters({
-      price: price || "",
-      type: type || "",
-      category: category ? slugToCategory[category] || "" : "",
+      price: price,
+      type: type,
+      category: category || "",
     });
   }, [searchParams]);
 
@@ -73,46 +68,48 @@ function EventsTab() {
   const updateURLParams = (filters: Filters) => {
     const params = new URLSearchParams();
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) {
-        if (key === "category") {
-          params.append(key, categorySlugs[value]);
-        } else {
-          params.append(key, value);
-        }
-      }
-    });
+    if (filters.price === "Paid") params.append("isPaid", "true");
+    if (filters.price === "Free") params.append("isPaid", "false");
+    if (filters.type === "Online") params.append("isOnline", "true");
+    if (filters.type === "Offline") params.append("isOnline", "false");
+    if (filters.category) params.append("category", filters.category);
 
-    router.push(`?${params.toString()}`, { scroll: false });
+    const newQueryParams = params.toString();
+    setQueryParams(newQueryParams);
+    router.push(`?${newQueryParams}`, { scroll: false });
   };
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
-    const updatedFilters = {
-      ...activeFilters,
-      [filterType]: activeFilters[filterType] === value ? "" : value,
-    };
+    const updatedFilters = { ...activeFilters };
+    updatedFilters[filterType] =
+      updatedFilters[filterType] === value ? "" : value;
     setActiveFilters(updatedFilters);
     updateURLParams(updatedFilters);
   };
 
   const resetFilters = () => {
     setActiveFilters(initialFilters);
+    setQueryParams("");
     router.push("");
   };
 
-  const filteredEvents = eventCardItems.filter((event) => {
-    const matchesPrice =
-      activeFilters.price === "" ||
-      (activeFilters.price === "Free" && event.price === 0) ||
-      (activeFilters.price === "Paid" && event.price !== 0);
-    const matchesType =
-      activeFilters.type === "" || event.type === activeFilters.type;
-    const matchesCategory =
-      activeFilters.category === "" ||
-      event.category.toLowerCase() === activeFilters.category.toLowerCase();
+  const CircularLoader = () => (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-luxtix-2"></div>
+    </div>
+  );
 
-    return matchesPrice && matchesCategory && matchesType;
-  });
+  if (loading) {
+    return (
+      <div className="flex flex-center">
+        <CircularLoader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error loading events</div>;
+  }
 
   return (
     <div className="flex flex-col md:flex-row max-w-7xl mx-auto px-4 py-4 sm:py-8">
@@ -175,7 +172,7 @@ function EventsTab() {
           <h2 className="text-xl font-semibold">Events</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {filteredEvents.map((event) => (
+          {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>

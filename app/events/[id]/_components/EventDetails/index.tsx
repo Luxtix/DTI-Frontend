@@ -1,14 +1,27 @@
 "use client";
-import eventCardItems from "@/utils/eventCardItems";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import EventDetailsCard from "@/components/EventDetailsCard";
+import { useEventById } from "@/hooks/useEventById";
 
 function EventDetails() {
   const { id } = useParams();
+  const { event, loading, error } = useEventById(Number(id));
 
-  const event = eventCardItems.find((event) => event.id === Number(id));
+  const CircularLoader = () => (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-luxtix-2"></div>
+    </div>
+  );
+
+  if (loading) {
+    return <CircularLoader />;
+  }
+
+  if (error) {
+    return <p>Error loading event</p>;
+  }
 
   if (!event) {
     return <p>Event not found</p>;
@@ -21,7 +34,7 @@ function EventDetails() {
           <AiOutlineArrowLeft size={25} />
         </Link>
       </div>
-      <EventDetailsCard key={event.id} event={event} />
+      <EventDetailsCard event={event} />
     </div>
   );
 }

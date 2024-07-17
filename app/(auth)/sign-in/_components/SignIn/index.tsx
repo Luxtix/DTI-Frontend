@@ -17,11 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { redirect, useRouter } from "next/navigation";
-import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { jwtDecode } from "jwt-decode";
 import { signIn } from "next-auth/react";
 
 
@@ -35,7 +32,6 @@ const signInSchema = z.object({
 });
 
 function SignIn() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm({
@@ -46,72 +42,11 @@ function SignIn() {
     },
   });
 
-  interface DecodedToken {
-    sub: string;
-    isReferral: boolean;
-    scope: string;
-    iss: string;
-    id: number;
-    exp: number;
-    iat: number;
-  }
-
-  const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      const result = await response.json();
-
-      if (result.body && result.body.data && result.body.data.token) {
-        const token = result.body.data.token;
-        localStorage.setItem("authToken", token);
-
-        const decodedToken = jwtDecode<DecodedToken>(token);
-
-        if (decodedToken.scope === "ORGANIZER") {
-          localStorage.setItem("userType", "ORGANIZER");
-        } else {
-          localStorage.setItem("userType", "USER");
-        }
-
-        toast({
-          title: "Login Successful",
-          description: "You have been successfully logged in.",
-        });
-
-        if (decodedToken.scope === "ORGANIZER") {
-          router.push("/dashboard");
-        } else {
-          router.push("/");
-        }
-      } else {
-        throw new Error("Token not found in the response");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast({
-        title: "Login Failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred",
-        variant: "destructive",
-      });
-    }
+  const handleLogin = async (values: any) => {
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+    });
   };
 
 
@@ -156,7 +91,10 @@ function SignIn() {
           </h2>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(handleLogin)}
+              className="space-y-6"
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -203,15 +141,6 @@ function SignIn() {
                   </FormItem>
                 )}
               />
-
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-luxtix-8 font-bold"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
 
               <Button
                 type="submit"

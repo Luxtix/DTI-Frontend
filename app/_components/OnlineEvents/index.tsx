@@ -5,8 +5,8 @@ import { useEvents } from "@/hooks/useEvents";
 
 import Link from "next/link";
 
-function PopularEvents() {
-  const { events, loading, error } = useEvents("?isOnline=true");
+function OnlineEvents() {
+  const { events, loading, error } = useEvents("isOnline=true&", 6);
 
   if (loading) {
     return (
@@ -52,4 +52,4 @@ function PopularEvents() {
   );
 }
 
-export default PopularEvents;
+export default OnlineEvents;

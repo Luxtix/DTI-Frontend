@@ -1,7 +1,7 @@
-// hooks/useEvents.ts
-import { useState, useEffect } from 'react'
-import { EventType } from '@/types/event'
-import { useSession } from 'next-auth/react'
+import { useState, useEffect } from "react";
+import { EventType } from "@/types/event";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 interface ApiResponse {
   statusCode: number
@@ -12,22 +12,33 @@ interface ApiResponse {
   currentPage: number
 }
 
-export function useEvents(queryParams: string = '') {
-  const [events, setEvents] = useState<EventType[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const { data: session } = useSession()
+
+export function useEvents(queryParams: string = "", size?: number) {
+  const [events, setEvents] = useState<EventType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const search = useSearchParams();
+  const city = search.get("city") || "";
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const endpoint = session
-          ? `/api/events${queryParams}`
-          : `/api/events/public${queryParams}`
+          ? `/api/events${queryParams ? `?${queryParams}` : ""}?size=6`
+          : `/api/events/public${queryParams ? `?${queryParams}` : ""}?size=6`;
 
-        const response = await fetch(`http://localhost:8080${endpoint}`, {
-          credentials: 'include',
-        })
+        const headers: HeadersInit = {};
+        if (session) {
+          headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+        }
+        const response = await fetch(
+          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}`,
+          {
+            credentials: "include",
+            headers,
+          }
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch events')
         }
@@ -39,9 +50,8 @@ export function useEvents(queryParams: string = '') {
         setLoading(false)
       }
     }
-
-    fetchEvents()
-  }, [queryParams, session])
+    fetchEvents();
+  }, [queryParams, size, session]);
 
   return { events, loading, error }
 }
