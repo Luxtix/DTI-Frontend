@@ -1,16 +1,17 @@
-import { useState } from 'react'
+import UpdateEvent from '@/app/update-event/_components'
+import React, { useState } from 'react'
 
-export const useCreateEvent = () => {
+const useUpdateEvent = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const createEvent = async (formData: any) => {
+  const updateEvent = async (formData: any) => {
     setIsLoading(true)
     setError(null)
     try {
       const response = await fetch('http://localhost:8080/api/events', {
         credentials: 'include',
-        method: 'POST',
+        method: 'PUT',
         body: formData,
       })
       if (!response.ok) {
@@ -25,5 +26,7 @@ export const useCreateEvent = () => {
     }
   }
 
-  return { createEvent, isLoading, error }
+  return { updateEvent, isLoading, error }
 }
+
+export default useUpdateEvent

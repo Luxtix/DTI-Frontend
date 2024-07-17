@@ -23,17 +23,16 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-
-      <PurchasedEventsProvider>
-        <SessionProvider session={session} refetchInterval={120}>
-         <TicketProvider>
-          <body className={inter.className}>
-            {children}
-            <Toaster />
-          </body>
-         </TicketProvider>
-        </SessionProvider>
-      </PurchasedEventsProvider>
+      <SessionProvider session={session} refetchInterval={120}>
+        <PurchasedEventsProvider>
+          <TicketProvider>
+            <body className={inter.className}>
+              {children}
+              <Toaster />
+            </body>
+          </TicketProvider>
+        </PurchasedEventsProvider>
+      </SessionProvider>
     </html>
   );
 }

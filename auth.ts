@@ -26,7 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           )
 
           if (!response.ok) {
-            throw new Error('Failed to log in')
+            throw new Error('Invalid email or password')
           }
 
           const data = await response.json()
@@ -65,9 +65,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.accessToken
       }
       return token
-    },
-    async redirect({ baseUrl }) {
-      return '/dashboard'
     },
   },
 

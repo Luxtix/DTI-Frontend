@@ -1,5 +1,6 @@
 "use client";
 
+import { useEvents } from "@/hooks/useEvents";
 import { EventType } from "@/types/event";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
@@ -8,6 +9,8 @@ interface PurchasedEventsContextType {
   addPurchasedEvent: (event: EventType) => void;
   eventId: number | null;
   setEventId: (id: number) => void;
+  eventLimit: number;
+  setEventLimit: (query: number) => void;
 }
 
 const PurchasedEventsContext = createContext<
@@ -23,7 +26,7 @@ export const PurchasedEventsProvider = ({
     Map<number, EventType>
   >(new Map());
   const [eventId, setEventId] = useState<number | null>(null);
-
+  const { eventLimit, setEventLimit } = useEvents();
 
   const addPurchasedEvent = (event: EventType) => {
     setPurchasedEvents(new Map(purchasedEvents.set(event.id, event)));
@@ -31,7 +34,7 @@ export const PurchasedEventsProvider = ({
 
   return (
     <PurchasedEventsContext.Provider
-      value={{ purchasedEvents, addPurchasedEvent, eventId, setEventId }}
+      value={{ purchasedEvents, addPurchasedEvent, eventId, setEventId, eventLimit, setEventLimit }}
     >
       {children}
     </PurchasedEventsContext.Provider>
