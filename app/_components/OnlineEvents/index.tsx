@@ -6,7 +6,7 @@ import { useEvents } from "@/hooks/useEvents";
 import Link from "next/link";
 
 function OnlineEvents() {
-  const { events, loading, error } = useEvents("isOnline=true", 6);
+  const { events, loading, error } = useEvents("isOnline=true&", 6);
 
   if (loading) {
     return (
