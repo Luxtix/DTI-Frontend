@@ -32,6 +32,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function Dashboard() {
+  const [dateType, setDateType] = useState("day");
   const { organizerEvent } = useOrganizerEvent();
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const { fetchEventSummary } = useEventSummary();
@@ -45,8 +46,24 @@ function Dashboard() {
     const id = parseInt(event.target.value);
     setSelectedEvent(event.target.value);
     try {
-      const result = await fetchEventSummary(id);
+      const result = await fetchEventSummary(id, dateType);
       setEventId(id);
+      setSummaryData(result.data);
+    } catch (error) {
+      console.error("Error fetching event summary:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDateTypeChange = async (newDateType: string) => {
+    setIsLoading(true);
+    setDateType(newDateType);
+    try {
+      const result = await fetchEventSummary(
+        parseInt(selectedEvent!),
+        newDateType
+      );
       setSummaryData(result.data);
     } catch (error) {
       console.error("Error fetching event summary:", error);
@@ -60,7 +77,7 @@ function Dashboard() {
       if (organizerEvent.length > 0) {
         setIsLoading(true);
         try {
-          const result = await fetchEventSummary(organizerEvent[0].id);
+          const result = await fetchEventSummary(organizerEvent[0].id, "day");
           setEventId(organizerEvent[0].id);
           setSummaryData(result.data);
           setSelectedEvent(organizerEvent[0].id.toString());
@@ -76,7 +93,7 @@ function Dashboard() {
   }, [organizerEvent]);
 
   const getXAxisDataKey = () => {
-    switch (dataPeriod) {
+    switch (dateType) {
       case "day":
         return "hour";
       case "month":
@@ -89,15 +106,18 @@ function Dashboard() {
   };
 
   const formatXAxisTick = (value: string) => {
-    switch (dataPeriod) {
+    switch (dateType) {
       case "day":
         return `${value}:00`;
       case "month":
-        return `Day ${value}`;
+        return `${value}`;
       case "year":
-        return new Date(value).toLocaleString("default", { month: "short" });
+        return new Date(2024, parseInt(value) - 1, 1).toLocaleString(
+          "default",
+          { month: "short" }
+        );
       default:
-        return `${value}:00`;
+        return value;
     }
   };
 
@@ -201,14 +221,29 @@ function Dashboard() {
                 Ticket Sales Over Time
               </h2>
               <div className="flex space-x-2">
-                <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded">
+                <button
+                  className={`btn-anim ${
+                    dateType === "day" ? "bg-luxtix-2" : "bg-luxtix-6"
+                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  onClick={() => handleDateTypeChange("day")}
+                >
                   D
                 </button>
-                <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded">
-                  W
-                </button>
-                <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded">
+                <button
+                  className={`btn-anim ${
+                    dateType === "month" ? "bg-luxtix-2" : "bg-luxtix-6"
+                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  onClick={() => handleDateTypeChange("month")}
+                >
                   M
+                </button>
+                <button
+                  className={`btn-anim ${
+                    dateType === "year" ? "bg-luxtix-2" : "bg-luxtix-6"
+                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  onClick={() => handleDateTypeChange("year")}
+                >
+                  Y
                 </button>
               </div>
             </div>
@@ -247,16 +282,13 @@ function Dashboard() {
                       tickMargin={10}
                       axisLine={false}
                       tickFormatter={(value) => formatXAxisTick(value)}
+                      interval="preserveStartEnd"
                     />
                     <ChartTooltip
                       cursor={false}
                       content={<ChartTooltipContent hideLabel />}
                     />
-                    <Bar
-                      dataKey="totalQty"
-                      fill="var(--color-desktop)"
-                      radius={8}
-                    />
+                    <Bar dataKey="totalQty" fill="#E6D5B8" radius={8} />
                   </BarChart>
                 </ChartContainer>
               </CardContent>

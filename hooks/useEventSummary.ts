@@ -1,57 +1,57 @@
-import { useSession } from 'next-auth/react'
-import React, { useEffect, useState } from 'react'
+import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 
 export interface EventSummary {
-  id: string
-  name: string
-  venue: string
-  address: string
-  city: string
-  eventDate: string
-  eventDay: string
-  startTime: string
-  endTime: string
-  ticketQty: number
-  soldTicket: number
-  revenue: number
-  rating: number
-  tickets: { date: string; totalQty: number }[]
+  id: string;
+  name: string;
+  venue: string;
+  address: string;
+  city: string;
+  eventDate: string;
+  eventDay: string;
+  startTime: string;
+  endTime: string;
+  ticketQty: number;
+  soldTicket: number;
+  revenue: number;
+  rating: number;
+  tickets: { date: string; totalQty: number }[];
 }
 
 const useEventSummary = () => {
-  const [eventSummary, setEventSummary] = useState<EventSummary>()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const { data: session } = useSession()
+  const [eventSummary, setEventSummary] = useState<EventSummary>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
-  const fetchEventSummary = async (id: number) => {
+  const fetchEventSummary = async (id: number, dateType: string) => {
     try {
-      const endpoint = `/api/summary/${id}`
+      const endpoint = `/api/summary/${id}?dateType=${dateType}`;
 
-      const headers: HeadersInit = {}
+      const headers: HeadersInit = {};
       if (session) {
-        headers['Authorization'] = `Bearer ${session.user.accessToken}`
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
       }
       const response = await fetch(
         `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}`,
         {
-          credentials: 'include',
+          credentials: "include",
           headers,
         }
-      )
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch events')
+        throw new Error("Failed to fetch events");
       }
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { fetchEventSummary }
-}
+  return { fetchEventSummary };
+};
 
-export default useEventSummary
+export default useEventSummary;
