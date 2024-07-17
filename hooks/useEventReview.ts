@@ -1,25 +1,13 @@
 import { useSession } from 'next-auth/react'
 import React, { useEffect, useState } from 'react'
 
-interface EventReview {
-  data: {
-    id: number
-    rating: number
-    comments: string
-    type: string
-    reviewerName: string
-  }[]
-  totalPages: number
-  currentPage: number
-}
-const useEventReview = (id: number | null) => {
-  const [eventReview, setEventReview] = useState<EventReview>()
+const useEventReview = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()
 
-  useEffect(() => {
-    const fetchEventReview = async () => {
+  const fetchEventReview = async (id: number | null, page: number) => {
+    if (id != null) {
       try {
         const endpoint = `/api/event-review/${id}`
         const headers: HeadersInit = {}
@@ -28,7 +16,7 @@ const useEventReview = (id: number | null) => {
         }
 
         const response = await fetch(
-          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}`,
+          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}?page=${page}&size=1`,
           {
             credentials: 'include',
             headers,
@@ -38,19 +26,15 @@ const useEventReview = (id: number | null) => {
           throw new Error('Failed to fetch events')
         }
         const data = await response.json()
-        setEventReview(data)
+        return data
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
       }
     }
-    if (id != null) {
-      fetchEventReview()
-    }
-  }, [id])
-
-  return { eventReview, loading, error }
+  }
+  return { fetchEventReview }
 }
 
 export default useEventReview
