@@ -127,15 +127,6 @@ function SignIn() {
                 )}
               />
 
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-luxtix-8 font-bold"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
-
               <Button
                 type="submit"
                 className="w-full bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2"
