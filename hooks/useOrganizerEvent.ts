@@ -1,26 +1,20 @@
-import { useState, useEffect } from 'react'
-import { EventDetailType } from '@/types/event'
 import { useSession } from 'next-auth/react'
+import React, { useEffect, useState } from 'react'
 
-interface ApiResponse {
-  statusCode: number
-  message: string
-  success: boolean
-  data: EventDetailType
+interface OrganizerEvent {
+  id: number
+  eventName: string
 }
-
-export function useEventById(eventId: number) {
-  const [event, setEvent] = useState<EventDetailType | null>(null)
+const useOrganizerEvent = () => {
+  const [organizerEvent, setOrganizerEvent] = useState<OrganizerEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()
 
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchOrganizerEvents = async () => {
       try {
-        const endpoint = session
-          ? `/api/events/${eventId}`
-          : `/api/events/public/${eventId}`
+        const endpoint = '/api/summary/event'
 
         const headers: HeadersInit = {}
         if (session) {
@@ -34,10 +28,10 @@ export function useEventById(eventId: number) {
           }
         )
         if (!response.ok) {
-          throw new Error('Failed to fetch event')
+          throw new Error('Failed to fetch events')
         }
-        const data: ApiResponse = await response.json()
-        setEvent(data.data)
+        const data = await response.json()
+        setOrganizerEvent(data.data)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
@@ -45,8 +39,10 @@ export function useEventById(eventId: number) {
       }
     }
 
-    fetchEvent()
-  }, [eventId, session])
+    fetchOrganizerEvents()
+  }, [])
 
-  return { event, loading, error }
+  return { organizerEvent, loading, error }
 }
+
+export default useOrganizerEvent

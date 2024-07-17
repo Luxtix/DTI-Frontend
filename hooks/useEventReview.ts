@@ -1,36 +1,32 @@
-import { useState, useEffect } from 'react'
-import { EventType } from '@/types/event'
 import { useSession } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-interface ApiResponse {
-  statusCode: number
-  message: string
-  success: boolean
-  data: EventType[]
+interface EventReview {
+  data: {
+    id: number
+    rating: number
+    comments: string
+    type: string
+    reviewerName: string
+  }[]
   totalPages: number
   currentPage: number
 }
-
-export function useEvents(queryParams: string = '', size?: number) {
-  const [events, setEvents] = useState<EventType[]>([])
+const useEventReview = (id: number | null) => {
+  const [eventReview, setEventReview] = useState<EventReview>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: session } = useSession()
-  const search = useSearchParams()
-  const city = search.get('city') || ''
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchEventReview = async () => {
       try {
-        const endpoint = session
-          ? `/api/events${queryParams ? `?${queryParams}` : ''}`
-          : `/api/events/public${queryParams ? `?${queryParams}` : ''}`
-
+        const endpoint = `/api/event-review/${id}`
         const headers: HeadersInit = {}
         if (session) {
           headers['Authorization'] = `Bearer ${session.user.accessToken}`
         }
+
         const response = await fetch(
           `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}`,
           {
@@ -41,17 +37,20 @@ export function useEvents(queryParams: string = '', size?: number) {
         if (!response.ok) {
           throw new Error('Failed to fetch events')
         }
-        const data: ApiResponse = await response.json()
-        setEvents(data.data)
+        const data = await response.json()
+        setEventReview(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setLoading(false)
       }
     }
+    if (id != null) {
+      fetchEventReview()
+    }
+  }, [id])
 
-    fetchEvents()
-  }, [queryParams, size, session])
-
-  return { events, loading, error }
+  return { eventReview, loading, error }
 }
+
+export default useEventReview

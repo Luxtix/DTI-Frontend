@@ -1,26 +1,31 @@
 import { ReviewType } from "@/types/review";
 
 interface ReviewProps {
-  review: ReviewType;
+  id: number,
+  rating: number,
+  comments: string,
+  type: string,
+  reviewerName: string
+  index: number
 }
 
-function ReviewCard({ review }: ReviewProps) {
+function ReviewCard({ id, rating, comments, type, reviewerName, index }: ReviewProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 p-4 border-b sm:text-center bg-white">
       <div className="col-span-1 text-sm sm:text-base break-words">
-        {review.number}
+        {index + 1}
       </div>
       <div className="col-span-1 text-sm sm:text-base break-words">
-        {review.name}
+        {reviewerName}
       </div>
       <div className="col-span-1 text-sm sm:text-base break-words">
-        {review.title}
+        {type}
       </div>
       <div className="col-span-1 text-sm sm:text-base break-words">
-        {review.reviewText}
+        {comments}
       </div>
       <div className="col-span-1 text-sm sm:text-base break-words">
-        {`${review.stars}/5`}
+        {`${rating}/5`}
       </div>
     </div>
   );
