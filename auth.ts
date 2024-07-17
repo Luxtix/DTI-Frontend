@@ -31,8 +31,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const data = await response.json()
 
-
-
           const useCookies = cookies()
           useCookies.set('Sid', data.accessToken)
           return {
