@@ -21,10 +21,10 @@ export default auth((req) => {
   const reqUrl = new URL(req.url);
   const path = reqUrl.pathname;
 
-  console.log(req.auth?.user.role);
-  const publicRoutes = ["/", "/events", "/sign-in", "/sign-up"];
-  if (publicRoutes.includes(path) || path.startsWith("/events/")) {
-    return NextResponse.next();
+  console.log(req.auth?.user.role)
+  const publicRoutes = ['/', '/sign-in', '/sign-up', '/events', '/events/:id']
+  if (publicRoutes.includes(path)) {
+    return NextResponse.next()
   }
 
   if (!req.auth) {
@@ -36,7 +36,11 @@ export default auth((req) => {
   if (role === "ORGANIZER") {
     const organizerRoutes = ["/dashboard", "/create-event", "/profile"];
     if (!organizerRoutes.includes(path)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      if (path.startsWith('/events/')) {
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      } else {
+        return NextResponse.redirect(new URL('/dashboard', req.url))
+      }
     }
   }
 

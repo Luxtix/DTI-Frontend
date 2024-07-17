@@ -21,18 +21,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsDoorOpen, BsCurrencyDollar } from "react-icons/bs";
 import TicketRow from "./TicketRow";
 import VoucherRow from "./VoucherRow";
-import { useCreateEvent } from "@/hooks/useCreateEvent";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { useCities } from "@/hooks/useCities";
+
 
 const eventCategories = [
   "Entertainment",
@@ -47,7 +45,7 @@ const eventCategories = [
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-const createEventSchema = z.object({
+const UpdateEventSchema = z.object({
   name: z.string().min(1, "Event name is required"),
   category: z.number().min(1, "Event category is required"),
   isOnline: z.boolean(),
@@ -61,6 +59,7 @@ const createEventSchema = z.object({
   isPaid: z.boolean(),
   tickets: z.array(
     z.object({
+      id: z.string().nullable(),
       name: z.string(),
       price: z.coerce.number(),
       qty: z.coerce.number().min(1, "Ticket qty is required"),
@@ -68,6 +67,7 @@ const createEventSchema = z.object({
   ),
   vouchers: z.array(
     z.object({
+      id: z.string().nullable(),
       name: z.string(),
       qty: z.coerce.number().min(1, "Voucher qty is required"),
       rate: z.coerce.number(),
@@ -92,15 +92,15 @@ const createEventSchema = z.object({
 
 const imageSchema = z.instanceof(File);
 
-function CreateEvent() {
+function UpdateEvent() {
   const router = useRouter();
-  const { createEvent, isLoading, error } = useCreateEvent();
+
   const { toast } = useToast();
   const { cities, loading } = useCities();
   const [image, setImage] = useState<File | null>(null);
 
-  const form = useForm<z.infer<typeof createEventSchema>>({
-    resolver: zodResolver(createEventSchema),
+  const form = useForm<z.infer<typeof UpdateEventSchema>>({
+    resolver: zodResolver(UpdateEventSchema),
     defaultValues: {
       name: "",
       category: 1,
@@ -113,13 +113,7 @@ function CreateEvent() {
       city: 1,
       description: "",
       isPaid: false,
-      tickets: [
-        {
-          name: '',
-          price: 0,
-          qty: 0
-        }
-      ],
+      tickets: [],
       vouchers: [],
     },
   });
@@ -145,34 +139,34 @@ function CreateEvent() {
   }, [isPaid, form]);
 
 
-  const onSubmit = async (data: z.infer<typeof createEventSchema>) => {
-    try {
-      const formData = new FormData()
-      const eventData = JSON.stringify(data);
+  const onSubmit = async (data: z.infer<typeof UpdateEventSchema>) => {
+    // try {
+    //   const formData = new FormData()
+    //   const eventData = JSON.stringify(data);
 
-      if (image) {
-        formData.append('image', image);
-      }
-      formData.append('eventData', eventData)
-      const result = await createEvent(formData);
-      if (result) {
-        toast({
-          title: "Event Created",
-          description: "Your event has been successfully created.",
-          duration: 3000,
-        });
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Failed to create event:", err);
-      toast({
-        title: "Error",
-        description: "Failed to create event. Please try again.",
-        variant: "destructive",
-      });
-    }
+    //   if (image) {
+    //     formData.append('image', image);
+    //   }
+    //   formData.append('eventData', eventData)
+    //   // const result = await UpdateEvent(formData);
+    //   if (result) {
+    //     toast({
+    //       title: "Event Updated",
+    //       description: "Your event has been successfully Updated.",
+    //       duration: 3000,
+    //     });
+    //     setTimeout(() => {
+    //       router.push("/dashboard");
+    //     }, 3000);
+    //   }
+    // } catch (err) {
+    //   console.error("Failed to Update event:", err);
+    //   toast({
+    //     title: "Error",
+    //     description: "Failed to Update event. Please try again.",
+    //     variant: "destructive",
+    //   });
+    // }
   };
 
 
@@ -460,6 +454,7 @@ function CreateEvent() {
             ))}
             <button
               onClick={() => appendTicket({
+                id: '',
                 name: '',
                 price: 0,
                 qty: 0
@@ -475,7 +470,7 @@ function CreateEvent() {
           <>
             <section className="mb-6">
               <h2 className="text-xl font-semibold mb-4">
-                Do you want to create promotional voucher?
+                Do you want to Update promotional voucher?
               </h2>
               <div className="py-2">
                 {voucherField.map((_, index: number) => (
@@ -483,6 +478,7 @@ function CreateEvent() {
                 ))}
                 <button
                   onClick={() => appendVoucher({
+                    id: '',
                     name: '',
                     qty: 0,
                     rate: 0,
@@ -503,9 +499,9 @@ function CreateEvent() {
             type="submit"
             className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
             onClick={form.handleSubmit(onSubmit)}
-            disabled={isLoading}
+          // disabled={isLoading}
           >
-            {isLoading ? "Creating..." : "Save & Continue"}
+            {/* {isLoading ? "Creating..." : "Save & Continue"} */}
           </button>
         </div>
       </div>
@@ -513,4 +509,4 @@ function CreateEvent() {
   );
 }
 
-export default CreateEvent;
+export default UpdateEvent;

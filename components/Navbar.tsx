@@ -41,7 +41,6 @@ function Navbar() {
         setIsOrganizer(true)
       }
     }
-    console.log(data)
   }, [data]);
 
 
