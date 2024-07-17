@@ -15,22 +15,22 @@ function ProfileSideMenu() {
       <ul className="space-y-2">
         <li>
           <Link
-            href={`/profile/${profile.id}`}
-            className={`block hover:text-luxtix-8 transition duration-300 ${pathname === `/profile/${profile.id}`
-              ? "border-b-2 border-luxtix-6"
-              : ""
-              } p-1`}
+            href={`/profile/`}
+            className={`block hover:text-luxtix-8 transition duration-300 ${
+              pathname === `/profile` ? "border-b-2 border-luxtix-6" : ""
+            } p-1`}
           >
             Account Info
           </Link>
         </li>
         <li>
           <Link
-            href={`/profile/${profile.id}/password`}
-            className={`block hover:text-luxtix-8 ${pathname === `/profile/${profile.id}/password`
-              ? "border-b-2 border-luxtix-6"
-              : ""
-              } p-1`}
+            href={`/profile/password`}
+            className={`block hover:text-luxtix-8 ${
+              pathname === `/profile/password`
+                ? "border-b-2 border-luxtix-6"
+                : ""
+            } p-1`}
           >
             Password
           </Link>

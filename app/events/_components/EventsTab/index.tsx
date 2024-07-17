@@ -6,6 +6,7 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEvents } from "@/hooks/useEvents";
 import CircularLoader from "@/components/ui/circular-loader";
+import { useEventsTab } from "@/hooks/useEventsTab";
 
 interface Filters {
   price: string;

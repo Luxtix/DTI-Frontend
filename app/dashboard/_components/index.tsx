@@ -23,6 +23,18 @@ import {
 } from "@/components/ui/chart";
 import { usePurchasedEvents } from "@/contexts/PurchasedEventsContext";
 import CircularLoader from "@/components/ui/circular-loader";
+import { useDeleteEvent } from "@/hooks/useDeleteEvent";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const chartConfig = {
   desktop: {
@@ -40,6 +52,8 @@ function Dashboard() {
   const { setEventId, eventId } = usePurchasedEvents();
   const [dataPeriod, setDataPeriod] = useState("daily");
   const [isLoading, setIsLoading] = useState(true);
+  const { deleteEvent, isDeleting } = useDeleteEvent();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const handleEventChange = async (event: ChangeEvent<HTMLSelectElement>) => {
     setIsLoading(true);
@@ -91,6 +105,15 @@ function Dashboard() {
 
     fetchInitialData();
   }, [organizerEvent]);
+
+  const handleDeleteConfirm = async () => {
+    if (selectedEvent) {
+      const success = await deleteEvent(parseInt(selectedEvent));
+      if (success) {
+        window.location.reload();
+      }
+    }
+  };
 
   const getXAxisDataKey = () => {
     switch (dateType) {
@@ -170,9 +193,36 @@ function Dashboard() {
               <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 ml-0 sm:ml-4 px-4 py-2 rounded mb-2 sm:mb-0">
                 Modify
               </button>
-              <button className="btn-anim bg-luxtix-3 text-white hover:bg-luxtix-2 ml-0 sm:ml-4 px-4 py-2 rounded mb-2 sm:mb-0">
-                Delete
-              </button>
+              <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+                <AlertDialogTrigger asChild>
+                  <button
+                    className="btn-anim bg-luxtix-3 text-white hover:bg-luxtix-2 ml-0 sm:ml-4 px-4 py-2 rounded mb-2 sm:mb-0"
+                    disabled={isDeleting || !selectedEvent}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      the event.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteConfirm}
+                      className="bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
 

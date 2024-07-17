@@ -16,12 +16,12 @@ const profile = profileItems[0];
 const navItemsIcon = [
   { icon: GiTicket, text: "Tickets", path: "/purchased-tickets" },
   { icon: AiFillStar, text: "Interested", path: "/interested" },
-  { icon: CgProfile, text: "Profile", path: `/profile/${profile.id}` },
+  { icon: CgProfile, text: "Profile", path: `/profile` },
 ];
 
 const organizerNavItemsIcon = [
   { icon: FaChartBar, text: "Dashboard", path: "/dashboard" },
-  { icon: CgProfile, text: "Profile", path: `/profile/${profile.id}` },
+  { icon: CgProfile, text: "Profile", path: `/profile` },
 ];
 
 export default {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +29,8 @@ const formSchema = z.object({
   phoneNumber: z
     .string()
     .min(10, "Phone number must be at least 10 characters"),
+  email: z.string().email(),
+  referralCode: z.string(),
 });
 
 function Profile() {
@@ -40,13 +42,32 @@ function Profile() {
   );
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
+  console.log(userProfile);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       displayName: session?.user?.name || "",
       phoneNumber: "",
+      email: session?.user?.email || "",
+      referralCode: userProfile?.referralCode || "",
     },
   });
+
+  useEffect(() => {
+    if (userProfile) {
+      form.setValue(
+        "displayName",
+        userProfile.displayName || session?.user?.name || ""
+      );
+      form.setValue("phoneNumber", userProfile.phoneNumber || "");
+      form.setValue("email", userProfile.email || session?.user?.email || "");
+      form.setValue("referralCode", userProfile.referralCode || "");
+      setAvatarPreview(
+        userProfile.avatar || session?.user?.image || DEFAULT_AVATAR
+      );
+    }
+  }, [userProfile, session, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -95,6 +116,7 @@ function Profile() {
       <ProfileSideMenu />
       <main className="w-3/4 p-2 sm:p-10">
         <h1 className="text-2xl font-bold mb-8">Account Information</h1>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="relative w-24 h-24 mx-auto mb-4">
@@ -119,6 +141,23 @@ function Profile() {
                 onChange={handleAvatarChange}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="">
+              Referral Code
+              <div>{userProfile && userProfile.referralCode}</div>
+            </div>
+
             <FormField
               control={form.control}
               name="displayName"
@@ -151,12 +190,6 @@ function Profile() {
             >
               Save My Profile
             </Button>
-            <div className="mt-8">
-              <h2 className="text-lg font-semibold mb-2">Referral Code</h2>
-              <div className="w-1/4 bg-luxtix-7 p-4 rounded-md">
-                {userProfile?.referralCode}
-              </div>
-            </div>
           </form>
         </Form>
       </main>
