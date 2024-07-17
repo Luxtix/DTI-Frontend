@@ -37,6 +37,7 @@ function Dashboard() {
   const { fetchEventSummary } = useEventSummary();
   const [summaryData, setSummaryData] = useState<EventSummary>();
   const { setEventId, eventId } = usePurchasedEvents()
+  const [dataPeriod, setDataPeriod] = useState('daily');
 
   const handleEventChange = async (event: ChangeEvent<HTMLSelectElement>) => {
     const id = parseInt(event.target.value);
@@ -47,6 +48,46 @@ function Dashboard() {
       setSummaryData(result.data);
     } catch (error) {
       console.error('Error fetching event summary:', error);
+    }
+  };
+
+
+  const getXAxisDataKey = () => {
+    switch (dataPeriod) {
+      case 'day':
+        return 'hour';
+      case 'month':
+        return 'day';
+      case 'year':
+        return 'month';
+      default:
+        return 'hour';
+    }
+  };
+
+  const formatXAxisTick = (value: string) => {
+    switch (dataPeriod) {
+      case 'day':
+        return `${value}:00`;
+      case 'month':
+        return `Day ${value}`;
+      case 'year':
+        return new Date(value).toLocaleString('default', { month: 'short' });
+      default:
+        return `${value}:00`;
+    }
+  };
+
+  const getDataPeriod = () => {
+    switch (dataPeriod) {
+      case 'day':
+        return 'hpur';
+      case 'month':
+        return 'day';
+      case 'year':
+        return 'month';
+      default:
+        return 'hour';
     }
   };
 
@@ -126,9 +167,9 @@ function Dashboard() {
             </button>
           </div>
         </div>
-        {/* <Card>
+        <Card>
           <CardHeader>
-            <CardTitle>Hourly Ticket Sales</CardTitle>
+            <CardTitle>Ticket Sales</CardTitle>
             <CardDescription>
               {summaryData?.tickets && summaryData.tickets.length > 0
                 ? new Date(summaryData.tickets[0].date).toLocaleDateString('en-US', {
@@ -145,16 +186,19 @@ function Dashboard() {
                 accessibilityLayer
                 data={summaryData?.tickets.map(ticket => ({
                   ...ticket,
-                  hour: new Date(ticket.date).getHours()
+                  hour: new Date(ticket.date).getHours(),
+                  day: new Date(ticket.date).getDate(),
+                  month: new Date(ticket.date).getMonth() + 1,
+                  year: new Date(ticket.date).getFullYear()
                 }))}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="hour"
+                  dataKey={getXAxisDataKey()}
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
-                  tickFormatter={(value) => `${value}:00`}
+                  tickFormatter={(value) => formatXAxisTick(value)}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -170,10 +214,10 @@ function Dashboard() {
               <TrendingUp className="h-4 w-4" />
             </div>
             <div className="leading-none text-muted-foreground">
-              Showing hourly ticket sales for the day
+              Showing {getDataPeriod()} ticket sales
             </div>
           </CardFooter>
-        </Card> */}
+        </Card>
       </div>
     </div>
   );
