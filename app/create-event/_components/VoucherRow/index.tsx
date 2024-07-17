@@ -1,3 +1,4 @@
+
 import { useFormContext } from "react-hook-form";
 import {
   FormControl,
@@ -10,6 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CgRemove } from "react-icons/cg";
 
+const voucherRowSchema = z.object({
+  name: z.string().min(1, "Voucher name is required"),
+  rate: z.bigint(),
+  qty: z.number(),
+  startDate: z.string(),
+  endDate: z.string(),
+  referralOnly: z.boolean()
+});
+
 function VoucherRow({
   index,
   removeRow,
@@ -17,6 +27,7 @@ function VoucherRow({
   index: number;
   removeRow: (index: number) => void;
 }) {
+
   const { control, watch } = useFormContext();
   const isReferral = watch(`vouchers.${index}.isReferral`);
 

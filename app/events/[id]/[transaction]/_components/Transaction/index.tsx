@@ -102,11 +102,11 @@ function Transaction() {
     vvipTickets * vvipPrice;
   const voucherDiscount = voucherApplied
     ? Math.round(
-        (subtotal *
-          (availableVouchers.find((v) => v.code === selectedVoucher)
-            ?.discount || 0)) /
-          100
-      )
+      (subtotal *
+        (availableVouchers.find((v) => v.code === selectedVoucher)
+          ?.discount || 0)) /
+      100
+    )
     : 0;
   const pointsDiscount = pointsUsed ? 20000 : 0;
   const total = subtotal - voucherDiscount - pointsDiscount;
@@ -161,9 +161,8 @@ function Transaction() {
                     <div className="flex flex-col">
                       <span className="text-luxtix-1">Regular</span>
                       <span className="text-sm">{`IDR ${regularPrice.toLocaleString()}`}</span>
-                      <span className="text-xs text-luxtix-7">{`${
-                        event.quota - regularTickets
-                      } Remaining`}</span>
+                      <span className="text-xs text-luxtix-7">{`${event.quota - regularTickets
+                        } Remaining`}</span>
                     </div>
                     <div className="flex items-center">
                       <button
@@ -189,9 +188,8 @@ function Transaction() {
                       <span className="text-sm">
                         {`IDR ${vipPrice.toLocaleString()}`}
                       </span>
-                      <span className="text-xs text-luxtix-7">{`${
-                        event.vipQuota - vipTickets
-                      } Remaining`}</span>
+                      <span className="text-xs text-luxtix-7">{`${event.vipQuota - vipTickets
+                        } Remaining`}</span>
                     </div>
                     <div className="flex items-center">
                       <button
@@ -215,9 +213,8 @@ function Transaction() {
                     <div className="flex flex-col">
                       <span className="text-luxtix-1">VVIP</span>
                       <span className="text-sm">{`IDR ${vvipPrice.toLocaleString()}`}</span>
-                      <span className="text-xs text-luxtix-7">{`${
-                        event.vvipQuota - vvipTickets
-                      } Remaining`}</span>
+                      <span className="text-xs text-luxtix-7">{`${event.vvipQuota - vvipTickets
+                        } Remaining`}</span>
                     </div>
                     <div className="flex items-center">
                       <button

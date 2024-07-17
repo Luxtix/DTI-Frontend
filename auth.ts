@@ -31,11 +31,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           const data = await response.json()
 
+
+
           const useCookies = cookies()
           useCookies.set('Sid', data.accessToken)
           return {
             id: data.id,
             email: data.email,
+            sub: data.email,
             role: data.role,
             accessToken: data.accessToken,
           }
