@@ -9,8 +9,6 @@ interface PurchasedEventsContextType {
   addPurchasedEvent: (event: EventType) => void;
   eventId: number | null;
   setEventId: (id: number) => void;
-  eventLimit: number;
-  setEventLimit: (query: number) => void;
 }
 
 const PurchasedEventsContext = createContext<
@@ -26,7 +24,6 @@ export const PurchasedEventsProvider = ({
     Map<number, EventType>
   >(new Map());
   const [eventId, setEventId] = useState<number | null>(null);
-  const { eventLimit, setEventLimit } = useEvents();
 
   const addPurchasedEvent = (event: EventType) => {
     setPurchasedEvents(new Map(purchasedEvents.set(event.id, event)));
@@ -34,7 +31,7 @@ export const PurchasedEventsProvider = ({
 
   return (
     <PurchasedEventsContext.Provider
-      value={{ purchasedEvents, addPurchasedEvent, eventId, setEventId, eventLimit, setEventLimit }}
+      value={{ purchasedEvents, addPurchasedEvent, eventId, setEventId }}
     >
       {children}
     </PurchasedEventsContext.Provider>

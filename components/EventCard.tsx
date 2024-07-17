@@ -8,16 +8,21 @@ import { GiTicket } from "react-icons/gi";
 import { useState } from "react";
 import moment from "moment";
 import { format } from "date-fns";
+import { useIntrestedEvent } from "@/hooks/useIntrestedEvent";
+import { useSession } from "next-auth/react";
 
 interface EventCardProps {
   event: EventType;
 }
 
 function EventCard({ event }: EventCardProps) {
-  const [isStarred, setIsStarred] = useState<boolean>(false);
+  const [isStarred, setIsStarred] = useState<boolean>(event.isFavorite);
+  const { toogleIntrested } = useIntrestedEvent()
+  const { data: session } = useSession()
 
-  const handleStarClick = () => {
+  const handleStarClick = async () => {
     setIsStarred(!isStarred);
+    await toogleIntrested(event.id)
   };
 
   return (
@@ -42,7 +47,7 @@ function EventCard({ event }: EventCardProps) {
             {format(new Date(event.eventDate), "cccc")},{" "}
             {format(new Date(event.eventDate), "d MMMM yyyy")}
           </span>
-          <button className="btn-anim" onClick={handleStarClick}>
+          <button className="btn-anim" onClick={handleStarClick} disabled={!session}>
             {isStarred ? (
               <AiFillStar
                 size={30}
