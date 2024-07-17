@@ -10,6 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CgRemove } from "react-icons/cg";
+import { z } from "zod";
+
 
 const voucherRowSchema = z.object({
   name: z.string().min(1, "Voucher name is required"),
