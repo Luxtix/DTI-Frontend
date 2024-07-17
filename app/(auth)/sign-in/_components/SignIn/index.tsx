@@ -41,8 +41,6 @@ function SignIn() {
     const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
-      redirect: true,
-      callbackUrl: "/",
     });
   };
 
@@ -128,15 +126,6 @@ function SignIn() {
                   </FormItem>
                 )}
               />
-
-              <div className="text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-luxtix-8 font-bold"
-                >
-                  Forgot Password?
-                </Link>
-              </div>
 
               <Button
                 type="submit"

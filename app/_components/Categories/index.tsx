@@ -8,19 +8,10 @@ interface CategoryItemProps {
   link: string;
 }
 
-const categorySlugs: { [key: string]: string } = {
-  Entertainment: "entertainment",
-  "Educational & Business": "educational-business",
-  "Arts & Culture": "arts-culture",
-  "Sports & Fitness": "sports-fitness",
-  "Technology & Innovation": "technology-innovation",
-  "Travel & Adventure": "travel-adventure",
-};
-
 function CategoryItem({ name, img, link }: CategoryItemProps) {
   return (
     <div className="text-center">
-      <Link href={`events?category=${categorySlugs[link]}`} scroll={false}>
+      <Link href={`events?category=${link}`} scroll={false}>
         <div className="w-16 h-16 sm:w-24 sm:h-24 mx-auto rounded-full overflow-hidden">
           <Image src={img} alt={name} className="h-full w-full object-cover" />
         </div>

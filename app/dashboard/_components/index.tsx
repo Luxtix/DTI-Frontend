@@ -81,7 +81,7 @@ function Dashboard() {
   const getDataPeriod = () => {
     switch (dataPeriod) {
       case 'day':
-        return 'hour';
+        return 'hpur';
       case 'month':
         return 'day';
       case 'year':
