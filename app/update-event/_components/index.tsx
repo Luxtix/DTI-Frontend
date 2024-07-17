@@ -21,18 +21,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsDoorOpen, BsCurrencyDollar } from "react-icons/bs";
 import TicketRow from "./TicketRow";
 import VoucherRow from "./VoucherRow";
-import { useCreateEvent } from "@/hooks/useCreateEvent";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { useCities } from "@/hooks/useCities";
+
 
 const eventCategories = [
   "Entertainment",
@@ -47,7 +45,7 @@ const eventCategories = [
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
-const createEventSchema = z.object({
+const UpdateEventSchema = z.object({
   name: z.string().min(1, "Event name is required"),
   category: z.number().min(1, "Event category is required"),
   isOnline: z.boolean(),
@@ -61,6 +59,7 @@ const createEventSchema = z.object({
   isPaid: z.boolean(),
   tickets: z.array(
     z.object({
+      id: z.string().nullable(),
       name: z.string(),
       price: z.coerce.number(),
       qty: z.coerce.number().min(1, "Ticket qty is required"),
@@ -68,6 +67,7 @@ const createEventSchema = z.object({
   ),
   vouchers: z.array(
     z.object({
+      id: z.string().nullable(),
       name: z.string(),
       qty: z.coerce.number().min(1, "Voucher qty is required"),
       rate: z.coerce.number(),
@@ -92,15 +92,15 @@ const createEventSchema = z.object({
 
 const imageSchema = z.instanceof(File);
 
-function CreateEvent() {
+function UpdateEvent() {
   const router = useRouter();
-  const { createEvent, isLoading, error } = useCreateEvent();
+
   const { toast } = useToast();
   const { cities, loading } = useCities();
   const [image, setImage] = useState<File | null>(null);
 
-  const form = useForm<z.infer<typeof createEventSchema>>({
-    resolver: zodResolver(createEventSchema),
+  const form = useForm<z.infer<typeof UpdateEventSchema>>({
+    resolver: zodResolver(UpdateEventSchema),
     defaultValues: {
       name: "",
       category: 1,
@@ -113,17 +113,8 @@ function CreateEvent() {
       city: 1,
       description: "",
       isPaid: false,
-      tickets: [
-        {
-          name: '',
-          price: 0,
-          qty: 0
-        }
-      ],
+      tickets: [],
       vouchers: [],
-      acceptReferralVoucher: false,
-      referralVoucherName: "",
-      referralVoucherQuantity: 0,
     },
   });
 
@@ -148,34 +139,34 @@ function CreateEvent() {
   }, [isPaid, form]);
 
 
-  const onSubmit = async (data: z.infer<typeof createEventSchema>) => {
-    try {
-      const formData = new FormData()
-      const eventData = JSON.stringify(data);
+  const onSubmit = async (data: z.infer<typeof UpdateEventSchema>) => {
+    // try {
+    //   const formData = new FormData()
+    //   const eventData = JSON.stringify(data);
 
-      if (image) {
-        formData.append('image', image);
-      }
-      formData.append('eventData', eventData)
-      const result = await createEvent(formData);
-      if (result) {
-        toast({
-          title: "Event Created",
-          description: "Your event has been successfully created.",
-          duration: 3000,
-        });
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Failed to create event:", err);
-      toast({
-        title: "Error",
-        description: "Failed to create event. Please try again.",
-        variant: "destructive",
-      });
-    }
+    //   if (image) {
+    //     formData.append('image', image);
+    //   }
+    //   formData.append('eventData', eventData)
+    //   // const result = await UpdateEvent(formData);
+    //   if (result) {
+    //     toast({
+    //       title: "Event Updated",
+    //       description: "Your event has been successfully Updated.",
+    //       duration: 3000,
+    //     });
+    //     setTimeout(() => {
+    //       router.push("/dashboard");
+    //     }, 3000);
+    //   }
+    // } catch (err) {
+    //   console.error("Failed to Update event:", err);
+    //   toast({
+    //     title: "Error",
+    //     description: "Failed to Update event. Please try again.",
+    //     variant: "destructive",
+    //   });
+    // }
   };
 
 
@@ -363,14 +354,18 @@ function CreateEvent() {
                       <SelectValue placeholder="Select a city" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">Jakarta</SelectItem>
-                    <SelectItem value="2">Surabaya</SelectItem>
-                    <SelectItem value="3">Bandung</SelectItem>
-                    <SelectItem value="4">Medan</SelectItem>
-                    <SelectItem value="5">Semarang</SelectItem>
-                    <SelectItem value="6">Makassar</SelectItem>
-                    <SelectItem value="7">Palembang</SelectItem>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {loading ? (
+                      <SelectItem value="loading">Loading cities...</SelectItem>
+                    ) : (
+                      cities
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -459,6 +454,7 @@ function CreateEvent() {
             ))}
             <button
               onClick={() => appendTicket({
+                id: '',
                 name: '',
                 price: 0,
                 qty: 0
@@ -474,7 +470,7 @@ function CreateEvent() {
           <>
             <section className="mb-6">
               <h2 className="text-xl font-semibold mb-4">
-                Do you want to create promotional voucher?
+                Do you want to Update promotional voucher?
               </h2>
               <div className="py-2">
                 {voucherField.map((_, index: number) => (
@@ -482,6 +478,7 @@ function CreateEvent() {
                 ))}
                 <button
                   onClick={() => appendVoucher({
+                    id: '',
                     name: '',
                     qty: 0,
                     rate: 0,
@@ -495,72 +492,21 @@ function CreateEvent() {
                 </button>
               </div>
             </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Do you accept referral voucher?
-              </h2>
-              <FormField
-                control={form.control}
-                name="acceptReferralVoucher"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Yes, I accept referral vouchers</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {form.watch("acceptReferralVoucher") && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-                  <FormField
-                    name="referralVoucherName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Voucher Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="referralVoucherQuantity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>QTY</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="QTY 0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-            </section>
           </>
         )}
         <div className="flex justify-end">
-          <Button
+          <button
             type="submit"
             className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
             onClick={form.handleSubmit(onSubmit)}
-            disabled={isLoading}
+          // disabled={isLoading}
           >
-            {isLoading ? "Creating..." : "Save & Continue"}
-          </Button>
+            {/* {isLoading ? "Creating..." : "Save & Continue"} */}
+          </button>
         </div>
       </div>
     </Form>
   );
 }
 
-export default CreateEvent;
+export default UpdateEvent;

@@ -10,7 +10,7 @@ interface UserProfile {
 }
 
 export function useUserProfile() {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile>();
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -25,7 +25,7 @@ export function useUserProfile() {
         );
         if (!response.ok) throw new Error("Failed to fetch user profile");
         const data = await response.json();
-        setUserProfile(data);
+        setUserProfile(data.data);
       } catch (error) {
         toast({
           title: "Error",
