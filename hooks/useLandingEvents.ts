@@ -12,7 +12,7 @@ interface ApiResponse {
   currentPage: number;
 }
 
-export function useEvents(queryParams: string = "", size?: number) {
+export function useLandingEvents(queryParams: string = "", size?: number) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export function useEvents(queryParams: string = "", size?: number) {
       try {
         const endpoint = session
           ? `/api/events${queryParams ? `?${queryParams}&size=6` : "?size=6"}`
-          : `/api/events/public${queryParams ? `?${queryParams}` : ""}?size=6`;
+          : `/api/events/public${queryParams ? `?${queryParams}` : "?size=6"}`;
 
         const headers: HeadersInit = {};
         if (session) {
