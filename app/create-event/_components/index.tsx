@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
@@ -31,6 +30,7 @@ import VoucherRow from "./VoucherRow";
 import { useCreateEvent } from "@/hooks/useCreateEvent";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { useCities } from "@/hooks/useCities";
 
 const eventCategories = [
   "Entertainment",
@@ -79,6 +79,7 @@ function CreateEvent() {
   const router = useRouter();
   const { createEvent, isLoading, error } = useCreateEvent();
   const { toast } = useToast();
+  const { cities, loading } = useCities();
 
   const form = useForm<z.infer<typeof createEventSchema>>({
     resolver: zodResolver(createEventSchema),
@@ -96,9 +97,6 @@ function CreateEvent() {
       isPaid: false,
       tickets: [],
       vouchers: [],
-      acceptReferralVoucher: false,
-      referralVoucherName: "",
-      referralVoucherQuantity: 0,
     },
   });
 
@@ -329,14 +327,18 @@ function CreateEvent() {
                       <SelectValue placeholder="Select a city" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">Jakarta</SelectItem>
-                    <SelectItem value="2">Surabaya</SelectItem>
-                    <SelectItem value="3">Bandung</SelectItem>
-                    <SelectItem value="4">Medan</SelectItem>
-                    <SelectItem value="5">Semarang</SelectItem>
-                    <SelectItem value="6">Makassar</SelectItem>
-                    <SelectItem value="7">Palembang</SelectItem>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {loading ? (
+                      <SelectItem value="loading">Loading cities...</SelectItem>
+                    ) : (
+                      cities
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -457,57 +459,6 @@ function CreateEvent() {
                   Add Voucher
                 </button>
               </div>
-            </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Do you accept referral voucher?
-              </h2>
-              <FormField
-                control={form.control}
-                name="acceptReferralVoucher"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Yes, I accept referral vouchers</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {form.watch("acceptReferralVoucher") && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-                  <FormField
-                    name="referralVoucherName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Voucher Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="referralVoucherQuantity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>QTY</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="QTY 0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
             </section>
           </>
         )}

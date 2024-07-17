@@ -1,8 +1,5 @@
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useFormContext } from "react-hook-form";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -10,13 +7,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CgRemove } from "react-icons/cg";
-
-const voucherRowSchema = z.object({
-  voucherName: z.string().min(1, "Voucher name is required"),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
-});
 
 function VoucherRow({
   index,
@@ -25,89 +17,133 @@ function VoucherRow({
   index: number;
   removeRow: (index: number) => void;
 }) {
-  const form = useForm<z.infer<typeof voucherRowSchema>>({
-    resolver: zodResolver(voucherRowSchema),
-    defaultValues: {
-      voucherName: "",
-      startDate: "",
-      endDate: "",
-    },
-  });
+  const { control, watch } = useFormContext();
+  const isReferral = watch(`vouchers.${index}.isReferral`);
 
   return (
-    <Form {...form}>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 mb-4">
+    <div className="grid grid-cols-2 sm:grid-cols-6 gap-x-4 mb-4">
+      <FormField
+        control={control}
+        name={`vouchers.${index}.name`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-md mb-2 text-luxtix-8">Name</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Voucher name"
+                className="w-full p-2 border border-input rounded"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name={`vouchers.${index}.qty`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-md mb-2 text-luxtix-8">QTY</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Quantity"
+                className="w-full p-2 border border-input rounded"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name={`vouchers.${index}.rate`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-md mb-2 text-luxtix-8">
+              Rate (%)
+            </FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Discount rate"
+                className="w-full p-2 border border-input rounded"
+                {...field}
+                disabled={isReferral}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name={`vouchers.${index}.startDate`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-md mb-2 text-luxtix-8">
+              Start Date
+            </FormLabel>
+            <FormControl>
+              <Input
+                type="date"
+                className="w-full p-2 border border-input rounded"
+                {...field}
+                disabled={isReferral}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name={`vouchers.${index}.endDate`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-md mb-2 text-luxtix-8">
+              End Date
+            </FormLabel>
+            <FormControl>
+              <Input
+                type="date"
+                className="w-full p-2 border border-input rounded"
+                {...field}
+                disabled={isReferral}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <div className="flex items-end justify-end">
         <FormField
-          control={form.control}
-          name="voucherName"
+          control={control}
+          name={`vouchers.${index}.isReferral`}
           render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-md mb-2 text-luxtix-8">
-                Voucher Name
-              </FormLabel>
+            <FormItem className="flex items-center space-x-2">
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Enter voucher name"
-                  className="w-full p-2 border border-input rounded"
-                  {...field}
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <FormMessage />
+              <FormLabel>Set as referral voucher?</FormLabel>
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-md mb-2 text-luxtix-8">
-                Start Date
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  placeholder="DD/MM/YYYY"
-                  className="w-full p-2 border border-input rounded"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="endDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-md mb-2 text-luxtix-8">
-                End Date
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="date"
-                  placeholder="DD/MM/YYYY"
-                  className="w-full p-2 border border-input rounded"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex flex-row items-end">
-          <button
-            type="button"
-            onClick={() => removeRow(index)}
-            className="btn-anim p-2 text-luxtix-3"
-          >
-            <CgRemove size={20} />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => removeRow(index)}
+          className="btn-anim p-2 text-luxtix-3 mt-2"
+        >
+          <CgRemove size={20} />
+        </button>
       </div>
-    </Form>
+    </div>
   );
 }
 
