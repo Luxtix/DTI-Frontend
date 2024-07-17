@@ -9,37 +9,29 @@ import Barcode from "react-barcode";
 import Modal from "@/components/Modal";
 import { formatTime } from "@/utils/formatTime";
 import transactionDetail from "@/hooks/useTransactionDetail";
-import { format } from 'date-fns';
-import { useInView } from 'react-intersection-observer';
-import { toast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
+import { useInView } from "react-intersection-observer";
 import { useTransactionContext } from "@/contexts/TicketListContext";
 import { TransactionDetail } from "@/types/transaction";
 
-
-
-
-
-
 function PurchasedTickets() {
   const { userTransactionList } = useTransactionContext();
-  const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetail>();
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionDetail>();
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [transactionEventId, setTransactionEventId] = useState<number>(0);
-  const [isTransactionDetailModalOpen, setTransactionDetailModalOpen] = useState(false);
+  const [isTransactionDetailModalOpen, setTransactionDetailModalOpen] =
+    useState(false);
   const { getDetailTransaction } = transactionDetail();
 
   const { ref, inView } = useInView();
   const { transactionLimit, setTransactionLimit } = useTransactionContext();
 
-
-
-
-
   useEffect(() => {
     if (inView) {
-      setTransactionLimit(transactionLimit + 1)
+      setTransactionLimit(transactionLimit + 1);
     }
-  }, [inView, setTransactionLimit])
+  }, [inView, setTransactionLimit]);
 
   const closeEventDetailsModal = () => {
     setTransactionDetailModalOpen(false);
@@ -58,12 +50,14 @@ function PurchasedTickets() {
   const openReviewModal = (id: number) => {
     setTransactionEventId(id);
     setReviewModalOpen(true);
-  }
+  };
 
   const closeReviewModal = () => setReviewModalOpen(false);
 
-  const modalTicket = "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative h-4/5 custom-scrollbar overflow-y-scroll";
-  const modalReview = "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative";
+  const modalTicket =
+    "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative h-4/5 custom-scrollbar overflow-y-scroll";
+  const modalReview =
+    "bg-white rounded-lg shadow-lg w-full max-w-md mx-4 relative";
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4">
@@ -80,7 +74,13 @@ function PurchasedTickets() {
               <div
                 key={transaction.transactionId}
                 className="border rounded-lg overflow-hidden shadow-sm relative"
-                ref={index === userTransactionList.data.length - 1 && userTransactionList.data.length < userTransactionList.totalData ? ref : null}
+                ref={
+                  index === userTransactionList.data.length - 1 &&
+                  userTransactionList.data.length <
+                    userTransactionList.totalData
+                    ? ref
+                    : null
+                }
               >
                 <div className="relative">
                   <Image
@@ -94,9 +94,9 @@ function PurchasedTickets() {
                 <div className="p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-bold text-luxtix-5 flex items-center">
-                      <h3 className="">{format(new Date(transaction.eventDate), 'cccc')}</h3>,
                       <h3>
-                        {format(new Date(transaction.eventDate), 'd MMM yyyy')}
+                        {format(new Date(transaction.eventDate), "cccc")},{" "}
+                        {format(new Date(transaction.eventDate), "d MMM yyyy")}
                       </h3>
                     </span>
                   </div>
@@ -106,14 +106,17 @@ function PurchasedTickets() {
                     </h3>
                     <div className="flex justify-between gap-4 mt-4">
                       <button
-                        onClick={() => openEventDetailsModal(transaction.transactionId)}
+                        onClick={() =>
+                          openEventDetailsModal(transaction.transactionId)
+                        }
                         className="w-full btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 text-xs px-2 py-1 sm:px-4 sm:py-2 rounded-lg"
                       >
                         Tickets Details
                       </button>
-                      {(transaction.isDone == false) || (transaction.canReview == false) ?
+                      {transaction.isDone == false ||
+                      transaction.canReview == false ? (
                         <></>
-                        :
+                      ) : (
                         <>
                           <button
                             onClick={() => openReviewModal(transaction.eventId)}
@@ -122,8 +125,7 @@ function PurchasedTickets() {
                             Add Review
                           </button>
                         </>
-                      }
-
+                      )}
                     </div>
                   </div>
                 </div>
@@ -135,17 +137,28 @@ function PurchasedTickets() {
         )}
       </div>
 
-      <Modal isOpen={isTransactionDetailModalOpen == true} onClose={closeEventDetailsModal} modalDesign={modalTicket}>
+      <Modal
+        isOpen={isTransactionDetailModalOpen == true}
+        onClose={closeEventDetailsModal}
+        modalDesign={modalTicket}
+      >
         <div className="flex flex-col gap-4">
           {selectedTransaction?.tickets.map((ticket) => (
-            <div className="max-w-sm mx-auto bg-luxtix-4 text-luxtix-1 rounded-2xl" key={ticket.id}>
+            <div
+              className="max-w-sm mx-auto bg-luxtix-4 text-luxtix-1 rounded-2xl"
+              key={ticket.id}
+            >
               <h2 className="text-sm font-extralight p-1 bg-luxtix-1 text-white text-center rounded-t-xl">
                 ©Luxtix
               </h2>
               <div className="p-4 text-center">
-                <h1 className="text-xl font-bold">{selectedTransaction.eventName}</h1>
+                <h1 className="text-xl font-bold">
+                  {selectedTransaction.eventName}
+                </h1>
                 <div>
-                  <p className="text-lg font-medium">{selectedTransaction.cityName}</p>
+                  <p className="text-lg font-medium">
+                    {selectedTransaction.cityName}
+                  </p>
                 </div>
               </div>
               <Image
@@ -158,23 +171,34 @@ function PurchasedTickets() {
               <div className="grid grid-cols-3 gap-4 p-4 text-center">
                 <div>
                   <p className="text-sm">DAY</p>
-                  <p className="text-lg font-bold">{format(new Date(selectedTransaction.eventDate), 'cccc')}</p>
+                  <p className="text-lg font-bold">
+                    {format(new Date(selectedTransaction.eventDate), "cccc")}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm">DATE</p>
-                  <p className="text-md font-bold">{new Date(Date.parse(selectedTransaction.eventDate)).toLocaleDateString('en-GB', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                  })}</p>
+                  <p className="text-md font-bold">
+                    {new Date(
+                      Date.parse(selectedTransaction.eventDate)
+                    ).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm">VENUE</p>
-                  <p className="text-lg font-bold">{selectedTransaction.venueName}</p>
+                  <p className="text-lg font-bold">
+                    {selectedTransaction.venueName}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm">TIME</p>
-                  <p className="text-md font-bold">{formatTime(selectedTransaction.startTime)} - {formatTime(selectedTransaction.endTime)}</p>
+                  <p className="text-md font-bold">
+                    {formatTime(selectedTransaction.startTime)} -{" "}
+                    {formatTime(selectedTransaction.endTime)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm">QTY</p>
@@ -186,10 +210,11 @@ function PurchasedTickets() {
                 </div>
               </div>
               <p className="text-[10px] px-8 text-center font-light italic">
-                {`${selectedTransaction.isOnline === false
-                  ? "Please scan the barcode at the venue to receive your entry ticket. Double-check your quantity and tier before leaving the ticketing area."
-                  : "Online event link will be sent to your email 1 hour before the event starts."
-                  }`}
+                {`${
+                  selectedTransaction.isOnline === false
+                    ? "Please scan the barcode at the venue to receive your entry ticket. Double-check your quantity and tier before leaving the ticketing area."
+                    : "Online event link will be sent to your email 1 hour before the event starts."
+                }`}
               </p>
               <div className="p-4 flex justify-center">
                 <Barcode
@@ -203,11 +228,15 @@ function PurchasedTickets() {
             </div>
           ))}
         </div>
-      </Modal >
-      <Modal isOpen={isReviewModalOpen} onClose={closeReviewModal} modalDesign={modalReview}>
+      </Modal>
+      <Modal
+        isOpen={isReviewModalOpen}
+        onClose={closeReviewModal}
+        modalDesign={modalReview}
+      >
         <AddReview id={transactionEventId} onClose={closeReviewModal} />
       </Modal>
-    </div >
+    </div>
   );
 }
 

@@ -7,6 +7,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { GiTicket } from "react-icons/gi";
 import { useState } from "react";
 import moment from "moment";
+import { format } from "date-fns";
 
 interface EventCardProps {
   event: EventType;
@@ -38,7 +39,8 @@ function EventCard({ event }: EventCardProps) {
       <div className="p-4 sm:p-6">
         <div className="flex justify-between items-center mb-2 sm:mb-4">
           <span className="text-xs sm:text-sm font-bold text-luxtix-5">
-            {event.eventDay}, {moment(event.eventDate).format("MMM Do YY")}
+            {format(new Date(event.eventDate), "cccc")},{" "}
+            {format(new Date(event.eventDate), "d MMMM yyyy")}
           </span>
           <button className="btn-anim" onClick={handleStarClick}>
             {isStarred ? (
@@ -64,7 +66,12 @@ function EventCard({ event }: EventCardProps) {
             {event.descriptions}
           </p>
           <p className="text-xs sm:text-sm text-luxtix-1 mb-1 sm:mb-2">
-            {event.startTime} - {event.endTime}
+            {format(
+              new Date(`${event.eventDate}T${event.startTime}`),
+              "hh:mm a"
+            )}{" "}
+            -{" "}
+            {format(new Date(`${event.eventDate}T${event.endTime}`), "hh:mm a")}
           </p>
           <p className="text-xs sm:text-sm space-x-2 text-orange-500 flex items-center">
             <GiTicket className="mr-1" />
