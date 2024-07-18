@@ -4,9 +4,10 @@ import { useEvents } from "@/hooks/useEvents";
 import { Skeleton } from "@/components/ui/skeleton";
 import EventCard from "@/components/EventCard";
 import Link from "next/link";
+import { useLandingEvents } from "@/hooks/useLandingEvents";
 
 function PopularEvents() {
-  const { events, loading, error } = useEvents("", 6);
+  const { events, loading, error } = useLandingEvents("", 6);
 
   if (loading) {
     return (

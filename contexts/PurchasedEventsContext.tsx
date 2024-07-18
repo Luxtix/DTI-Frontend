@@ -1,6 +1,5 @@
 "use client";
 
-import { useEvents } from "@/hooks/useEvents";
 import { EventType } from "@/types/event";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 

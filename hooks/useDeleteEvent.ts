@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
 
 export function useDeleteEvent() {
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   const deleteEvent = async (eventId: number) => {
+    const { data: session } = useSession();
     setIsDeleting(true);
     try {
+      const headers: HeadersInit = {};
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
       const response = await fetch(
-        `http://localhost:8080/api/events/${eventId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events/${eventId}`,
         {
           method: "DELETE",
           credentials: "include",

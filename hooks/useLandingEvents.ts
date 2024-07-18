@@ -12,7 +12,7 @@ interface ApiResponse {
   currentPage: number;
 }
 
-export function useEventsTab(queryParams: string = "") {
+export function useLandingEvents(queryParams: string = "", size?: number) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +24,8 @@ export function useEventsTab(queryParams: string = "") {
     const fetchEvents = async () => {
       try {
         const endpoint = session
-          ? `/api/events${queryParams ? `?${queryParams}` : ""}`
-          : `/api/events/public${queryParams ? `?${queryParams}` : ""}`;
+          ? `/api/events${queryParams ? `?${queryParams}&size=6` : "?size=6"}`
+          : `/api/events/public${queryParams ? `?${queryParams}` : "?size=6"}`;
 
         const headers: HeadersInit = {};
         if (session) {
@@ -50,7 +50,7 @@ export function useEventsTab(queryParams: string = "") {
       }
     };
     fetchEvents();
-  }, [queryParams, session]);
+  }, [queryParams, size, session]);
 
   return { events, loading, error };
 }
