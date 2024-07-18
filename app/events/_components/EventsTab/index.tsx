@@ -11,12 +11,14 @@ interface Filters {
   price: string;
   type: string;
   category: string;
+  city: string;
 }
 
 const initialFilters: Filters = {
   price: "",
   type: "",
   category: "",
+  city: "",
 };
 
 const filterOptions = {
@@ -59,14 +61,16 @@ function EventsTab() {
         : searchParams.get("isOnline") === "false"
         ? "Offline"
         : "";
+    const city = searchParams.get("city") || "";
 
     setActiveFilters({
       price: price,
       type: type,
       category: category || "",
+      city: city,
     });
 
-    updateURLParams({ price, type, category: category || "" });
+    updateURLParams({ price, type, category: category || "", city });
   }, [searchParams]);
 
   const toggleFilters = () => {
@@ -81,6 +85,7 @@ function EventsTab() {
     if (filters.type === "Online") params.append("isOnline", "true");
     if (filters.type === "Offline") params.append("isOnline", "false");
     if (filters.category) params.append("category", filters.category);
+    if (filters.city) params.append("city", filters.city);
 
     const newQueryParams = params.toString();
     setQueryParams(newQueryParams);
@@ -143,21 +148,23 @@ function EventsTab() {
               {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
             </h3>
             <div className="flex flex-wrap gap-2">
-              {filterOptions[filterType as keyof Filters].map((filter) => (
-                <div
-                  key={filter}
-                  onClick={() =>
-                    handleFilterChange(filterType as keyof Filters, filter)
-                  }
-                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${
-                    activeFilters[filterType as keyof Filters] === filter
-                      ? "bg-luxtix-4 text-luxtix-1"
-                      : "border-luxtix-7 text-luxtix-7"
-                  }`}
-                >
-                  {filter}
-                </div>
-              ))}
+              {filterOptions[filterType as keyof typeof filterOptions].map(
+                (filter) => (
+                  <div
+                    key={filter}
+                    onClick={() =>
+                      handleFilterChange(filterType as keyof Filters, filter)
+                    }
+                    className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${
+                      activeFilters[filterType as keyof Filters] === filter
+                        ? "bg-luxtix-4 text-luxtix-1"
+                        : "border-luxtix-7 text-luxtix-7"
+                    }`}
+                  >
+                    {filter}
+                  </div>
+                )
+              )}
             </div>
           </div>
         ))}

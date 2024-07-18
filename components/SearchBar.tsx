@@ -31,7 +31,7 @@ function SearchBar() {
     const fetchCities = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}api/cities?name=${debouncedCitySearchTerm}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cities?name=${debouncedCitySearchTerm}`,
           {
             credentials: "include",
           }
@@ -54,8 +54,12 @@ function SearchBar() {
     const fetchEvents = async () => {
       try {
         let endpoint = session ? "/api/events" : "/api/events/public";
+        const headers: HeadersInit = {};
+        if (session) {
+          headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+        }
         const response = await fetch(
-          `http://localhost:8080${endpoint}?eventName=${debouncedEventSearchTerm}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}?eventName=${debouncedEventSearchTerm}`,
           {
             credentials: "include",
           }
