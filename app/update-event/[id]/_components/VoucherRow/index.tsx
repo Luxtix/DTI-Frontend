@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CgRemove } from "react-icons/cg";
 import { number, z } from "zod";
+import { toast } from "@/components/ui/use-toast";
+import useDeleteVoucher from "@/hooks/useDeleteVoucher";
 
 
 const voucherRowSchema = z.object({
@@ -32,6 +34,8 @@ function VoucherRow({
 
   const { control, watch, setValue } = useFormContext();
   const startDate = watch(`vouchers.${index}.startDate`);
+  const form = useFormContext()
+  const { deleteVoucher } = useDeleteVoucher()
   const referralOnly = useWatch({
     control,
     name: `vouchers.${index}.referralOnly`,
@@ -43,6 +47,30 @@ function VoucherRow({
       setValue(`vouchers.${index}.startDate`, null);
       setValue(`vouchers.${index}.endDate`, null);
       setValue(`vouchers.${index}.rate`, 10);
+    }
+  };
+
+  const handleRemove = async () => {
+    const id = form.getValues(`vouchers.${index}.id`);
+
+    if (id > 0) {
+      const result = await deleteVoucher(id);
+      if (result) {
+        toast({
+          title: "Voucher delete successfully",
+          description: "Your ticket has been deleted.",
+          duration: 3000,
+        });
+        removeRow(index);
+      } else {
+        toast({
+          title: "Voucher delete Failed",
+          description: "Your ticket has not been deleted.",
+          variant: 'destructive'
+        });
+      }
+    } else {
+      removeRow(index);
     }
   };
 
@@ -173,12 +201,13 @@ function VoucherRow({
         />
         <button
           type="button"
-          onClick={() => removeRow(index)}
+          onClick={() => handleRemove()}
           className="btn-anim p-2 text-luxtix-3 mt-2"
         >
           <CgRemove size={20} />
         </button>
       </div>
+      <input type="hidden" {...form.control.register(`vouchers.${index}.id`)} />
     </div>
   );
 }

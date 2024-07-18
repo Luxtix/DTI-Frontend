@@ -25,11 +25,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { BsDoorOpen, BsCurrencyDollar } from "react-icons/bs";
-import TicketRow from "./TicketRow";
-import VoucherRow from "./VoucherRow";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useCities } from "@/hooks/useCities";
+import TicketRow from "./TicketRow";
+import VoucherRow from "./VoucherRow";
+import useOrganizerEventDetailById from "@/hooks/useOrganizerEventDetailById";
+import { Button } from "@/components/ui/button";
+import useUpdateEvent from "@/hooks/useUpdateEvent";
 
 
 const eventCategories = [
@@ -47,19 +50,19 @@ today.setHours(0, 0, 0, 0);
 
 const UpdateEventSchema = z.object({
   name: z.string().min(1, "Event name is required"),
-  category: z.number().min(1, "Event category is required"),
   isOnline: z.boolean(),
   eventDate: z.string().min(1, "Event date is required"),
   startTime: z.string().min(1, "Start time is required"),
   endTime: z.string().min(1, "End time is required"),
   venue: z.string().min(1, "Venue name is required"),
   address: z.string().min(1, "Venue address is required"),
-  city: z.number().min(1, "City is required"),
+  category: z.coerce.number().min(1, "Event category is required"),
+  city: z.coerce.number().min(1, "City is required"),
   description: z.string().min(1, "Description is required"),
   isPaid: z.boolean(),
   tickets: z.array(
     z.object({
-      id: z.string().nullable(),
+      id: z.coerce.string().transform((value) => value === '' ? -1 : value).nullable(),
       name: z.string(),
       price: z.coerce.number(),
       qty: z.coerce.number().min(1, "Ticket qty is required"),
@@ -67,7 +70,7 @@ const UpdateEventSchema = z.object({
   ),
   vouchers: z.array(
     z.object({
-      id: z.string().nullable(),
+      id: z.coerce.string().transform((value) => value === '' ? -1 : value).nullable(),
       name: z.string(),
       qty: z.coerce.number().min(1, "Voucher qty is required"),
       rate: z.coerce.number(),
@@ -94,8 +97,14 @@ const imageSchema = z.instanceof(File);
 
 function UpdateEvent() {
   const router = useRouter();
+  const { id } = useParams();
+  const eventId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id);
+
+  const { event } = useOrganizerEventDetailById(eventId);
+
 
   const { toast } = useToast();
+  const { updateEvent } = useUpdateEvent()
   const { cities, loading } = useCities();
   const [image, setImage] = useState<File | null>(null);
 
@@ -117,6 +126,39 @@ function UpdateEvent() {
       vouchers: [],
     },
   });
+
+  useEffect(() => {
+    if (event) {
+      form.reset({
+        name: event.name,
+        category: event.category,
+        isOnline: event.isOnline,
+        eventDate: event.eventDate,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        venue: event.venue,
+        address: event.address,
+        city: event.city,
+        description: event.description,
+        isPaid: event.isPaid,
+        tickets: event.tickets.map(ticket => ({
+          id: ticket.id,
+          name: ticket.name,
+          price: ticket.price,
+          qty: ticket.qty
+        })),
+        vouchers: event.vouchers.map(voucher => ({
+          id: voucher.id,
+          name: voucher.name,
+          qty: voucher.qty,
+          rate: voucher.rate,
+          startDate: voucher.startDate,
+          endDate: voucher.endDate,
+          referralOnly: voucher.referralOnly
+        })),
+      });
+    }
+  }, [event, form]);
 
   const { fields: ticketField, append: appendTicket, remove: removeTicket } = useFieldArray({
     control: form.control,
@@ -140,40 +182,35 @@ function UpdateEvent() {
 
 
   const onSubmit = async (data: z.infer<typeof UpdateEventSchema>) => {
-    // try {
-    //   const formData = new FormData()
-    //   const eventData = JSON.stringify(data);
+    try {
+      const formData = new FormData()
+      const eventData = JSON.stringify(data);
 
-    //   if (image) {
-    //     formData.append('image', image);
-    //   }
-    //   formData.append('eventData', eventData)
-    //   // const result = await UpdateEvent(formData);
-    //   if (result) {
-    //     toast({
-    //       title: "Event Updated",
-    //       description: "Your event has been successfully Updated.",
-    //       duration: 3000,
-    //     });
-    //     setTimeout(() => {
-    //       router.push("/dashboard");
-    //     }, 3000);
-    //   }
-    // } catch (err) {
-    //   console.error("Failed to Update event:", err);
-    //   toast({
-    //     title: "Error",
-    //     description: "Failed to Update event. Please try again.",
-    //     variant: "destructive",
-    //   });
-    // }
+      if (image) {
+        formData.append('image', image);
+      }
+      formData.append('eventData', eventData)
+      console.log(eventData)
+      const result = await updateEvent(formData, eventId);
+      if (result) {
+        toast({
+          title: "Event Updated",
+          description: "Your event has been successfully Updated.",
+          duration: 3000,
+        });
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Failed to Update event:", err);
+      toast({
+        title: "Error",
+        description: "Failed to Update event. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
-
-
-
-
-
-
 
   return (
     <Form {...form}>
@@ -450,7 +487,7 @@ function UpdateEvent() {
           </h2>
           <div className="py-2">
             {ticketField.map((_, index: number) => (
-              <TicketRow index={index} removeRow={removeTicket} isPaid={isPaid} />
+              <TicketRow key={index} index={index} removeRow={removeTicket} isPaid={isPaid} />
             ))}
             <button
               onClick={() => appendTicket({
@@ -478,7 +515,7 @@ function UpdateEvent() {
                 ))}
                 <button
                   onClick={() => appendVoucher({
-                    id: '',
+                    id: -1,
                     name: '',
                     qty: 0,
                     rate: 0,
@@ -495,14 +532,14 @@ function UpdateEvent() {
           </>
         )}
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
             onClick={form.handleSubmit(onSubmit)}
-          // disabled={isLoading}
+            disabled={loading}
           >
-            {/* {isLoading ? "Creating..." : "Save & Continue"} */}
-          </button>
+            {loading ? "Updating..." : "Save & Continue"}
+          </Button>
         </div>
       </div>
     </Form>

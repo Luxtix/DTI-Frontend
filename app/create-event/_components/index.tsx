@@ -90,7 +90,6 @@ const createEventSchema = z.object({
   ),
 });
 
-const imageSchema = z.instanceof(File);
 
 function CreateEvent() {
   const router = useRouter();
@@ -121,9 +120,6 @@ function CreateEvent() {
         }
       ],
       vouchers: [],
-      acceptReferralVoucher: false,
-      referralVoucherName: "",
-      referralVoucherQuantity: 0,
     },
   });
 
@@ -494,57 +490,6 @@ function CreateEvent() {
                   Add Voucher
                 </button>
               </div>
-            </section>
-
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold mb-4">
-                Do you accept referral voucher?
-              </h2>
-              <FormField
-                control={form.control}
-                name="acceptReferralVoucher"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Yes, I accept referral vouchers</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {form.watch("acceptReferralVoucher") && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-                  <FormField
-                    name="referralVoucherName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Voucher Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="referralVoucherQuantity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>QTY</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="QTY 0" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
             </section>
           </>
         )}

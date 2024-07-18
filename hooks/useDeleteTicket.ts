@@ -1,20 +1,19 @@
 import React, { useState } from 'react'
 
-const useUpdateEvent = () => {
+const useDeleteTicket = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const updateEvent = async (formData: any, id: number) => {
+  const deleteTicket = async (id: number) => {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch(`http://localhost:8080/api/events/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/ticket/${id}`, {
         credentials: 'include',
-        method: 'PUT',
-        body: formData,
+        method: 'DELETE',
       })
       if (!response.ok) {
-        throw new Error('Failed to create event')
+        throw new Error('Failed to delete ticket')
       }
       const data = await response.json()
       setIsLoading(false)
@@ -25,7 +24,7 @@ const useUpdateEvent = () => {
     }
   }
 
-  return { updateEvent, isLoading, error }
+  return { deleteTicket, isLoading, error }
 }
 
-export default useUpdateEvent
+export default useDeleteTicket
