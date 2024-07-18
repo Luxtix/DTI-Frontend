@@ -15,7 +15,9 @@ function Hero() {
       </div>
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-4 pb-16">
-        <h2 className="text-4xl sm:text-5xl font-bold mb-4">Don't miss out!</h2>
+        <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          Don&apos;t miss out!
+        </h2>
         <h2 className="text-2xl sm:text-3xl font-semibold mb-8">
           Explore the <span className="text-luxtix-6">vibrant events</span>{" "}
           happening locally and globally.

@@ -7,8 +7,8 @@ function CTA() {
             Experience the Best Events with Luxtix
           </h2>
           <p className="text-luxtix-1 text-xs sm:text-lg">
-            Get your tickets now and be part of unforgettable experiences. Don't
-            miss out!
+            Get your tickets now and be part of unforgettable experiences.
+            Don&apos;t miss out!
           </p>
         </div>
       </div>
