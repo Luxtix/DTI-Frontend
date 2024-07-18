@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AiOutlineArrowLeft } from "react-icons/ai";
@@ -31,7 +30,6 @@ import VoucherRow from "./VoucherRow";
 import { useCreateEvent } from "@/hooks/useCreateEvent";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { useCities } from "@/hooks/useCities";
 
 const eventCategories = [
@@ -42,7 +40,6 @@ const eventCategories = [
   "Technology & Innovation",
   "Travel & Adventure",
 ];
-
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -76,20 +73,21 @@ const createEventSchema = z.object({
         z.string().refine((date) => {
           const parsedDate = new Date(date);
           return !isNaN(parsedDate.getTime()) && parsedDate >= today;
-        }, "Start date must be today or later")
+        }, "Start date must be today or later"),
       ]),
       endDate: z.union([
         z.null(),
         z.string().refine((date) => {
           const parsedDate = new Date(date);
           return !isNaN(parsedDate.getTime()) && parsedDate >= today;
-        }, "End date must be today or later")
+        }, "End date must be today or later"),
       ]),
       referralOnly: z.boolean(),
     })
   ),
 });
 
+const imageSchema = z.instanceof(File);
 
 function CreateEvent() {
   const router = useRouter();
@@ -114,24 +112,32 @@ function CreateEvent() {
       isPaid: false,
       tickets: [
         {
-          name: '',
+          name: "",
           price: 0,
-          qty: 0
-        }
+          qty: 0,
+        },
       ],
       vouchers: [],
     },
   });
 
-  const { fields: ticketField, append: appendTicket, remove: removeTicket } = useFieldArray({
+  const {
+    fields: ticketField,
+    append: appendTicket,
+    remove: removeTicket,
+  } = useFieldArray({
     control: form.control,
-    name: "tickets"
-  })
+    name: "tickets",
+  });
 
-  const { fields: voucherField, append: appendVoucher, remove: removeVoucher } = useFieldArray({
+  const {
+    fields: voucherField,
+    append: appendVoucher,
+    remove: removeVoucher,
+  } = useFieldArray({
     control: form.control,
-    name: "vouchers"
-  })
+    name: "vouchers",
+  });
   const isPaid = form.watch("isPaid");
 
   useEffect(() => {
@@ -143,16 +149,15 @@ function CreateEvent() {
     }
   }, [isPaid, form]);
 
-
   const onSubmit = async (data: z.infer<typeof createEventSchema>) => {
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       const eventData = JSON.stringify(data);
 
       if (image) {
-        formData.append('image', image);
+        formData.append("image", image);
       }
-      formData.append('eventData', eventData)
+      formData.append("eventData", eventData);
       const result = await createEvent(formData);
       if (result) {
         toast({
@@ -173,12 +178,6 @@ function CreateEvent() {
       });
     }
   };
-
-
-
-
-
-
 
   return (
     <Form {...form}>
@@ -276,9 +275,11 @@ function CreateEvent() {
                 <FormItem>
                   <FormLabel>Event Date</FormLabel>
                   <FormControl>
-                    <Input type="date"
-                      min={new Date().toISOString().split('T')[0]}
-                      {...field} />
+                    <Input
+                      type="date"
+                      min={new Date().toISOString().split("T")[0]}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -359,14 +360,18 @@ function CreateEvent() {
                       <SelectValue placeholder="Select a city" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="1">Jakarta</SelectItem>
-                    <SelectItem value="2">Surabaya</SelectItem>
-                    <SelectItem value="3">Bandung</SelectItem>
-                    <SelectItem value="4">Medan</SelectItem>
-                    <SelectItem value="5">Semarang</SelectItem>
-                    <SelectItem value="6">Makassar</SelectItem>
-                    <SelectItem value="7">Palembang</SelectItem>
+                  <SelectContent className="max-h-[200px] overflow-y-auto">
+                    {loading ? (
+                      <SelectItem value="loading">Loading cities...</SelectItem>
+                    ) : (
+                      cities
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((city) => (
+                          <SelectItem key={city.id} value={city.id.toString()}>
+                            {city.name}
+                          </SelectItem>
+                        ))
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -451,14 +456,20 @@ function CreateEvent() {
           </h2>
           <div className="py-2">
             {ticketField.map((_, index: number) => (
-              <TicketRow index={index} removeRow={removeTicket} isPaid={isPaid} />
+              <TicketRow
+                index={index}
+                removeRow={removeTicket}
+                isPaid={isPaid}
+              />
             ))}
             <button
-              onClick={() => appendTicket({
-                name: '',
-                price: 0,
-                qty: 0
-              })}
+              onClick={() =>
+                appendTicket({
+                  name: "",
+                  price: 0,
+                  qty: 0,
+                })
+              }
               className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
             >
               Add Ticket
@@ -474,17 +485,23 @@ function CreateEvent() {
               </h2>
               <div className="py-2">
                 {voucherField.map((_, index: number) => (
-                  <VoucherRow key={index} index={index} removeRow={removeVoucher} />
+                  <VoucherRow
+                    key={index}
+                    index={index}
+                    removeRow={removeVoucher}
+                  />
                 ))}
                 <button
-                  onClick={() => appendVoucher({
-                    name: '',
-                    qty: 0,
-                    rate: 0,
-                    startDate: null,
-                    endDate: null,
-                    referralOnly: false
-                  })}
+                  onClick={() =>
+                    appendVoucher({
+                      name: "",
+                      qty: 0,
+                      rate: 0,
+                      startDate: null,
+                      endDate: null,
+                      referralOnly: false,
+                    })
+                  }
                   className="btn-anim bg-luxtix-4 hover:bg-luxtix-2 text-black text-sm p-2 rounded-md"
                 >
                   Add Voucher
@@ -494,14 +511,14 @@ function CreateEvent() {
           </>
         )}
         <div className="flex justify-end">
-          <Button
+          <button
             type="submit"
             className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
             onClick={form.handleSubmit(onSubmit)}
             disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Save & Continue"}
-          </Button>
+          </button>
         </div>
       </div>
     </Form>

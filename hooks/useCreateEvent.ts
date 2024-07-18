@@ -4,9 +4,9 @@ import { useState } from "react";
 export const useCreateEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const createEvent = async (formData: any) => {
-    const { data: session } = useSession();
     setIsLoading(true);
     setError(null);
     try {
@@ -20,6 +20,7 @@ export const useCreateEvent = () => {
           credentials: "include",
           method: "POST",
           body: formData,
+          headers,
         }
       );
       if (!response.ok) {
