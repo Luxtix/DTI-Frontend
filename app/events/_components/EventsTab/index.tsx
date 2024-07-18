@@ -6,7 +6,6 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEvents } from "@/hooks/useEvents";
 import CircularLoader from "@/components/ui/circular-loader";
-import { useEventsTab } from "@/hooks/useEventsTab";
 
 interface Filters {
   price: string;
@@ -35,11 +34,16 @@ const filterOptions = {
 
 function EventsTab() {
   const [queryParams, setQueryParams] = useState("");
-  const { events, loading, error } = useEvents(queryParams);
+  const [page, setPage] = useState(0);
+  const { events, loading, error, hasMore } = useEvents(queryParams, 10, page);
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -47,20 +51,22 @@ function EventsTab() {
       searchParams.get("isPaid") === "true"
         ? "Paid"
         : searchParams.get("isPaid") === "false"
-          ? "Free"
-          : "";
+        ? "Free"
+        : "";
     const type =
       searchParams.get("isOnline") === "true"
         ? "Online"
         : searchParams.get("isOnline") === "false"
-          ? "Offline"
-          : "";
+        ? "Offline"
+        : "";
 
     setActiveFilters({
       price: price,
       type: type,
       category: category || "",
     });
+
+    updateURLParams({ price, type, category: category || "" });
   }, [searchParams]);
 
   const toggleFilters = () => {
@@ -126,8 +132,9 @@ function EventsTab() {
       </div>
 
       <div
-        className={`${showFilters ? "block" : "hidden"
-          } sm:block w-full sm:w-1/4 p-4 border-r`}
+        className={`${
+          showFilters ? "block" : "hidden"
+        } sm:block w-full sm:w-1/4 p-4 border-r`}
       >
         <h2 className="text-xl font-semibold mb-4">Filters</h2>
         {Object.keys(filterOptions).map((filterType) => (
@@ -142,10 +149,11 @@ function EventsTab() {
                   onClick={() =>
                     handleFilterChange(filterType as keyof Filters, filter)
                   }
-                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${activeFilters[filterType as keyof Filters] === filter
-                    ? "bg-luxtix-4 text-luxtix-1"
-                    : "border-luxtix-7 text-luxtix-7"
-                    }`}
+                  className={`px-4 py-2 text-xs sm:text-base rounded-full border cursor-pointer ${
+                    activeFilters[filterType as keyof Filters] === filter
+                      ? "bg-luxtix-4 text-luxtix-1"
+                      : "border-luxtix-7 text-luxtix-7"
+                  }`}
                 >
                   {filter}
                 </div>
@@ -170,6 +178,16 @@ function EventsTab() {
             <EventCard key={event.id} event={event} />
           ))}
         </div>
+        {hasMore && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={handleLoadMore}
+              className="w-1/2 p-4 btn-anim bg-luxtix-4 text-luxtix-1 px-4 py-2 rounded-md"
+            >
+              View More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
