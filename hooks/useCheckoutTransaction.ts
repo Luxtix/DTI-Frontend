@@ -19,7 +19,7 @@ const useCheckoutTransaction = () => {
   const { data: session } = useSession();
   const checkoutTransaction = async (result: TransactionProps) => {
     try {
-      const headers: HeadersInit = {};
+      const headers: HeadersInit = { "Content-Type": "application/json" };
       if (session) {
         headers["Authorization"] = `Bearer ${session.user.accessToken}`;
       }
@@ -28,9 +28,7 @@ const useCheckoutTransaction = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers,
           credentials: "include",
           body: JSON.stringify(result),
         }

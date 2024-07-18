@@ -25,7 +25,9 @@ export function useLandingEvents(queryParams: string = "", size?: number) {
       try {
         const endpoint = session
           ? `/api/events${queryParams ? `?${queryParams}&size=6` : "?size=6"}`
-          : `/api/events/public${queryParams ? `?${queryParams}` : "?size=6"}`;
+          : `/api/events/public${
+              queryParams ? `?${queryParams}&size=6` : "?size=6"
+            }`;
 
         const headers: HeadersInit = {};
         if (session) {
