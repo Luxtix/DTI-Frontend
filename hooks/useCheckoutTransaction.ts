@@ -1,3 +1,5 @@
+import { useSession } from "next-auth/react";
+
 interface TransactionProps {
   eventId: string;
   voucherId: number | null;
@@ -14,8 +16,14 @@ interface TransactionProps {
 }
 
 const useCheckoutTransaction = () => {
+  const { data: session } = useSession();
   const checkoutTransaction = async (result: TransactionProps) => {
     try {
+      const headers: HeadersInit = {};
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction`,
         {

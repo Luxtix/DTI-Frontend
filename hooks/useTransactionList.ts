@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export interface TransactionList {
@@ -20,8 +21,13 @@ const useTransactionList = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<unknown>(null);
   const [transactionLimit, setTransactionLimit] = useState<number>(1);
+  const { data: session } = useSession();
   const getLists = async () => {
     try {
+      const headers: HeadersInit = {};
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
       const limit = 6 * transactionLimit;
       setLoading(true);
       const endpoint = `/api/transaction?size=${limit}`;
@@ -29,6 +35,7 @@ const useTransactionList = () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
         {
           credentials: "include",
+          headers,
         }
       );
       if (!response.ok) {
