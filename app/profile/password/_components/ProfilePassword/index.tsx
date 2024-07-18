@@ -48,7 +48,7 @@ function ProfilePassword() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/users/change-password",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/change-password`,
         {
           method: "PUT",
           headers: {

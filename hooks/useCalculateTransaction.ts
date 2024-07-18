@@ -1,46 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from "react";
 
 interface calculatePriceProps {
-  voucherId: number | null
-  originalPrice: number
-  usePoint: number | null
+  voucherId: number | null;
+  originalPrice: number;
+  usePoint: number | null;
 }
 
 interface CalculateResult {
-  totalDiscount: number
-  finalPrice: number
+  totalDiscount: number;
+  finalPrice: number;
 }
 
 const useCalculateTransaction = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [calculateResult, setCalculateResult] = useState<CalculateResult>()
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [calculateResult, setCalculateResult] = useState<CalculateResult>();
 
   const calculateTransaction = async (result: calculatePriceProps) => {
-    setIsLoading(true)
-    setError(null)
+    setIsLoading(true);
+    setError(null);
     try {
       const response = await fetch(
-        'http://localhost:8080/api/transaction/calculate',
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/calculate`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(result),
-          credentials: 'include',
+          credentials: "include",
         }
-      )
+      );
       if (!response.ok) {
-        throw new Error('Failed to create event')
+        throw new Error("Failed to create event");
       }
-      const data = await response.json()
-      setIsLoading(false)
-      return data.data
+      const data = await response.json();
+      setIsLoading(false);
+      return data.data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-      setIsLoading(false)
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setIsLoading(false);
     }
-  }
-  return { calculateTransaction }
-}
+  };
+  return { calculateTransaction };
+};
 
-export default useCalculateTransaction
+export default useCalculateTransaction;

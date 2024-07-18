@@ -1,38 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 interface userPointProps {
-  points: number
+  points: number;
 }
 const useTotalUserPoint = () => {
   const [userPoint, setUserPoint] = useState<userPointProps | undefined>(
     undefined
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserPoint = async () => {
       try {
-        const endpoint = `/api/points`
+        const endpoint = `/api/points`;
 
-        const response = await fetch(`http://localhost:8080${endpoint}`, {
-          credentials: 'include',
-        })
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
+          {
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
-          throw new Error('Failed to fetch events')
+          throw new Error("Failed to fetch events");
         }
-        const point = await response.json()
-        setUserPoint(point.data)
+        const point = await response.json();
+        setUserPoint(point.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchUserPoint()
-  }, [])
+    };
+    fetchUserPoint();
+  }, []);
 
-  return { userPoint, loading, error }
-}
+  return { userPoint, loading, error };
+};
 
-export default useTotalUserPoint
+export default useTotalUserPoint;

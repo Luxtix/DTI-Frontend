@@ -20,10 +20,8 @@ import {
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { signIn } from "next-auth/react";
-import { error } from "console";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
-
 
 interface formValues {
   email: string;
@@ -36,8 +34,8 @@ const signInSchema = z.object({
 
 function SignIn() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -60,7 +58,7 @@ function SignIn() {
           title: "Login Error",
           description: "Invalid email or password. Please try again.",
           duration: 2000,
-          variant: 'destructive'
+          variant: "destructive",
         });
       } else if (result?.ok) {
         router.push("/dashboard");
