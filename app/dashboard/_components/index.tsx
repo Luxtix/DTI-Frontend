@@ -35,6 +35,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 const chartConfig = {
   desktop: {
@@ -54,6 +55,10 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const { deleteEvent, isDeleting } = useDeleteEvent();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const router = useRouter();
+  const handleModifyClick = (eventId: string | number) => {
+    router.push(`/update-event/${eventId}`);
+  };
 
   const handleEventChange = async (event: ChangeEvent<HTMLSelectElement>) => {
     setIsLoading(true);
@@ -190,7 +195,7 @@ function Dashboard() {
                   Create
                 </button>
               </Link>
-              <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 ml-0 sm:ml-4 px-4 py-2 rounded mb-2 sm:mb-0">
+              <button className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 ml-0 sm:ml-4 px-4 py-2 rounded mb-2 sm:mb-0" onClick={() => handleModifyClick(eventId!)}>
                 Modify
               </button>
               <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
@@ -272,25 +277,22 @@ function Dashboard() {
               </h2>
               <div className="flex space-x-2">
                 <button
-                  className={`btn-anim ${
-                    dateType === "day" ? "bg-luxtix-2" : "bg-luxtix-6"
-                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  className={`btn-anim ${dateType === "day" ? "bg-luxtix-2" : "bg-luxtix-6"
+                    } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
                   onClick={() => handleDateTypeChange("day")}
                 >
                   D
                 </button>
                 <button
-                  className={`btn-anim ${
-                    dateType === "month" ? "bg-luxtix-2" : "bg-luxtix-6"
-                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  className={`btn-anim ${dateType === "month" ? "bg-luxtix-2" : "bg-luxtix-6"
+                    } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
                   onClick={() => handleDateTypeChange("month")}
                 >
                   M
                 </button>
                 <button
-                  className={`btn-anim ${
-                    dateType === "year" ? "bg-luxtix-2" : "bg-luxtix-6"
-                  } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
+                  className={`btn-anim ${dateType === "year" ? "bg-luxtix-2" : "bg-luxtix-6"
+                    } text-luxtix-1 hover:bg-luxtix-2 px-2 py-1 rounded`}
                   onClick={() => handleDateTypeChange("year")}
                 >
                   Y
@@ -303,13 +305,13 @@ function Dashboard() {
                 <CardDescription>
                   {summaryData?.tickets && summaryData.tickets.length > 0
                     ? new Date(summaryData.tickets[0].date).toLocaleDateString(
-                        "en-US",
-                        {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        }
-                      )
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )
                     : "No data available"}
                 </CardDescription>
               </CardHeader>

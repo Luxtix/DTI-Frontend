@@ -90,7 +90,6 @@ const createEventSchema = z.object({
   ),
 });
 
-const imageSchema = z.instanceof(File);
 
 function CreateEvent() {
   const router = useRouter();
@@ -360,18 +359,14 @@ function CreateEvent() {
                       <SelectValue placeholder="Select a city" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="max-h-[200px] overflow-y-auto">
-                    {loading ? (
-                      <SelectItem value="loading">Loading cities...</SelectItem>
-                    ) : (
-                      cities
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((city) => (
-                          <SelectItem key={city.id} value={city.id.toString()}>
-                            {city.name}
-                          </SelectItem>
-                        ))
-                    )}
+                  <SelectContent>
+                    <SelectItem value="1">Jakarta</SelectItem>
+                    <SelectItem value="2">Surabaya</SelectItem>
+                    <SelectItem value="3">Bandung</SelectItem>
+                    <SelectItem value="4">Medan</SelectItem>
+                    <SelectItem value="5">Semarang</SelectItem>
+                    <SelectItem value="6">Makassar</SelectItem>
+                    <SelectItem value="7">Palembang</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -499,14 +494,14 @@ function CreateEvent() {
           </>
         )}
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             className="btn-anim bg-luxtix-6 text-luxtix-1 hover:bg-luxtix-2 px-4 py-2 rounded-lg"
             onClick={form.handleSubmit(onSubmit)}
             disabled={isLoading}
           >
             {isLoading ? "Creating..." : "Save & Continue"}
-          </button>
+          </Button>
         </div>
       </div>
     </Form>

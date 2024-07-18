@@ -9,6 +9,8 @@ import { CiLocationOn } from "react-icons/ci";
 import { BiTimeFive, BiCalendarAlt } from "react-icons/bi";
 import { GiTicket } from "react-icons/gi";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
+import { useIntrestedEvent } from "@/hooks/useIntrestedEvent";
 
 interface EventDetailsCardProps {
   event: EventDetailType;
@@ -16,9 +18,11 @@ interface EventDetailsCardProps {
 
 function EventDetailsCard({ event }: EventDetailsCardProps) {
   const [interested, setInterested] = useState<boolean>(false);
-
-  const toggleInterested = () => {
+  const { data: session } = useSession()
+  const { toogleIntrested } = useIntrestedEvent()
+  const toggleInterested = async () => {
     setInterested(!interested);
+    await toogleIntrested(event.id)
   };
 
   return (
@@ -37,7 +41,7 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-luxtix-1">
             {event.eventName}
           </h1>
-          <button onClick={toggleInterested} className="btn-anim">
+          <button onClick={toggleInterested} className="btn-anim" disabled={!session}>
             {interested ? (
               <AiFillStar
                 size={40}
@@ -83,8 +87,8 @@ function EventDetailsCard({ event }: EventDetailsCardProps) {
                 {event.tickets.length === 0
                   ? "Free"
                   : `From IDR ${Math.min(
-                      ...event.tickets.map((ticket) => ticket.price)
-                    ).toLocaleString()}`}
+                    ...event.tickets.map((ticket) => ticket.price)
+                  ).toLocaleString()}`}
               </span>
             </div>
           </div>

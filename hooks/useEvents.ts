@@ -3,14 +3,13 @@ import { EventType } from "@/types/event";
 import { useSession } from "next-auth/react";
 
 interface ApiResponse {
-  statusCode: number;
-  message: string;
-  success: boolean;
-  data: EventType[];
-  totalPages: number;
-  currentPage: number;
+  statusCode: number
+  message: string
+  success: boolean
+  data: EventType[]
+  totalPages: number
+  currentPage: number
 }
-
 export function useEvents(
   queryParams: string = "",
   size: number = 10,

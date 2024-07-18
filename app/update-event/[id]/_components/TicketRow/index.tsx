@@ -11,12 +11,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CgRemove } from "react-icons/cg";
+import useDeleteTicket from "@/hooks/useDeleteTicket";
+import { toast } from "@/components/ui/use-toast";
 
-const ticketRowSchema = z.object({
-  ticketName: z.string().min(1, "Ticket name is required"),
-  ticketPrice: z.number().min(0, "Price must be 0 or greater"),
-  ticketQuantity: z.number().int().min(1, "Quantity must be at least 1"),
-});
+
 
 function TicketRow({
   index,
@@ -28,6 +26,32 @@ function TicketRow({
   isPaid: boolean;
 }) {
   const form = useFormContext()
+  const { deleteTicket } = useDeleteTicket();
+
+  const handleRemove = async () => {
+    const id = form.getValues(`tickets.${index}.id`);
+
+    if (id > 0) {
+      const result = await deleteTicket(id);
+      if (result) {
+        toast({
+          title: "Ticket Delete successfully",
+          description: "Your ticket has been deleted.",
+          duration: 3000,
+        });
+        removeRow(index);
+      } else {
+        toast({
+          title: "Ticket Delete Failed",
+          description: "Your ticket has not been deleted.",
+          variant: 'destructive'
+        });
+      }
+
+    } else {
+      removeRow(index);
+    }
+  };
 
 
   return (
@@ -86,12 +110,13 @@ function TicketRow({
       <div className="flex flex-row">
         <button
           type="button"
-          onClick={() => removeRow(index)}
+          onClick={() => handleRemove()}
           className="btn-anim p-2 text-luxtix-3"
         >
           <CgRemove size={20} />
         </button>
       </div>
+      <input type="hidden" {...form.control.register(`tickets.${index}.id`)} />
     </div>
 
   );
