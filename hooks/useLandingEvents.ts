@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { EventType } from "@/types/event";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 interface ApiResponse {
   statusCode: number;
@@ -11,30 +12,20 @@ interface ApiResponse {
   currentPage: number;
 }
 
-export function useEvents(
-  queryParams: string = "",
-  size: number = 10,
-  page: number = 0
-) {
+export function useLandingEvents(queryParams: string = "", size?: number) {
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
   const { data: session } = useSession();
+  const search = useSearchParams();
+  const city = search.get("city") || "";
 
   useEffect(() => {
     const fetchEvents = async () => {
-      setLoading(true);
       try {
         const endpoint = session
-          ? `/api/events${
-              queryParams
-                ? `?${queryParams}&size=${size}&page=${page}`
-                : `?size=${size}&page=${page}`
-            }`
-          : `/api/events/public${
-              queryParams ? `?${queryParams}` : ""
-            }?size=${size}&page=${page}`;
+          ? `/api/events${queryParams ? `?${queryParams}&size=6` : "?size=6"}`
+          : `/api/events/public${queryParams ? `?${queryParams}` : "?size=6"}`;
 
         const headers: HeadersInit = {};
         if (session) {
@@ -51,19 +42,15 @@ export function useEvents(
           throw new Error("Failed to fetch events");
         }
         const data: ApiResponse = await response.json();
-        setEvents((prevEvents) =>
-          page === 0 ? data.data : [...prevEvents, ...data.data]
-        );
-        setHasMore(data.currentPage < data.totalPages);
+        setEvents(data.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setLoading(false);
       }
     };
-
     fetchEvents();
-  }, [queryParams, size, page, session]);
+  }, [queryParams, size, session]);
 
-  return { events, loading, error, hasMore };
+  return { events, loading, error };
 }
