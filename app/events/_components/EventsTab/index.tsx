@@ -1,7 +1,7 @@
 "use client";
 
 import EventCard from "@/components/EventCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEvents } from "@/hooks/useEvents";
@@ -34,21 +34,11 @@ const filterOptions = {
   ],
 };
 
-function EventsTab() {
-  const [queryParams, setQueryParams] = useState("");
-  const [page, setPage] = useState(0);
-  const { events, loading, error, hasMore } = useEvents(queryParams, 10, page);
-  const [showFilters, setShowFilters] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
+function useUrlParams() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
-  const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
-
-  useEffect(() => {
-    const category = searchParams.get("category");
+  return useMemo(() => {
+    const category = searchParams.get("category") || "";
     const price =
       searchParams.get("isPaid") === "true"
         ? "Paid"
@@ -63,15 +53,37 @@ function EventsTab() {
         : "";
     const city = searchParams.get("city") || "";
 
-    setActiveFilters({
-      price: price,
-      type: type,
-      category: category || "",
-      city: city,
-    });
-
-    updateURLParams({ price, type, category: category || "", city });
+    return { category, price, type, city };
   }, [searchParams]);
+}
+
+function EventsTab() {
+  const router = useRouter();
+  const { category, price, type, city } = useUrlParams();
+  const [page, setPage] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<Filters>(initialFilters);
+
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    if (price === "Paid") params.append("isPaid", "true");
+    if (price === "Free") params.append("isPaid", "false");
+    if (type === "Online") params.append("isOnline", "true");
+    if (type === "Offline") params.append("isOnline", "false");
+    if (category) params.append("category", category);
+    if (city) params.append("city", city);
+    return params.toString();
+  }, [category, price, type, city]);
+
+  const { events, loading, error, hasMore } = useEvents(queryParams, 10, page);
+
+  useEffect(() => {
+    setActiveFilters({ price, type, category, city });
+  }, [price, type, category, city]);
+
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -87,9 +99,7 @@ function EventsTab() {
     if (filters.category) params.append("category", filters.category);
     if (filters.city) params.append("city", filters.city);
 
-    const newQueryParams = params.toString();
-    setQueryParams(newQueryParams);
-    router.push(`?${newQueryParams}`, { scroll: false });
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const handleFilterChange = (filterType: keyof Filters, value: string) => {
@@ -103,7 +113,6 @@ function EventsTab() {
 
   const resetFilters = () => {
     setActiveFilters(initialFilters);
-    setQueryParams("");
     router.push("");
   };
 
