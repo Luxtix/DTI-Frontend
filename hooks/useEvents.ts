@@ -33,8 +33,8 @@ export function useEvents(
                 : `?size=${size}&page=${page}`
             }`
           : `/api/events/public${
-              queryParams ? `?${queryParams}` : ""
-            }?size=${size}&page=${page}`;
+              queryParams ? `?${queryParams}&` : "?"
+            }size=${size}&page=${page}`;
 
         const headers: HeadersInit = {};
         if (session) {
