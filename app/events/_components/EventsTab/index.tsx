@@ -97,6 +97,7 @@ function EventsTab() {
     updatedFilters[filterType] =
       updatedFilters[filterType] === value ? "" : value;
     setActiveFilters(updatedFilters);
+    setPage(0);
     updateURLParams(updatedFilters);
   };
 

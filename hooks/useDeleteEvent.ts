@@ -5,9 +5,9 @@ import { useSession } from "next-auth/react";
 export function useDeleteEvent() {
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
+  const { data: session } = useSession();
 
   const deleteEvent = async (eventId: number) => {
-    const { data: session } = useSession();
     setIsDeleting(true);
     try {
       const headers: HeadersInit = {};
@@ -18,6 +18,7 @@ export function useDeleteEvent() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events/${eventId}`,
         {
           method: "DELETE",
+          headers,
           credentials: "include",
         }
       );
