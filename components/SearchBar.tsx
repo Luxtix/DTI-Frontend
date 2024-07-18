@@ -62,6 +62,7 @@ function SearchBar() {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}?eventName=${debouncedEventSearchTerm}`,
           {
             credentials: "include",
+            headers,
           }
         );
         const data = await response.json();
