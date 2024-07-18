@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 export const useCreateEvent = () => {
@@ -5,9 +6,14 @@ export const useCreateEvent = () => {
   const [error, setError] = useState<string | null>(null);
 
   const createEvent = async (formData: any) => {
+    const { data: session } = useSession();
     setIsLoading(true);
     setError(null);
     try {
+      const headers: HeadersInit = {};
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events`,
         {

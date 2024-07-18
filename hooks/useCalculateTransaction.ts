@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 interface calculatePriceProps {
@@ -15,16 +16,24 @@ const useCalculateTransaction = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [calculateResult, setCalculateResult] = useState<CalculateResult>();
+  const { data: session } = useSession();
 
   const calculateTransaction = async (result: calculatePriceProps) => {
     setIsLoading(true);
     setError(null);
     try {
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/transaction/calculate`,
+
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify(result),
           credentials: "include",
         }

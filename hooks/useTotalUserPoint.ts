@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 interface userPointProps {
@@ -9,16 +10,24 @@ const useTotalUserPoint = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchUserPoint = async () => {
       try {
+        const headers: HeadersInit = {
+          "Content-Type": "application/json",
+        };
+        if (session) {
+          headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+        }
         const endpoint = `/api/points`;
 
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
           {
             credentials: "include",
+            headers,
           }
         );
         if (!response.ok) {
