@@ -33,15 +33,15 @@ export function useEvents(
                 : `?size=${size}&page=${page}`
             }`
           : `/api/events/public${
-              queryParams ? `?${queryParams}` : ""
-            }?size=${size}&page=${page}`;
+              queryParams ? `?${queryParams}&` : "?"
+            }size=${size}&page=${page}`;
 
         const headers: HeadersInit = {};
         if (session) {
           headers["Authorization"] = `Bearer ${session.user.accessToken}`;
         }
         const response = await fetch(
-          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`,
           {
             credentials: "include",
             headers,

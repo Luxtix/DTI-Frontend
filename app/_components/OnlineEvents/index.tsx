@@ -1,7 +1,6 @@
 "use client";
 import EventCard from "@/components/EventCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEvents } from "@/hooks/useEvents";
 import { useLandingEvents } from "@/hooks/useLandingEvents";
 import Link from "next/link";
 

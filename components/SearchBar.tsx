@@ -31,7 +31,7 @@ function SearchBar() {
     const fetchCities = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/cities?name=${debouncedCitySearchTerm}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}api/cities?name=${debouncedCitySearchTerm}`,
           {
             credentials: "include",
           }

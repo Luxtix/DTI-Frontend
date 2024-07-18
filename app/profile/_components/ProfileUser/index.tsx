@@ -78,11 +78,14 @@ function Profile() {
         formData.append("avatar", avatarFile);
       }
 
-      const response = await fetch("http://localhost:8080/api/users/profile", {
-        method: "PUT",
-        body: formData,
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/profile`,
+        {
+          method: "PUT",
+          body: formData,
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to update profile");
 

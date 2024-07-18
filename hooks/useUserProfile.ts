@@ -18,7 +18,7 @@ export function useUserProfile() {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/users/profile",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/profile`,
           {
             credentials: "include",
           }

@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 
 const useEventReview = () => {
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const useEventReview = () => {
         }
 
         const response = await fetch(
-          `https://dti-backend-lg2iizcpdq-uc.a.run.app${endpoint}?page=${page}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}?page=${page}`,
           {
             credentials: "include",
             headers,
