@@ -78,12 +78,18 @@ function Profile() {
         formData.append("avatar", avatarFile);
       }
 
+      const headers: HeadersInit = {};
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/profile`,
         {
           method: "PUT",
           body: formData,
           credentials: "include",
+          headers,
         }
       );
 

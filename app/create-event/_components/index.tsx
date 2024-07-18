@@ -457,6 +457,7 @@ function CreateEvent() {
           <div className="py-2">
             {ticketField.map((_, index: number) => (
               <TicketRow
+                key={index}
                 index={index}
                 removeRow={removeTicket}
                 isPaid={isPaid}

@@ -162,7 +162,7 @@ function SignIn() {
           </Form>
 
           <p className="mt-4 text-center text-luxtix-7">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/sign-up" className="text-luxtix-8 font-bold">
               Sign up
             </Link>
