@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { toast } from "@/components/ui/use-toast";
 import { useTransactionContext } from "@/contexts/TicketListContext";
+import { useSession } from "next-auth/react";
 
 interface ReviewProps {
   id: number;
@@ -48,6 +49,7 @@ const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
       comment: "",
     },
   });
+  const { data: session } = useSession();
 
   const onSubmit = async (data: ReviewFormValues) => {
     const formData = {
@@ -57,14 +59,16 @@ const AddReview: React.FC<ReviewProps> = ({ id, onClose }) => {
       type: getReviewType(data.reviewType),
     };
     try {
+      const headers: HeadersInit = { "Content-Type": "application/json" };
+      if (session) {
+        headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/event-review`,
         {
           credentials: "include",
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers,
           body: JSON.stringify(formData),
         }
       );
