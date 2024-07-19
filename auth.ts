@@ -14,7 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+            `https://dti-backend-2-lg2iizcpdq-as.a.run.app/auth/login`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
